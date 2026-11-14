@@ -163,7 +163,7 @@ impl ModelContext {
             name: "YOLOv8-Nano (Native Rust ORT)".to_string(),
             version: "v1.0.0".to_string(),
             modality: Modality::Vision,
-            model_path: "/home/joshua/ta1/trench-mark/models/yolov8n.onnx".to_string(),
+            model_path: "data/models/yolov8n-coco.onnx".to_string(),
         }
     }
 }
@@ -970,8 +970,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             cmd.file_path.clone(),
                             format!("data/models/{}.onnx", cmd.component_id),
                             format!("data/models/{}.bin", cmd.component_id),
-                            format!("/home/joshua/ta1/trench-mark/models/{}.onnx", if cmd.component_id.contains("11") { "yolo11n" } else { "yolov8n" }),
+                            format!("models/{}.onnx", cmd.component_id),
+                            "data/models/yolov8n-coco.onnx".to_string(),
                             "data/models/yolov8n.onnx".to_string(),
+                            "yolov8n.onnx".to_string(),
                         ];
                         if let Some(valid_path) = candidates.iter().find(|p| Path::new(p).exists()) {
                             if let Err(e) = reload_yolo.load_model(valid_path) {

@@ -127,9 +127,23 @@ run_all() {
     sleep 0.2
 
     # Step 2.5: Start Local Llama.cpp GGUF Inference Engine (if installed)
-    LLAMA_BIN="/home/joshua/llama.cpp/build/bin/llama-server"
-    QWEN_MODEL="/home/joshua/Downloads/qwen3-0.6b-q4_k_m.gguf"
-    if [[ -f "$LLAMA_BIN" ]] && [[ -f "$QWEN_MODEL" ]]; then
+    LLAMA_BIN=""
+    for cand in "$ROOT_DIR/llama-server" "$ROOT_DIR/bin/llama-server" "/usr/local/bin/llama-server" "llama-server" "/home/joshua/llama.cpp/build/bin/llama-server"; do
+        if command -v "$cand" >/dev/null 2>&1 || [[ -f "$cand" ]]; then
+            LLAMA_BIN="$cand"
+            break
+        fi
+    done
+
+    QWEN_MODEL=""
+    for cand in "$ROOT_DIR/data/models/qwen3-0.6b-q4_k_m.gguf" "$ROOT_DIR/qwen3-0.6b-q4_k_m.gguf" "$ROOT_DIR/data/models/qwen_v1.gguf" "/home/joshua/Downloads/qwen3-0.6b-q4_k_m.gguf"; do
+        if [[ -f "$cand" ]]; then
+            QWEN_MODEL="$cand"
+            break
+        fi
+    done
+
+    if [[ -n "$LLAMA_BIN" && -n "$QWEN_MODEL" ]]; then
         if ! nc -z 127.0.0.1 9931 2>/dev/null && ! timeout 0.5 bash -c '</dev/tcp/127.0.0.1/9931' 2>/dev/null; then
             log_info "2.5/7 Starting Local Llama.cpp Server (Qwen-0.6B GGUF on 127.0.0.1:9931)..."
             "$LLAMA_BIN" --host 127.0.0.1 --port 9931 -m "$QWEN_MODEL" -c 1024 -t 4 --reasoning off > /dev/null 2>&1 &

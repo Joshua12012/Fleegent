@@ -53,10 +53,13 @@ impl NativeYoloEngine {
     /// Discovers and initializes the best available native ONNX model weights.
     pub fn new() -> Self {
         let candidates = [
-            "/home/joshua/ta1/trench-mark/models/yolov8n.onnx",
-            "/home/joshua/ta1/trench-mark/models/yolo11n.onnx",
+            "data/models/yolov8n-coco.onnx",
             "data/models/yolov8n.onnx",
             "yolov8n.onnx",
+            "models/yolov8n.onnx",
+            "/content/data/models/yolov8n.onnx",
+            "/content/yolov8n.onnx",
+            "../data/models/yolov8n.onnx",
         ];
 
         let selected = candidates.iter().find(|p| Path::new(p).exists());

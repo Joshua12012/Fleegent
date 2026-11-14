@@ -557,6 +557,8 @@ function App() {
   const [connectingSource, setConnectingSource] = useState(null); // { nodeId, port }
   const [mouseCanvasPos, setMouseCanvasPos] = useState(null);
   const [showAddNodeMenu, setShowAddNodeMenu] = useState(false);
+  const [nodeFilterCat, setNodeFilterCat] = useState('All');
+  const [nodeSearchTerm, setNodeSearchTerm] = useState('');
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
 
@@ -1422,7 +1424,11 @@ function App() {
                 {/* Add Node Button */}
                 <div className="relative">
                   <button
-                    onClick={() => setShowAddNodeMenu(!showAddNodeMenu)}
+                    onClick={() => {
+                      setShowAddNodeMenu(!showAddNodeMenu);
+                      setNodeSearchTerm('');
+                      setNodeFilterCat('All');
+                    }}
                     className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-medium transition shadow-sm flex items-center space-x-1.5"
                   >
                     <Icon name="plus" className="w-3.5 h-3.5" />
@@ -1431,28 +1437,89 @@ function App() {
 
                   {/* Add Node Categorized Dropdown Popup */}
                   {showAddNodeMenu && (
-                    <div className="absolute right-0 top-10 z-50 w-64 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl p-2 space-y-2 animate-in fade-in zoom-in-95 duration-100 text-xs">
-                      {['Sensors', 'Gatekeepers', 'AI Engines', 'Storage & Sinks'].map(cat => {
-                        const items = Object.entries(NODE_LIBRARY).filter(([_, item]) => item.category === cat);
-                        return (
-                          <div key={cat} className="space-y-1">
-                            <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider px-2 block">{cat}</span>
-                            {items.map(([key, item]) => (
-                              <button
-                                key={key}
-                                onClick={() => handleAddNodeFromLibrary(key)}
-                                className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/[0.06] flex items-center space-x-2 text-zinc-300 hover:text-white transition"
-                              >
-                                <Icon name={item.icon} className="w-3.5 h-3.5 text-indigo-400" />
+                    <div className="absolute right-0 top-11 z-50 w-80 bg-zinc-900/95 backdrop-blur-md border border-white/[0.12] rounded-2xl shadow-2xl p-3 space-y-2.5 animate-in fade-in zoom-in-95 duration-100 text-xs">
+                      {/* Search Bar */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Search nodes (e.g. YOLO, Camera, SLM)..."
+                          value={nodeSearchTerm}
+                          onChange={(e) => setNodeSearchTerm(e.target.value)}
+                          autoFocus
+                          className="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500"
+                        />
+                        {nodeSearchTerm && (
+                          <button
+                            onClick={() => setNodeSearchTerm('')}
+                            className="absolute right-2.5 top-2 text-zinc-500 hover:text-white text-[10px]"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Category Pills */}
+                      <div className="flex items-center space-x-1 overflow-x-auto pb-1 text-[10px]">
+                        {['All', 'Sensors', 'Gatekeepers', 'AI Engines', 'Storage & Sinks'].map(cat => (
+                          <button
+                            key={cat}
+                            onClick={() => setNodeFilterCat(cat)}
+                            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition ${
+                              nodeFilterCat === cat
+                                ? 'bg-indigo-600 text-white shadow-sm'
+                                : 'bg-white/[0.04] text-zinc-400 hover:text-zinc-200'
+                            }`}
+                          >
+                            {cat}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Scrollable Node List (Max-height 64 prevents page scrolling) */}
+                      <div className="max-h-64 overflow-y-auto space-y-1 pr-1 overscroll-contain">
+                        {(() => {
+                          const filtered = Object.entries(NODE_LIBRARY).filter(([key, item]) => {
+                            const matchCat = nodeFilterCat === 'All' || item.category === nodeFilterCat;
+                            const matchSearch = !nodeSearchTerm ||
+                              item.title.toLowerCase().includes(nodeSearchTerm.toLowerCase()) ||
+                              item.subtitle.toLowerCase().includes(nodeSearchTerm.toLowerCase()) ||
+                              item.category.toLowerCase().includes(nodeSearchTerm.toLowerCase());
+                            return matchCat && matchSearch;
+                          });
+
+                          if (filtered.length === 0) {
+                            return (
+                              <div className="py-6 text-center text-zinc-500 text-xs">
+                                No matching nodes found.
+                              </div>
+                            );
+                          }
+
+                          return filtered.map(([key, item]) => (
+                            <button
+                              key={key}
+                              onClick={() => {
+                                handleAddNodeFromLibrary(key);
+                                setShowAddNodeMenu(false);
+                              }}
+                              className="w-full text-left p-2 rounded-xl hover:bg-white/[0.08] bg-white/[0.02] border border-white/[0.04] flex items-center justify-between group transition"
+                            >
+                              <div className="flex items-center space-x-2.5 min-w-0">
+                                <div className="w-6 h-6 rounded-lg bg-white/[0.05] group-hover:bg-indigo-500/20 text-indigo-400 flex items-center justify-center transition">
+                                  <Icon name={item.icon} className="w-3.5 h-3.5" />
+                                </div>
                                 <div className="truncate">
-                                  <div className="font-medium text-xs text-white">{item.title}</div>
+                                  <div className="font-medium text-xs text-zinc-200 group-hover:text-white transition truncate">{item.title}</div>
                                   <div className="text-[10px] text-zinc-500 truncate">{item.subtitle}</div>
                                 </div>
-                              </button>
-                            ))}
-                          </div>
-                        );
-                      })}
+                              </div>
+                              <span className="text-[10px] font-mono text-zinc-500 group-hover:text-indigo-400 pl-2">
+                                + Add
+                              </span>
+                            </button>
+                          ));
+                        })()}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -2534,7 +2601,7 @@ function App() {
                         <span>2. Local SLM (Llama.cpp)</span>
                         <span className="text-purple-400">Port 9931</span>
                       </div>
-                      <div className="text-[11px] text-zinc-300 select-all bg-black/40 p-1.5 rounded border border-white/[0.04] truncate" title="/home/joshua/llama.cpp/build/bin/llama-server --host 127.0.0.1 --port 9931 -m /home/joshua/Downloads/qwen3-0.6b-q4_k_m.gguf -c 1024 -t 4 --reasoning off">
+                      <div className="text-[11px] text-zinc-300 select-all bg-black/40 p-1.5 rounded border border-white/[0.04] truncate" title="llama-server --host 127.0.0.1 --port 9931 -m data/models/qwen.gguf -c 1024 -t 4 --reasoning off">
                         llama-server -p 9931 --reasoning off
                       </div>
                     </div>
