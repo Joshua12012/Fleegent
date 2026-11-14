@@ -115,36 +115,41 @@ cat <<EOF > data/edge.json
 EOF
 echo -e "\${GREEN}\${BOLD}[OK]\${NC} Staged identity config: data/edge.json"
 
-if [[ ! -f "./edge-ctl" ]]; then
+if [[ ! -f "./client_daemon" || ! -f "./run-edge.sh" || ! -f "./storage_service" || ! -f "./inference_worker" ]]; then
     echo -e "  - Downloading Edge Client binaries from: \${CLOUD_URL}/edge-client-bundle.tar.gz"
     curl -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz
-    chmod +x edge-ctl run-edge.sh client_daemon inference_worker wasm_host storage_service target/release/* 2>/dev/null || true
-    echo -e "\${GREEN}\${BOLD}[OK]\${NC} Edge runtime package extracted successfully."
 fi
+chmod +x edge-ctl run-edge.sh client_daemon inference_worker wasm_host storage_service nats-server target/release/* 2>/dev/null || true
+echo -e "\${GREEN}\${BOLD}[OK]\${NC} Edge runtime package ready."
 
 MODE="\${1:-foreground}"
 if [[ "\$MODE" == "--daemon" || "\$MODE" == "-d" || "\$MODE" == "daemon" ]]; then
     echo -e "\n\${CYAN}[4/4]\${NC} Starting Edge Microservice Fleet in background daemon mode..."
-    if [[ -f "./edge-ctl" ]]; then
-        nohup ./edge-ctl run >/dev/null 2>&1 &
-    elif [[ -f "./run-edge.sh" ]]; then
-        nohup ./run-edge.sh run >/dev/null 2>&1 &
+    mkdir -p data
+    if [[ -f "./run-edge.sh" ]]; then
+        nohup ./run-edge.sh run </dev/null > data/client.log 2>&1 &
+        CLIENT_PID=\$!
+        disown \$CLIENT_PID 2>/dev/null || true
+    elif [[ -f "./edge-ctl" ]]; then
+        nohup ./edge-ctl run </dev/null > data/client.log 2>&1 &
+        CLIENT_PID=\$!
+        disown \$CLIENT_PID 2>/dev/null || true
     fi
-    CLIENT_PID=\$!
     echo -e "\${GREEN}\${BOLD}[OK]\${NC} Edge microservices running in background (PID: \$CLIENT_PID)."
     echo -e "  - Dashboard URL:          \${BOLD}\${CLOUD_URL}\${NC}"
-    echo -e "  - Stop microservices:     \${BOLD}./edge-ctl stop\${NC}  (or click Stop in Web UI)"
-    echo -e "  - Purge device and data:  \${BOLD}./edge-ctl purge\${NC} (or click Purge in Web UI)\n"
+    echo -e "  - Runtime log:            \${BOLD}tail -f data/client.log\${NC}"
+    echo -e "  - Stop microservices:     \${BOLD}./run-edge.sh stop\${NC} or \${BOLD}./edge-ctl stop\${NC}  (or click Stop in Web UI)"
+    echo -e "  - Purge device and data:  \${BOLD}./run-edge.sh purge\${NC} or \${BOLD}./edge-ctl purge\${NC} (or click Purge in Web UI)\n"
 else
-    echo -e "\n\${CYAN}[4/4]\${NC} Starting Edge Microservice Fleet in live streaming mode..."
+    echo -e "\n\${CYAN}[4/4]\${NC} Starting Edge Microservice Fleet in live streaming mode via run-edge.sh..."
     echo -e "  - Hit \${BOLD}Ctrl+C\${NC} anytime to stop cleanly without orphaned PIDs."
     echo -e "  - Background daemon mode: \${BOLD}curl -sSL \${CLOUD_URL}/bootstrap.sh?token=\${TOKEN} | bash -s -- --daemon\${NC}\n"
-    if [[ -f "./edge-ctl" ]]; then
-        ./edge-ctl run
-    elif [[ -f "./run-edge.sh" ]]; then
-        ./run-edge.sh run
+    if [[ -f "./run-edge.sh" ]]; then
+        exec ./run-edge.sh run </dev/tty 2>/dev/null || exec ./run-edge.sh run </dev/null
+    elif [[ -f "./edge-ctl" ]]; then
+        exec ./edge-ctl run </dev/tty 2>/dev/null || exec ./edge-ctl run </dev/null
     else
-        echo -e "\${RED}[ERROR]\${NC} Missing edge-ctl binary."
+        echo -e "\${RED}[ERROR]\${NC} Missing run-edge.sh binary."
         exit 1
     fi
 fi

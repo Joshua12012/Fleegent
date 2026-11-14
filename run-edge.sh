@@ -89,17 +89,31 @@ run_all() {
     [[ ! -f "$DAEMON_BIN" && -f "$ROOT_DIR/client_daemon" ]] && DAEMON_BIN="$ROOT_DIR/client_daemon"
     [[ ! -f "$WASM_FILE" && -f "$ROOT_DIR/wasm_worker.wasm" ]] && WASM_FILE="$ROOT_DIR/wasm_worker.wasm"
 
-    # Auto-build if any binary is missing
+    # Auto-build if any binary is missing and Cargo workspace is present
     if [[ ! -f "$WASM_FILE" ]] || [[ ! -f "$STORAGE_BIN" ]] || [[ ! -f "$INFERENCE_BIN" ]] || [[ ! -f "$WASM_HOST_BIN" ]] || [[ ! -f "$DAEMON_BIN" ]]; then
-        build_all
+        if command -v cargo >/dev/null 2>&1 && [[ -d "$ROOT_DIR/wasm_worker" ]] && [[ -f "$ROOT_DIR/Cargo.toml" ]]; then
+            build_all
+        else
+            log_err "Missing pre-built binaries and Cargo workspace not found in $ROOT_DIR to compile."
+            log_err "Please run with bundled binaries or check repository contents."
+            exit 1
+        fi
     fi
 
     mkdir -p data data/models
 
+    # Locate NATS Broker (system PATH or local root)
+    NATS_BIN="nats-server"
+    if ! command -v nats-server >/dev/null 2>&1; then
+        if [[ -f "$ROOT_DIR/nats-server" ]]; then
+            NATS_BIN="$ROOT_DIR/nats-server"
+        fi
+    fi
+
     # Step 1: Start local NATS IPC broker (if not already running)
     if ! nc -z 127.0.0.1 4222 2>/dev/null && ! timeout 0.5 bash -c '</dev/tcp/127.0.0.1/4222' 2>/dev/null; then
         log_info "1/5 Starting Local NATS Broker on 127.0.0.1:4222..."
-        nats-server -p 4222 > /dev/null 2>&1 &
+        "$NATS_BIN" -p 4222 > /dev/null 2>&1 &
         NATS_PID=$!
         sleep 0.4
     else
