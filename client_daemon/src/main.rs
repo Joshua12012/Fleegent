@@ -233,9 +233,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("  - Hostname:          {}", hostname_cfg);
     println!("  - Kernel Sysfs Temp: {:.1}°C ({})", real_temp, thermal_driver.sysfs_path());
     println!(
-        "  - Camera Node:       {} (Physical V4L2 Device Available: {})",
+        "  - Camera Node:       {} (Hardware Available: {}, Engine: {})",
         camera_driver.device_path(),
-        camera_driver.is_hardware_available()
+        camera_driver.is_hardware_available(),
+        camera_driver.streaming_backend()
     );
     println!("  - Host CPU Usage:    {:.1}%", cpu_usage);
     println!("  - Host RAM:          {} MB / {} MB used", used_ram_mb, total_ram_mb);
