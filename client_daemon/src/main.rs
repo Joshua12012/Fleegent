@@ -64,31 +64,69 @@ fn handle_remote_command(cmd: &str) {
         println!("  🛑 REMOTE STOP COMMAND RECEIVED FROM CLOUD DASHBOARD");
         println!("================================================================");
         println!("[Daemon] Halting all edge microservices cleanly...");
+
+        // Direct process termination across all platforms
+        let _ = std::process::Command::new("killall")
+            .args(["-9", "inference_worker", "wasm_host", "storage_service"])
+            .status();
+        let _ = std::process::Command::new("pkill")
+            .args(["-x", "inference_worker", "wasm_host", "storage_service"])
+            .status();
+        let _ = std::process::Command::new("pkill")
+            .args(["-f", "nats-server -p 4222"])
+            .status();
+
         if std::path::Path::new("./run-edge.sh").exists() {
             let _ = std::process::Command::new("./run-edge.sh").arg("stop").status();
         } else if std::path::Path::new("./edge-ctl").exists() {
             let _ = std::process::Command::new("./edge-ctl").arg("stop").status();
-        } else {
-            let _ = std::process::Command::new("killall")
-                .args(["-9", "inference_worker", "wasm_host", "storage_service"])
-                .status();
         }
+        println!("[Daemon] All edge microservices stopped cleanly. Exiting daemon.");
         std::process::exit(0);
     } else if cmd == "PURGE" {
         println!("\n================================================================");
         println!("  🧹 REMOTE PURGE COMMAND RECEIVED FROM CLOUD DASHBOARD");
         println!("================================================================");
         println!("[Daemon] Halting microservices and purging all edge data & binaries...");
+
+        let _ = std::process::Command::new("killall")
+            .args(["-9", "inference_worker", "wasm_host", "storage_service"])
+            .status();
+        let _ = std::process::Command::new("pkill")
+            .args(["-x", "inference_worker", "wasm_host", "storage_service"])
+            .status();
+        let _ = std::process::Command::new("pkill")
+            .args(["-f", "nats-server -p 4222"])
+            .status();
+
+        let _ = std::fs::remove_dir_all("data");
+        let _ = std::fs::remove_file("/tmp/edge_supervisor.sock");
+        let _ = std::fs::remove_file("/tmp/edge_live_frame.jpg");
+
+        // If running as standalone deployment (no .git), wipe all binaries and scripts
+        if !std::path::Path::new(".git").exists() {
+            let files_to_remove = [
+                "client_daemon",
+                "inference_worker",
+                "storage_service",
+                "wasm_host",
+                "nats-server",
+                "wasm_worker.wasm",
+                "default_frame.jpg",
+                "run-edge.sh",
+                "edge-ctl",
+            ];
+            for f in &files_to_remove {
+                let _ = std::fs::remove_file(f);
+            }
+        }
+
         if std::path::Path::new("./run-edge.sh").exists() {
             let _ = std::process::Command::new("./run-edge.sh").arg("purge").status();
         } else if std::path::Path::new("./edge-ctl").exists() {
             let _ = std::process::Command::new("./edge-ctl").arg("purge").status();
-        } else {
-            let _ = std::process::Command::new("killall")
-                .args(["-9", "inference_worker", "wasm_host", "storage_service"])
-                .status();
-            let _ = std::fs::remove_dir_all("data");
         }
+        println!("[Daemon] Complete edge purge finished. System clean. Exiting.");
         std::process::exit(0);
     }
 }

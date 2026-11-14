@@ -115,10 +115,8 @@ cat <<EOF > data/edge.json
 EOF
 echo -e "\${GREEN}\${BOLD}[OK]\${NC} Staged identity config: data/edge.json"
 
-if [[ ! -f "./client_daemon" || ! -f "./run-edge.sh" || ! -f "./storage_service" || ! -f "./inference_worker" ]]; then
-    echo -e "  - Downloading Edge Client binaries from: \${CLOUD_URL}/edge-client-bundle.tar.gz"
-    curl -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz
-fi
+echo -e "  - Downloading latest Edge Client binaries from: \${CLOUD_URL}/edge-client-bundle.tar.gz"
+curl -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz
 chmod +x edge-ctl run-edge.sh client_daemon inference_worker wasm_host storage_service nats-server target/release/* 2>/dev/null || true
 echo -e "\${GREEN}\${BOLD}[OK]\${NC} Edge runtime package ready."
 
