@@ -51,18 +51,29 @@ class TokenService {
       throw new Error(`Token '${token}' expired at ${new Date(record.expires_at * 1000).toISOString()}.`);
     }
 
-    // Check if a device with this hardware_id already exists (prevent duplicate devices)
+    // Check if an existing device matches BOTH hardware_id AND hostname (exact same host reconnecting)
     let existingDevice = null;
     if (hardware_id && hardware_id !== 'unknown-mac' && hardware_id !== 'auto-registered') {
-      existingDevice = Array.from(store.devices.values()).find(d => d.hardware_id === hardware_id);
+      existingDevice = Array.from(store.devices.values()).find(d => 
+        d.hardware_id === hardware_id && 
+        d.hostname === hostname && 
+        d.status !== 'PURGED'
+      );
     }
 
-    // Deterministic or reused device ID: if hardware exists, keep same ID; otherwise derive deterministically
-    const deviceId = existingDevice
-      ? existingDevice.device_id
-      : (hardware_id && hardware_id.length >= 6
-          ? `${record.device_tag}-${hardware_id.slice(0, 6)}`
-          : `${record.device_tag}-${crypto.randomBytes(3).toString('hex')}`);
+    // Generate unique device ID for this enrollment:
+    let deviceId = existingDevice ? existingDevice.device_id : null;
+    if (!deviceId) {
+      const baseTag = record.device_tag || 'edge-node';
+      const shortHw = (hardware_id && hardware_id.length >= 6) ? hardware_id.slice(0, 6) : crypto.randomBytes(3).toString('hex');
+      const candidateId = `${baseTag}-${shortHw}`;
+      // Ensure candidate ID does not collide with an already registered device
+      if (store.devices.has(candidateId)) {
+        deviceId = `${baseTag}-${shortHw}-${crypto.randomBytes(2).toString('hex')}`;
+      } else {
+        deviceId = candidateId;
+      }
+    }
 
     const authToken = 'auth_jwt_' + crypto.randomBytes(16).toString('hex');
 

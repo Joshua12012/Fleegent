@@ -1420,24 +1420,23 @@ function App() {
 
   // Handle Deploying selected model to active device
   const handleDeployModel = async modelId => {
-    const activeDevice = devices.find(d => d.status === 'ONLINE') || devices[0];
-    if (!activeDevice) {
+    const onlineDevices = devices.filter(d => d.status === 'ONLINE');
+    const targetDevices = onlineDevices.length > 0 ? onlineDevices : (devices.length > 0 ? [devices[0]] : []);
+    if (targetDevices.length === 0) {
       showToast('error', 'No edge devices connected. Run the quickstart command on your device first.');
       return;
     }
     setIsDeployingModel(true);
     try {
-      const res = await fetch(`/api/v1/devices/${activeDevice.device_id}/deploy/${modelId}`, {
-        method: 'POST'
-      });
-      const data = await res.json();
-      if (data.success) {
-        setActiveModel(modelId);
-        showToast('success', `Deployed '${modelId}' to ${activeDevice.device_id}`);
-        fetchAllData();
-      } else {
-        showToast('error', data.error || 'Deployment failed');
-      }
+      const deployPromises = targetDevices.map(dev =>
+        fetch(`/api/v1/devices/${dev.device_id}/deploy/${modelId}`, {
+          method: 'POST'
+        }).then(r => r.json())
+      );
+      await Promise.all(deployPromises);
+      setActiveModel(modelId);
+      showToast('success', `Deployed '${modelId}' to ${targetDevices.length} edge device(s)`);
+      await fetchAllData();
     } catch (err) {
       showToast('error', err.message);
     } finally {
@@ -1511,8 +1510,9 @@ function App() {
 
   // Deploy custom pipeline configuration to edge hardware
   const handleDeployPipelineToEdge = async () => {
-    const activeDevice = devices.find(d => d.status === 'ONLINE') || devices[0];
-    if (!activeDevice) {
+    const onlineDevices = devices.filter(d => d.status === 'ONLINE');
+    const targetDevices = onlineDevices.length > 0 ? onlineDevices : (devices.length > 0 ? [devices[0]] : []);
+    if (targetDevices.length === 0) {
       showToast('error', 'No active edge device online to receive pipeline deploy.');
       return;
     }
@@ -1555,18 +1555,22 @@ function App() {
       }
     };
     try {
-      const res = await fetch(`/api/v1/devices/${activeDevice.device_id}/services`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(servicesConfig)
-      });
-      const data = await res.json();
-      if (data.success) {
-        showToast('success', `Deployed customized pipeline (${pipelineNodes.length} nodes) to ${activeDevice.device_id}!`);
+      const deployPromises = targetDevices.map(dev =>
+        fetch(`/api/v1/devices/${dev.device_id}/services`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(servicesConfig)
+        }).then(r => r.json())
+      );
+      const results = await Promise.all(deployPromises);
+      const allOk = results.every(r => r.success);
+      if (allOk) {
+        showToast('success', `Deployed customized pipeline (${pipelineNodes.length} nodes) to ${targetDevices.length} device(s)!`);
+        await fetchAllData();
       } else {
-        showToast('error', data.error || 'Failed to deploy services');
+        showToast('error', 'Failed to deploy services to some devices');
       }
     } catch (e) {
       showToast('error', 'Pipeline deploy error: ' + e.message);

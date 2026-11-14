@@ -209,9 +209,19 @@ class DeviceService {
   }
 
   /**
-   * Updates Azure-style modular services for a given device.
+   * Updates Azure-style modular services for a given device or entire fleet ('all').
    */
   updateModularServices(deviceId, servicesConfig) {
+    if (deviceId === 'all') {
+      let lastCfg = { version: 1 };
+      for (const devId of store.devices.keys()) {
+        try {
+          lastCfg = this.updateModularServices(devId, servicesConfig);
+        } catch (_) {}
+      }
+      return lastCfg;
+    }
+
     const device = store.devices.get(deviceId);
     if (!device) {
       throw new Error(`Device '${deviceId}' not found.`);

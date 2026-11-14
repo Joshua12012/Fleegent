@@ -50,15 +50,19 @@ class DeploymentService {
     store.deployments.set(depId, record);
     store.latestDeployment = reloadCmd;
 
-    // Also update device's configured service record
-    if (deviceId && deviceId !== 'all') {
+    // Update target device (or all devices) with new model inference config
+    const targetDevices = (deviceId && deviceId !== 'all')
+      ? [deviceId]
+      : Array.from(store.devices.keys());
+
+    for (const targetId of targetDevices) {
       try {
-        deviceService.updateModularServices(deviceId, {
+        deviceService.updateModularServices(targetId, {
           inference: {
             enabled: true,
             active_model_id: model.model_id,
             modality: model.modality,
-            model_path: `data/models/${model.model_id}.bin`,
+            model_path: filePath,
             confidence_threshold: 0.75,
             memory_cap_mb: 15,
             listen_topic: `inference.${model.modality.toLowerCase()}`,

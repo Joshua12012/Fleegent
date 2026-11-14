@@ -58,14 +58,24 @@ if [[ -z "\$BOARD_MODEL" ]]; then
     BOARD_MODEL="\$ARCH Linux Host"
 fi
 
-HARDWARE_ID=""
+SYS_ID=""
 if [[ -f /etc/machine-id ]]; then
-    HARDWARE_ID=\$(cat /etc/machine-id | tr -d ' \\n')
-elif command -v ip >/dev/null 2>&1; then
-    HARDWARE_ID=\$(ip link show 2>/dev/null | awk '/ether/ {print \$2; exit}' | tr -d ':')
+    SYS_ID=\$(cat /etc/machine-id | tr -d ' \\n')
 fi
-if [[ -z "\$HARDWARE_ID" ]]; then
-    HARDWARE_ID="hw_\$(date +%s%N | cut -b1-12)"
+MAC_ID=""
+if command -v ip >/dev/null 2>&1; then
+    MAC_ID=\$(ip link show 2>/dev/null | awk '/ether/ {print \$2; exit}' | tr -d ':' || true)
+fi
+
+# In cloud VMs, containers, and Google Colab, /etc/machine-id is pre-baked and identical across instances.
+# We hash machine-id together with container hostname and network MAC to ensure every container is unique.
+UNIQUE_SEED="\${SYS_ID}_\${HOSTNAME}_\${MAC_ID}"
+if command -v sha256sum >/dev/null 2>&1; then
+    HARDWARE_ID=\$(echo -n "\$UNIQUE_SEED" | sha256sum | awk '{print \$1}' | cut -b1-16)
+elif command -v md5sum >/dev/null 2>&1; then
+    HARDWARE_ID=\$(echo -n "\$UNIQUE_SEED" | md5sum | awk '{print \$1}' | cut -b1-16)
+else
+    HARDWARE_ID="\${HOSTNAME}_\${SYS_ID:0:8}"
 fi
 
 echo "  - Hostname:     \$HOSTNAME"

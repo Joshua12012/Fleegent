@@ -392,10 +392,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // --------------------------------------------------------------------------
     // MAIN EXECUTION LOOP: Declarative, Systematic & Explainable
     // --------------------------------------------------------------------------
-    let mut heartbeat_interval = tokio::time::interval(Duration::from_secs(3));
+    let mut heartbeat_interval = tokio::time::interval(Duration::from_millis(1500));
     let mut pipeline_interval = tokio::time::interval(Duration::from_secs(2));
 
-    let mut last_applied_deployment: u64 = now_secs;
+    let mut last_applied_deployment_id = String::new();
     let mut tick_counter: u64 = 0;
 
     loop {
@@ -515,7 +515,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     file_path: m.inference.model_path.clone(),
                                     sha256_checksum: String::new(),
                                     timestamp: current_time,
-                                    deployment_id: None,
+                                    deployment_id: Some(format!("dep_v{}", *v)),
                                 };
                                 println!(
                                     "  🔄 [Pipeline Hot-Swap] Propagating active model update to inference worker: {} ({:?})",
@@ -540,8 +540,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .await
                 {
                     if let Ok(Some(dep_cmd)) = resp.json::<Option<ReloadCommand>>().await {
-                        if dep_cmd.timestamp > last_applied_deployment {
-                            last_applied_deployment = dep_cmd.timestamp;
+                        let dep_id_str = dep_cmd.deployment_id.clone().unwrap_or_else(|| dep_cmd.timestamp.to_string());
+                        if dep_id_str != last_applied_deployment_id {
+                            last_applied_deployment_id = dep_id_str;
                             println!(
                                 "\n  📥 [OTA Hot-Swap] Cloud requested model update: {} ({:?}) -> Dispatching to workers...",
                                 dep_cmd.model_name, dep_cmd.modality
