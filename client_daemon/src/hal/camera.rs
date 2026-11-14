@@ -249,5 +249,11 @@ impl Drop for CameraDriver {
         if let Some(mut child) = self.stream_proc.take() {
             let _ = child.kill();
         }
+        let _ = std::process::Command::new("killall")
+            .args(["-9", "gst-launch-1.0", "ffmpeg"])
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .status();
+        let _ = std::fs::remove_file("/tmp/edge_live_frame.jpg");
     }
 }

@@ -86,13 +86,15 @@ cmd_stop() {
     echo -e "${BOLD}================================================================${NC}"
 
     log_warn "Stopping running edge microservices..."
-    killall -9 inference_worker wasm_host storage_service 2>/dev/null || true
+    killall -9 inference_worker wasm_host storage_service gst-launch-1.0 ffmpeg 2>/dev/null || true
     pkill -x inference_worker 2>/dev/null || true
     pkill -x wasm_host 2>/dev/null || true
     pkill -x storage_service 2>/dev/null || true
     pkill -f "nats-server -p 4222" 2>/dev/null || true
+    pkill -f "gst-launch-1.0|ffmpeg -f v4l2" 2>/dev/null || true
     pkill -x client_daemon 2>/dev/null || true
     killall -9 client_daemon 2>/dev/null || true
+    rm -f /tmp/edge_live_frame.jpg 2>/dev/null || true
     sleep 0.5
 
     # If edge.json has device_id and cloud_server_url, inform the cloud of STOPPED status
@@ -119,11 +121,13 @@ cmd_purge() {
     echo -e "${BOLD}================================================================${NC}"
 
     log_warn "Stopping any running edge microservices..."
-    killall -9 inference_worker wasm_host storage_service 2>/dev/null || true
+    killall -9 inference_worker wasm_host storage_service gst-launch-1.0 ffmpeg 2>/dev/null || true
     pkill -x inference_worker 2>/dev/null || true
     pkill -x wasm_host 2>/dev/null || true
     pkill -x storage_service 2>/dev/null || true
     pkill -f "nats-server -p 4222" 2>/dev/null || true
+    pkill -f "gst-launch-1.0|ffmpeg -f v4l2" 2>/dev/null || true
+    rm -f /tmp/edge_live_frame.jpg 2>/dev/null || true
     sleep 0.5
 
     # If edge.json has device_id and cloud_server_url, notify cloud to purge record

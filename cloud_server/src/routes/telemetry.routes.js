@@ -11,30 +11,79 @@ const deviceService = require('../services/device.service');
 const store = require('../store/state');
 
 /**
+ * POST /api/v1/devices/:id/frame
+ * Ingests live optical camera JPEG frames uploaded by remote edge devices (Kaggle, Colab, RPi).
+ */
+router.post('/devices/:id/frame', express.raw({ type: ['image/jpeg', 'application/octet-stream'], limit: '10mb' }), (req, res) => {
+  const deviceId = req.params.id;
+  if (req.body && req.body.length > 0) {
+    store.latestFrames = store.latestFrames || new Map();
+    store.latestFrames.set(deviceId, {
+      buffer: req.body,
+      received_at: Date.now()
+    });
+
+    // Also sync to /tmp/edge_live_frame.jpg for the YOLO detector
+    try {
+      fs.writeFileSync('/tmp/edge_live_frame.jpg', req.body);
+    } catch (_) {}
+
+    return res.json({ success: true, bytes: req.body.length });
+  }
+  res.status(400).json({ success: false, error: 'No frame data' });
+});
+
+/**
  * GET /api/v1/telemetry/live/frame
- * Serves the real live camera frame captured from physical /dev/video0.
+ * Serves the live camera frame captured from physical /dev/video0 or uploaded from remote edge nodes.
  */
 router.get('/telemetry/live/frame', (req, res) => {
+  const now = Date.now();
+
+  // 1. Check if an active online device has uploaded a live frame within the last 10 seconds
+  if (store.latestFrames && store.latestFrames.size > 0) {
+    const onlineDev = Array.from(store.devices.values()).find(d => d.status === 'ONLINE');
+    if (onlineDev && store.latestFrames.has(onlineDev.device_id)) {
+      const entry = store.latestFrames.get(onlineDev.device_id);
+      if (now - entry.received_at < 10000) {
+        res.setHeader('Content-Type', 'image/jpeg');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        return res.send(entry.buffer);
+      }
+    }
+  }
+
+  // 2. Fallback to local /tmp/edge_live_frame.jpg ONLY if fresh (written within last 10 seconds)
   const framePath = '/tmp/edge_live_frame.jpg';
   const fallbackPath = path.join(__dirname, '../../../data/samples/default_frame.jpg');
 
-  fs.readFile(framePath, (err, data) => {
-    if (!err && data && data.length > 0) {
-      res.setHeader('Content-Type', 'image/jpeg');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      return res.send(data);
-    }
+  if (fs.existsSync(framePath)) {
+    try {
+      const stat = fs.statSync(framePath);
+      if (now - stat.mtimeMs < 10000) {
+        const data = fs.readFileSync(framePath);
+        if (data.length > 0) {
+          res.setHeader('Content-Type', 'image/jpeg');
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          return res.send(data);
+        }
+      }
+    } catch (_) {}
+  }
 
-    fs.readFile(fallbackPath, (fbErr, fbData) => {
-      if (!fbErr && fbData && fbData.length > 0) {
+  // 3. Fallback to authentic industrial inspection sample dataset
+  if (fs.existsSync(fallbackPath)) {
+    try {
+      const fbData = fs.readFileSync(fallbackPath);
+      if (fbData.length > 0) {
         res.setHeader('Content-Type', 'image/jpeg');
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
         return res.send(fbData);
       }
+    } catch (_) {}
+  }
 
-      res.status(404).send('Frame not available yet');
-    });
-  });
+  res.status(404).send('Frame not available yet');
 });
 
 /**

@@ -67,7 +67,7 @@ fn handle_remote_command(cmd: &str) {
 
         // Direct process termination across all platforms
         let _ = std::process::Command::new("killall")
-            .args(["-9", "inference_worker", "wasm_host", "storage_service"])
+            .args(["-9", "inference_worker", "wasm_host", "storage_service", "gst-launch-1.0", "ffmpeg"])
             .status();
         let _ = std::process::Command::new("pkill")
             .args(["-x", "inference_worker", "wasm_host", "storage_service"])
@@ -75,6 +75,10 @@ fn handle_remote_command(cmd: &str) {
         let _ = std::process::Command::new("pkill")
             .args(["-f", "nats-server -p 4222"])
             .status();
+        let _ = std::process::Command::new("pkill")
+            .args(["-f", "gst-launch-1.0|ffmpeg -f v4l2"])
+            .status();
+        let _ = std::fs::remove_file("/tmp/edge_live_frame.jpg");
 
         if std::path::Path::new("./run-edge.sh").exists() {
             let _ = std::process::Command::new("./run-edge.sh").arg("stop").status();
@@ -90,13 +94,16 @@ fn handle_remote_command(cmd: &str) {
         println!("[Daemon] Halting microservices and purging all edge data & binaries...");
 
         let _ = std::process::Command::new("killall")
-            .args(["-9", "inference_worker", "wasm_host", "storage_service"])
+            .args(["-9", "inference_worker", "wasm_host", "storage_service", "gst-launch-1.0", "ffmpeg"])
             .status();
         let _ = std::process::Command::new("pkill")
             .args(["-x", "inference_worker", "wasm_host", "storage_service"])
             .status();
         let _ = std::process::Command::new("pkill")
             .args(["-f", "nats-server -p 4222"])
+            .status();
+        let _ = std::process::Command::new("pkill")
+            .args(["-f", "gst-launch-1.0|ffmpeg -f v4l2"])
             .status();
 
         let _ = std::fs::remove_dir_all("data");
@@ -562,6 +569,35 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             let _ = client
                                 .publish(TOPIC_SENSOR_CAMERA, serde_json::to_vec(&frame)?.into())
                                 .await;
+                        }
+
+                        // Stream real frame bytes to Cloud Control Plane for visual dashboard
+                        let frame_bytes_opt = std::fs::read("/tmp/edge_live_frame.jpg").ok().or_else(|| {
+                            let sample_paths = [
+                                "data/samples/default_frame.jpg",
+                                "default_frame.jpg",
+                                "/content/data/samples/default_frame.jpg",
+                                "/content/default_frame.jpg",
+                                "../data/samples/default_frame.jpg",
+                            ];
+                            for p in &sample_paths {
+                                if let Ok(b) = std::fs::read(p) {
+                                    return Some(b);
+                                }
+                            }
+                            None
+                        });
+
+                        if let Some(bytes) = frame_bytes_opt {
+                            if !bytes.is_empty() {
+                                let upload_url = format!("{}/api/v1/devices/{}/frame", cloud_url, device_id);
+                                let _ = http_client
+                                    .post(&upload_url)
+                                    .header("Content-Type", "image/jpeg")
+                                    .body(bytes)
+                                    .send()
+                                    .await;
+                            }
                         }
                     }
                 }

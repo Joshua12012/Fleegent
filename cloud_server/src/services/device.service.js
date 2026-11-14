@@ -277,18 +277,24 @@ class DeviceService {
       store.saveToDisk();
     }
 
-    try {
-      const child = spawn('./run-edge.sh', ['run'], {
-        cwd: rootDir,
-        detached: true,
-        stdio: 'ignore'
-      });
-      child.unref();
-      store.logEvent('DEVICE_STARTED', `Dispatched start signal for device [${deviceId || 'local'}].`);
-      return { success: true, message: `Edge client microservices started for ${deviceId}.` };
-    } catch (err) {
-      throw new Error(`Failed to launch edge client: ${err.message}`);
+    // Only spawn local binaries if explicitly targeting 'local' host
+    if (deviceId === 'local') {
+      try {
+        const child = spawn('./run-edge.sh', ['run'], {
+          cwd: rootDir,
+          detached: true,
+          stdio: 'ignore'
+        });
+        child.unref();
+        store.logEvent('DEVICE_STARTED', `Dispatched local start signal.`);
+        return { success: true, message: `Local edge microservices launched.` };
+      } catch (err) {
+        throw new Error(`Failed to launch edge client: ${err.message}`);
+      }
     }
+
+    store.logEvent('DEVICE_ONLINE_ACK', `Device [${deviceId}] marked active. Awaiting remote client heartbeat.`);
+    return { success: true, message: `Device '${deviceId}' marked active.` };
   }
 
   /**
@@ -314,13 +320,15 @@ class DeviceService {
       store.saveToDisk();
     }
 
-    // Stop local edge microservices
+    // Stop local edge microservices and kill any orphaned camera streamers
     try {
-      execSync('killall -9 client_daemon inference_worker wasm_host storage_service 2>/dev/null || true');
+      execSync('killall -9 client_daemon inference_worker wasm_host storage_service gst-launch-1.0 ffmpeg 2>/dev/null || true');
       execSync('pkill -x client_daemon 2>/dev/null || true');
       execSync('pkill -x inference_worker 2>/dev/null || true');
       execSync('pkill -x wasm_host 2>/dev/null || true');
       execSync('pkill -x storage_service 2>/dev/null || true');
+      execSync('pkill -f "gst-launch-1.0|ffmpeg -f v4l2" 2>/dev/null || true');
+      execSync('rm -f /tmp/edge_live_frame.jpg 2>/dev/null || true');
     } catch (_) {}
 
     store.logEvent('DEVICE_STOPPED', `Device [${deviceId}] microservices stopped.`);
@@ -336,13 +344,15 @@ class DeviceService {
     const path = require('path');
     const rootDir = path.resolve(__dirname, '../../../');
 
-    // 1. Terminate edge client microservices
+    // 1. Terminate edge client microservices and video streams
     try {
-      execSync('killall -9 client_daemon inference_worker wasm_host storage_service 2>/dev/null || true');
+      execSync('killall -9 client_daemon inference_worker wasm_host storage_service gst-launch-1.0 ffmpeg 2>/dev/null || true');
       execSync('pkill -x client_daemon 2>/dev/null || true');
       execSync('pkill -x inference_worker 2>/dev/null || true');
       execSync('pkill -x wasm_host 2>/dev/null || true');
       execSync('pkill -x storage_service 2>/dev/null || true');
+      execSync('pkill -f "gst-launch-1.0|ffmpeg -f v4l2" 2>/dev/null || true');
+      execSync('rm -f /tmp/edge_live_frame.jpg 2>/dev/null || true');
     } catch (_) {}
 
     // 2. Wipe local runtime databases and identity config if they exist
