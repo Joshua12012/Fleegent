@@ -136,11 +136,23 @@ cmd_purge() {
         fi
     fi
 
-    log_info "Deleting runtime SQLite databases, WAL scratchpads, and identity configs..."
-    rm -rf data/*.db data/*.db-wal data/*.db-shm data/edge.json
-    rm -rf /tmp/edge_supervisor.sock
+    log_info "Deleting runtime data, models, databases, and logs..."
+    rm -rf data /tmp/edge_supervisor.sock client_test.log trace.log
 
-    log_ok "All edge data, databases, and configs completely purged!"
+    # If running in a standalone client directory (not a development git checkout), remove all binaries and scripts
+    if [[ ! -d "$ROOT_DIR/.git" ]]; then
+        log_info "Standalone client installation detected — removing microservice binaries & scripts..."
+        rm -f "$ROOT_DIR/client_daemon" \
+              "$ROOT_DIR/inference_worker" \
+              "$ROOT_DIR/storage_service" \
+              "$ROOT_DIR/wasm_host" \
+              "$ROOT_DIR/nats-server" \
+              "$ROOT_DIR/wasm_worker.wasm" \
+              "$ROOT_DIR/run-edge.sh" \
+              "$ROOT_DIR/edge-ctl"
+    fi
+
+    log_ok "All edge client data, databases, and microservice files completely purged!"
     echo -e "${GREEN}${BOLD}System is clean. Zero residual files or running daemons.${NC}\n"
 }
 

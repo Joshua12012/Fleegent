@@ -199,8 +199,27 @@ case "$COMMAND" in
         ;;
     purge|uninstall|clean-all)
         stop_all
-        clean_all
-        rm -f data/edge.json
+        if [[ -f "data/edge.json" ]]; then
+            DEVICE_ID=$(grep -o '"device_id":"[^"]*' data/edge.json | head -n1 | cut -d'"' -f4 || true)
+            CLOUD_URL=$(grep -o '"cloud_server_url":"[^"]*' data/edge.json | head -n1 | cut -d'"' -f4 || true)
+            if [[ -n "$DEVICE_ID" && -n "$CLOUD_URL" ]]; then
+                log_info "Notifying Cloud Server to deregister device $DEVICE_ID..."
+                curl -sSL -X POST "$CLOUD_URL/api/v1/devices/$DEVICE_ID/purge" >/dev/null 2>&1 || true
+            fi
+        fi
+        rm -rf data /tmp/edge_supervisor.sock client_test.log trace.log
+        if [[ ! -d "$ROOT_DIR/.git" ]]; then
+            log_info "Standalone client installation detected — removing microservice binaries & scripts..."
+            rm -f "$ROOT_DIR/client_daemon" \
+                  "$ROOT_DIR/inference_worker" \
+                  "$ROOT_DIR/storage_service" \
+                  "$ROOT_DIR/wasm_host" \
+                  "$ROOT_DIR/nats-server" \
+                  "$ROOT_DIR/wasm_worker.wasm" \
+                  "$ROOT_DIR/edge-ctl" \
+                  "$ROOT_DIR/run-edge.sh"
+        fi
+        log_ok "All edge client data, databases, and microservice files completely purged!"
         ;;
     test|verify|smoke-test)
         run_all --once
