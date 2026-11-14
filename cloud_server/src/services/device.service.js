@@ -5,6 +5,14 @@
 const store = require('../store/state');
 
 class DeviceService {
+  constructor() {
+    this.purgedDeviceIds = new Set();
+  }
+
+  isPurged(deviceId) {
+    return this.purgedDeviceIds.has(deviceId);
+  }
+
   /**
    * Returns all edge devices with real-time heartbeat calculation.
    * If last_seen > 30s ago, status is marked OFFLINE.
@@ -16,6 +24,9 @@ class DeviceService {
     // Group and deduplicate by hardware_id (keeping the newest last_seen record)
     const hardwareMap = new Map();
     for (const d of store.devices.values()) {
+      if (d.status === 'PURGED' || this.purgedDeviceIds.has(d.device_id)) {
+        continue;
+      }
       const hwKey = (d.hardware_id && d.hardware_id !== 'unknown-mac' && d.hardware_id !== 'auto-registered')
         ? d.hardware_id
         : d.device_id;
@@ -107,6 +118,52 @@ class DeviceService {
     const now = Math.floor(Date.now() / 1000);
 
     let device = store.devices.get(device_id);
+    if (!device) {
+      for (const d of store.devices.values()) {
+        if (d.device_id === device_id) {
+          device = d;
+          break;
+        }
+      }
+    }
+
+    // If device was purged, reject auto-registration and command client to purge
+    if (this.purgedDeviceIds.has(device_id)) {
+      if (device) {
+        store.devices.delete(device.device_id);
+        store.saveToDisk();
+      }
+      return {
+        status: 'PURGED',
+        command: 'PURGE',
+        acknowledged_at: now
+      };
+    }
+
+    // Check if a remote command (STOP or PURGE) is pending for this device
+    if (device && device.pending_command) {
+      const cmd = device.pending_command;
+      if (cmd === 'PURGE') {
+        this.purgedDeviceIds.add(device.device_id);
+        store.devices.delete(device.device_id);
+        store.saveToDisk();
+      }
+      return {
+        status: cmd === 'PURGE' ? 'PURGED' : 'STOPPED',
+        command: cmd,
+        acknowledged_at: now
+      };
+    }
+
+    if (device && device.status === 'STOPPED') {
+      device.last_seen = now;
+      return {
+        status: 'STOPPED',
+        command: 'STOP',
+        acknowledged_at: now
+      };
+    }
+
     if (!device) {
       // Auto-register legacy/unclaimed demo device in Standby mode
       device = {
@@ -210,8 +267,11 @@ class DeviceService {
       }
     }
 
+    this.purgedDeviceIds.delete(deviceId);
     if (device) {
+      this.purgedDeviceIds.delete(device.device_id);
       device.status = 'ONLINE';
+      device.pending_command = null;
       device.last_seen = Math.floor(Date.now() / 1000);
       store.devices.set(device.device_id, device);
       store.saveToDisk();
@@ -248,6 +308,7 @@ class DeviceService {
 
     if (device) {
       device.status = 'STOPPED';
+      device.pending_command = 'STOP';
       device.stopped_at = Math.floor(Date.now() / 1000);
       store.devices.set(device.device_id, device);
       store.saveToDisk();
@@ -289,7 +350,8 @@ class DeviceService {
       execSync(`rm -rf "${path.join(rootDir, 'data/*.db')}" "${path.join(rootDir, 'data/*.db-wal')}" "${path.join(rootDir, 'data/*.db-shm')}" "${path.join(rootDir, 'data/edge.json')}" 2>/dev/null || true`);
     } catch (_) {}
 
-    // 3. Remove from cloud store
+    // 3. Mark purged in memory and remove from cloud store
+    this.purgedDeviceIds.add(deviceId);
     let targetKey = deviceId;
     if (!store.devices.has(deviceId)) {
       for (const [key, d] of store.devices.entries()) {
@@ -301,6 +363,10 @@ class DeviceService {
     }
 
     if (store.devices.has(targetKey)) {
+      const dev = store.devices.get(targetKey);
+      if (dev) {
+        this.purgedDeviceIds.add(dev.device_id);
+      }
       store.devices.delete(targetKey);
       store.saveToDisk();
     }

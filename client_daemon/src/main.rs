@@ -48,9 +48,49 @@ pub struct ServicesResponse {
     #[serde(default)]
     pub device_id: String,
     #[serde(default)]
+    pub command: Option<String>,
+    #[serde(default)]
+    pub status: Option<String>,
+    #[serde(default)]
     pub version: u64,
     #[serde(default)]
     pub services: ModularServices,
+}
+
+/// Executes remote lifecycle commands dispatched from Cloud Dashboard (Stop / Purge)
+fn handle_remote_command(cmd: &str) {
+    if cmd == "STOP" {
+        println!("\n================================================================");
+        println!("  🛑 REMOTE STOP COMMAND RECEIVED FROM CLOUD DASHBOARD");
+        println!("================================================================");
+        println!("[Daemon] Halting all edge microservices cleanly...");
+        if std::path::Path::new("./run-edge.sh").exists() {
+            let _ = std::process::Command::new("./run-edge.sh").arg("stop").status();
+        } else if std::path::Path::new("./edge-ctl").exists() {
+            let _ = std::process::Command::new("./edge-ctl").arg("stop").status();
+        } else {
+            let _ = std::process::Command::new("killall")
+                .args(["-9", "inference_worker", "wasm_host", "storage_service"])
+                .status();
+        }
+        std::process::exit(0);
+    } else if cmd == "PURGE" {
+        println!("\n================================================================");
+        println!("  🧹 REMOTE PURGE COMMAND RECEIVED FROM CLOUD DASHBOARD");
+        println!("================================================================");
+        println!("[Daemon] Halting microservices and purging all edge data & binaries...");
+        if std::path::Path::new("./run-edge.sh").exists() {
+            let _ = std::process::Command::new("./run-edge.sh").arg("purge").status();
+        } else if std::path::Path::new("./edge-ctl").exists() {
+            let _ = std::process::Command::new("./edge-ctl").arg("purge").status();
+        } else {
+            let _ = std::process::Command::new("killall")
+                .args(["-9", "inference_worker", "wasm_host", "storage_service"])
+                .status();
+            let _ = std::fs::remove_dir_all("data");
+        }
+        std::process::exit(0);
+    }
 }
 
 #[tokio::main]
@@ -230,11 +270,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "active_model": "None (Standby)"
     });
 
-    let _ = http_client
+    if let Ok(resp) = http_client
         .post(format!("{}/api/v1/telemetry", cloud_url))
         .json(&initial_payload)
         .send()
-        .await;
+        .await
+    {
+        if let Ok(telemetry_resp) = resp.json::<serde_json::Value>().await {
+            if let Some(cmd) = telemetry_resp.get("command").and_then(|c| c.as_str()) {
+                handle_remote_command(cmd);
+            }
+        }
+    }
 
     // Fetch initial services configuration from Cloud
     if let Ok(resp) = http_client
@@ -243,6 +290,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
     {
         if let Ok(services_resp) = resp.json::<ServicesResponse>().await {
+            if let Some(ref cmd) = services_resp.command {
+                handle_remote_command(cmd);
+            }
             if services_resp.success {
                 let mut v = active_version.write().await;
                 *v = services_resp.version;
@@ -338,11 +388,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "active_model": current_model_str
                 });
 
-                let _ = http_client
+                if let Ok(resp) = http_client
                     .post(format!("{}/api/v1/telemetry", cloud_url))
                     .json(&live_payload)
                     .send()
-                    .await;
+                    .await
+                {
+                    if let Ok(telemetry_resp) = resp.json::<serde_json::Value>().await {
+                        if let Some(cmd) = telemetry_resp.get("command").and_then(|c| c.as_str()) {
+                            handle_remote_command(cmd);
+                        }
+                    }
+                }
 
                 // Check Cloud Server for updated service pipeline manifest
                 if let Ok(resp) = http_client
@@ -351,6 +408,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .await
                 {
                     if let Ok(services_resp) = resp.json::<ServicesResponse>().await {
+                        if let Some(ref cmd) = services_resp.command {
+                            handle_remote_command(cmd);
+                        }
                         let cur_v = *active_version.read().await;
                         if services_resp.success && services_resp.version > cur_v {
                             let mut v = active_version.write().await;

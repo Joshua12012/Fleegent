@@ -86,12 +86,13 @@ cmd_stop() {
     echo -e "${BOLD}================================================================${NC}"
 
     log_warn "Stopping running edge microservices..."
-    killall -9 client_daemon inference_worker wasm_host storage_service 2>/dev/null || true
-    pkill -x client_daemon 2>/dev/null || true
+    killall -9 inference_worker wasm_host storage_service 2>/dev/null || true
     pkill -x inference_worker 2>/dev/null || true
     pkill -x wasm_host 2>/dev/null || true
     pkill -x storage_service 2>/dev/null || true
     pkill -f "nats-server -p 4222" 2>/dev/null || true
+    pkill -x client_daemon 2>/dev/null || true
+    killall -9 client_daemon 2>/dev/null || true
     sleep 0.5
 
     # If edge.json has device_id and cloud_server_url, inform the cloud of STOPPED status
@@ -118,8 +119,7 @@ cmd_purge() {
     echo -e "${BOLD}================================================================${NC}"
 
     log_warn "Stopping any running edge microservices..."
-    killall -9 client_daemon inference_worker wasm_host storage_service 2>/dev/null || true
-    pkill -x client_daemon 2>/dev/null || true
+    killall -9 inference_worker wasm_host storage_service 2>/dev/null || true
     pkill -x inference_worker 2>/dev/null || true
     pkill -x wasm_host 2>/dev/null || true
     pkill -x storage_service 2>/dev/null || true
@@ -154,6 +154,8 @@ cmd_purge() {
 
     log_ok "All edge client data, databases, and microservice files completely purged!"
     echo -e "${GREEN}${BOLD}System is clean. Zero residual files or running daemons.${NC}\n"
+    pkill -x client_daemon 2>/dev/null || true
+    killall -9 client_daemon 2>/dev/null || true
 }
 
 # ==============================================================================

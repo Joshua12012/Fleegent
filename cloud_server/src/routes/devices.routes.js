@@ -71,6 +71,16 @@ router.post('/claim', (req, res) => {
  */
 router.get('/:id/services', (req, res) => {
   try {
+    if (deviceService.isPurged(req.params.id)) {
+      return res.json({
+        success: true,
+        device_id: req.params.id,
+        status: 'PURGED',
+        command: 'PURGE',
+        services: {}
+      });
+    }
+
     const device = deviceService.getDeviceById(req.params.id);
     if (!device) {
       return res.status(404).json({ success: false, error: `Device '${req.params.id}' not found` });
@@ -78,6 +88,8 @@ router.get('/:id/services', (req, res) => {
     res.json({
       success: true,
       device_id: device.device_id,
+      status: device.status,
+      command: device.pending_command || (device.status === 'STOPPED' ? 'STOP' : null),
       version: device.config?.version || 1,
       services: device.config?.services || {}
     });

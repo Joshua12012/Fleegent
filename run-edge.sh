@@ -166,12 +166,13 @@ run_all() {
 # ------------------------------------------------------------------------------
 stop_all() {
     log_info "Stopping all running edge client microservices..."
-    killall -9 client_daemon inference_worker wasm_host storage_service 2>/dev/null || true
-    pkill -x client_daemon 2>/dev/null || true
+    killall -9 inference_worker wasm_host storage_service 2>/dev/null || true
     pkill -x inference_worker 2>/dev/null || true
     pkill -x wasm_host 2>/dev/null || true
     pkill -x storage_service 2>/dev/null || true
     pkill -f "nats-server -p 4222" 2>/dev/null || true
+    pkill -x client_daemon 2>/dev/null || true
+    killall -9 client_daemon 2>/dev/null || true
     log_ok "All edge client microservices stopped cleanly. Local data & configs preserved."
 }
 
@@ -198,7 +199,12 @@ case "$COMMAND" in
         stop_all
         ;;
     purge|uninstall|clean-all)
-        stop_all
+        log_info "Stopping worker microservices..."
+        killall -9 inference_worker wasm_host storage_service 2>/dev/null || true
+        pkill -x inference_worker 2>/dev/null || true
+        pkill -x wasm_host 2>/dev/null || true
+        pkill -x storage_service 2>/dev/null || true
+        pkill -f "nats-server -p 4222" 2>/dev/null || true
         if [[ -f "data/edge.json" ]]; then
             DEVICE_ID=$(grep -o '"device_id":"[^"]*' data/edge.json | head -n1 | cut -d'"' -f4 || true)
             CLOUD_URL=$(grep -o '"cloud_server_url":"[^"]*' data/edge.json | head -n1 | cut -d'"' -f4 || true)
@@ -220,6 +226,8 @@ case "$COMMAND" in
                   "$ROOT_DIR/run-edge.sh"
         fi
         log_ok "All edge client data, databases, and microservice files completely purged!"
+        pkill -x client_daemon 2>/dev/null || true
+        killall -9 client_daemon 2>/dev/null || true
         ;;
     test|verify|smoke-test)
         run_all --once
