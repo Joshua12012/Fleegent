@@ -1,3 +1,0 @@
-# Clippy configuration - minimal
-# Only deny unused_must_use to keep it simple
-# Other lints run in CI via `cargo clippy -- -D warnings`
