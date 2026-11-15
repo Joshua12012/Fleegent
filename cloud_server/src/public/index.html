@@ -5,27 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tether-Edge — Minimalist Fleet Control Plane</title>
   
-  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <!-- High-priority local preloads for instantaneous rendering -->
+  <link rel="preload" href="/vendor/react.min.js" as="script">
+  <link rel="preload" href="/vendor/react-dom.min.js" as="script">
+  <link rel="preload" href="/vendor/tailwind.js" as="script">
+  <link rel="preload" href="/app.js?v=2.3" as="script">
+
+  <!-- Asynchronous non-blocking Google Fonts with immediate system font fallback -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  </noscript>
 
-  
-  <!-- Tailwind CSS: Local vendor bundle with CDN fallback -->
+  <!-- Local fast-boot Tailwind CSS engine -->
   <script src="/vendor/tailwind.js"></script>
-  <script>
-    if (!window.tailwind) {
-      document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
-    }
-  </script>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
           },
           colors: {
             brand: {
@@ -49,19 +52,9 @@
     };
   </script>
 
-  <!-- React 18 & ReactDOM: Local offline bundle with CDN fallback -->
+  <!-- React 18 & ReactDOM: Local offline bundle -->
   <script src="/vendor/react.min.js"></script>
-  <script>
-    if (!window.React) {
-      document.write('<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"><\/script>');
-    }
-  </script>
   <script src="/vendor/react-dom.min.js"></script>
-  <script>
-    if (!window.ReactDOM) {
-      document.write('<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"><\/script>');
-    }
-  </script>
 
   <style>
     body {

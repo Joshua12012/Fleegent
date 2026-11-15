@@ -23,6 +23,7 @@ purge:
 
 ## Start the Cloud Fleet Management Server (Control Plane + Web Dashboard)
 server:
+	@fuser -k 8080/tcp 2>/dev/null || true
 	@node cloud_server/src/server.js
 
 ## Start Cloudflare Public Tunnel for Google Colab, Kaggle & WAN Edge Nodes

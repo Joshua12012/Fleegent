@@ -78,7 +78,7 @@ app.get('/edge-client-bundle.tar.gz', (req, res) => {
 const publicDir = path.join(__dirname, 'public');
 if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
 
-// Auto-compile app.jsx -> app.js if app.jsx is newer or app.js is missing
+// Auto-compile app.jsx -> app.js if app.jsx is newer by at least 2 seconds or app.js is missing
 try {
   const jsxPath = path.join(publicDir, 'app.jsx');
   const jsPath = path.join(publicDir, 'app.js');
@@ -86,7 +86,7 @@ try {
   if (fs.existsSync(jsxPath) && fs.existsSync(babelVendorPath)) {
     const jsxMtime = fs.statSync(jsxPath).mtimeMs;
     const jsMtime = fs.existsSync(jsPath) ? fs.statSync(jsPath).mtimeMs : 0;
-    if (jsxMtime > jsMtime || !fs.existsSync(jsPath)) {
+    if ((jsxMtime - jsMtime > 2000) || !fs.existsSync(jsPath)) {
       const Babel = require(babelVendorPath);
       const code = fs.readFileSync(jsxPath, 'utf8');
       const transpiled = Babel.transform(code, {
@@ -100,7 +100,15 @@ try {
   console.warn('[CloudServer] JSX transpile notice:', e.message);
 }
 
-app.use(express.static(publicDir));
+// Serve public static frontend files with fast caching for local client assets
+app.use(express.static(publicDir, {
+  maxAge: '1h',
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+    }
+  }
+}));
 
 // Mount Routes
 app.use('/', bootstrapRoutes);
@@ -160,15 +168,26 @@ process.on('unhandledRejection', (reason) => {
 });
 
 // Start Server
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`================================================================`);
   console.log(`🚀 EDGE FLEET MANAGEMENT PLATFORM — CLOUD CONTROL PLANE`);
   console.log(`================================================================`);
-  console.log(` Server listening on:  http://0.0.0.0:${PORT}`);
-  console.log(` Dashboard UI:         http://localhost:${PORT}`);
+  console.log(`  Server listening on:  http://0.0.0.0:${PORT}`);
+  console.log(`  Dashboard UI:         http://localhost:${PORT}`);
   console.log(`  Bootstrap endpoint:   http://localhost:${PORT}/bootstrap.sh`);
-  console.log(` Model binaries:       http://localhost:${PORT}/models/`);
+  console.log(`  Model binaries:       http://localhost:${PORT}/models/`);
   console.log(`================================================================`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n❌ [CloudServer] Port ${PORT} is already in use by another running process.`);
+    console.error(`   To free port ${PORT} automatically, run: make server (or: fuser -k ${PORT}/tcp)\n`);
+    process.exit(1);
+  } else {
+    console.error('[CloudServer Error]', err.message);
+    process.exit(1);
+  }
 });
 
 module.exports = app;
