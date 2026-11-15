@@ -520,13 +520,18 @@ function App() {
       if (t && ['live', 'pipeline', 'fleet', 'catalog', 'security'].includes(t)) return t;
       const hash = window.location.hash.replace('#', '');
       if (hash && ['live', 'pipeline', 'fleet', 'catalog', 'security'].includes(hash)) return hash;
+      const saved = localStorage.getItem('tether_active_tab');
+      if (saved && ['live', 'pipeline', 'fleet', 'catalog', 'security'].includes(saved)) return saved;
     } catch (_) {}
     return 'live';
   };
   const [activeTab, setActiveTabState] = useState(getInitialTab);
   const setActiveTab = (tab) => {
     setActiveTabState(tab);
-    try { window.location.hash = tab; } catch (_) {}
+    try { 
+      window.location.hash = tab; 
+      localStorage.setItem('tether_active_tab', tab);
+    } catch (_) {}
   };
   const [devices, setDevices] = useState([]);
   const [catalog, setCatalog] = useState([]);
@@ -2101,6 +2106,14 @@ function App() {
                 >
                   <Icon name="shield" className="w-3.5 h-3.5" />
                   <span>Canary Deploy</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('pipeline')}
+                  className="px-3.5 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-medium transition flex items-center space-x-1.5 shadow-sm"
+                  title="Switch to visual node graph pipeline editor (TIF Sandbox)"
+                >
+                  <Icon name="workflow" className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Pipeline Studio (TIF Sandbox)</span>
                 </button>
                 {isDeployingModel && (
                   <span className="text-xs text-indigo-400 animate-pulse">Hot-swapping...</span>

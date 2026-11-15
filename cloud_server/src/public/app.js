@@ -1214,6 +1214,8 @@ function App() {
       if (t && ['live', 'pipeline', 'fleet', 'catalog', 'security'].includes(t)) return t;
       const hash = window.location.hash.replace('#', '');
       if (hash && ['live', 'pipeline', 'fleet', 'catalog', 'security'].includes(hash)) return hash;
+      const saved = localStorage.getItem('tether_active_tab');
+      if (saved && ['live', 'pipeline', 'fleet', 'catalog', 'security'].includes(saved)) return saved;
     } catch (_) {}
     return 'live';
   };
@@ -1222,6 +1224,7 @@ function App() {
     setActiveTabState(tab);
     try {
       window.location.hash = tab;
+      localStorage.setItem('tether_active_tab', tab);
     } catch (_) {}
   };
   const [devices, setDevices] = useState([]);
@@ -1421,18 +1424,16 @@ function App() {
   // Handle Deploying selected model to active device
   const handleDeployModel = async modelId => {
     const onlineDevices = devices.filter(d => d.status === 'ONLINE');
-    const targetDevices = onlineDevices.length > 0 ? onlineDevices : (devices.length > 0 ? [devices[0]] : []);
+    const targetDevices = onlineDevices.length > 0 ? onlineDevices : devices.length > 0 ? [devices[0]] : [];
     if (targetDevices.length === 0) {
       showToast('error', 'No edge devices connected. Run the quickstart command on your device first.');
       return;
     }
     setIsDeployingModel(true);
     try {
-      const deployPromises = targetDevices.map(dev =>
-        fetch(`/api/v1/devices/${dev.device_id}/deploy/${modelId}`, {
-          method: 'POST'
-        }).then(r => r.json())
-      );
+      const deployPromises = targetDevices.map(dev => fetch(`/api/v1/devices/${dev.device_id}/deploy/${modelId}`, {
+        method: 'POST'
+      }).then(r => r.json()));
       await Promise.all(deployPromises);
       setActiveModel(modelId);
       showToast('success', `Deployed '${modelId}' to ${targetDevices.length} edge device(s)`);
@@ -1511,7 +1512,7 @@ function App() {
   // Deploy custom pipeline configuration to edge hardware
   const handleDeployPipelineToEdge = async () => {
     const onlineDevices = devices.filter(d => d.status === 'ONLINE');
-    const targetDevices = onlineDevices.length > 0 ? onlineDevices : (devices.length > 0 ? [devices[0]] : []);
+    const targetDevices = onlineDevices.length > 0 ? onlineDevices : devices.length > 0 ? [devices[0]] : [];
     if (targetDevices.length === 0) {
       showToast('error', 'No active edge device online to receive pipeline deploy.');
       return;
@@ -1555,15 +1556,13 @@ function App() {
       }
     };
     try {
-      const deployPromises = targetDevices.map(dev =>
-        fetch(`/api/v1/devices/${dev.device_id}/services`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(servicesConfig)
-        }).then(r => r.json())
-      );
+      const deployPromises = targetDevices.map(dev => fetch(`/api/v1/devices/${dev.device_id}/services`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(servicesConfig)
+      }).then(r => r.json()));
       const results = await Promise.all(deployPromises);
       const allOk = results.every(r => r.success);
       if (allOk) {
@@ -2670,7 +2669,14 @@ function App() {
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "shield",
     className: "w-3.5 h-3.5"
-  }), /*#__PURE__*/React.createElement("span", null, "Canary Deploy")), isDeployingModel && /*#__PURE__*/React.createElement("span", {
+  }), /*#__PURE__*/React.createElement("span", null, "Canary Deploy")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setActiveTab('pipeline'),
+    className: "px-3.5 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-medium transition flex items-center space-x-1.5 shadow-sm",
+    title: "Switch to visual node graph pipeline editor (TIF Sandbox)"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "workflow",
+    className: "w-3.5 h-3.5 text-indigo-400"
+  }), /*#__PURE__*/React.createElement("span", null, "Pipeline Studio (TIF Sandbox)")), isDeployingModel && /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-indigo-400 animate-pulse"
   }, "Hot-swapping..."))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 lg:grid-cols-3 gap-6 items-start"
