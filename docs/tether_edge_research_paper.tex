@@ -1,452 +1,506 @@
-\documentclass[conference]{IEEEtran}
-\usepackage{cite}
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
-\usepackage{graphicx}
-\usepackage{textcomp}
-\usepackage{xcolor}
-\usepackage{booktabs}
-\usepackage{url}
-
-\begin{document}
-
-\title{Tether-Edge: AI Orchestration for Distributed Edge Devices}
-
-\author{
-\IEEEauthorblockN{Anish Chakrabarti, Joshua DeNiese, Mohammad Sufiyan}
-\IEEEauthorblockA{\textit{Department of Computer Science \& Engineering} \\
-\textit{MIT-ADT University, MIT School of Computing}\\
-Pune, Maharashtra, India \\
-Group ID: BCAIAE05 (TY AIEC-1 / TY AIEC-2)}
-\and
-\IEEEauthorblockN{Prof. Dr. Harshad Lokhande}
-\IEEEauthorblockA{\textit{Faculty Guide} \\
-\textit{MIT-ADT University}\\
-Pune, Maharashtra, India}
-}
-
-\maketitle
-
-\begin{abstract}
-Edge AI systems are increasingly deployed across distributed hardware---including industrial gateways, robotics, surveillance cameras, and embedded platforms---to process sensor data closer to the source. However, managing large fleets of heterogeneous edge devices remains exceptionally challenging due to strict resource constraints, volatile WAN connectivity, operational downtime during software updates, and the high overhead of conventional containerized stacks. Monolithic edge daemons frequently experience complete system outages and catastrophic telemetry loss when third-party AI models or user workloads panic or exceed memory limits. Furthermore, executing deep neural networks continuously on raw sensor streams causes severe thermal throttling and rapid battery exhaustion.
-
-This paper presents Tether-Edge, an intelligent, resilient, and ultra-low-footprint fleet orchestration platform designed to simplify the deployment, management, monitoring, and updating of distributed Edge AI systems. Tether-Edge introduces a modular multi-tier architecture featuring unprivileged, memory-safe native Rust microservices (\texttt{client\_daemon}, \texttt{storage\_service}, \texttt{inference\_worker}, and \texttt{wasm\_host}) communicating over an ultra-low-overhead local NATS message bus. To prevent workload crashes from disrupting device management, the platform isolates safety rules and dynamic event pre-filtering inside a 64\,KB WebAssembly (WASM) linear memory sandbox via Wasmtime, evaluating temporal differentials ($\Delta L$) in $<0.02$\,ms and suppressing $>90\%$ of static events before neural compute is invoked. Physical anomalies trigger a 100\% native Rust multi-modal AI engine powered by Microsoft ONNX Runtime (\texttt{ort}), achieving $\sim$120\,ms CPU object detection (YOLOv8n/YOLO11n), 1.5\,ms 1D-CNN ISO-10816 vibration classification, 1.8\,ms acoustic Mel-autoencoder cavitation detection, and on-device natural language root-cause reasoning via an embedded 4-bit quantized GGUF language model (Qwen-0.6B) at $\sim$45\,tokens/s with zero external cloud dependencies. 
-
-To overcome unreliable WAN networks, Tether-Edge implements an offline SQLite Write-Ahead Logging (WAL) store-and-forward telemetry buffer ensuring zero data loss during connectivity drops. Furthermore, an atomic \textit{Drain-and-Swap} Over-The-Air (OTA) deployment mechanism combines cryptographic SHA-256 staging with POSIX \texttt{rename(2)} commits and in-memory pointer swapping, guaranteeing zero downtime and zero dropped frames during live model updates. Empirical evaluation demonstrates a steady-state footprint below 520\,MB RAM, an 88.4\% reduction in active CPU compute load, and seamless fleet orchestration for resource-constrained edge devices (1--4\,GB RAM).
-\end{abstract}
-
-\begin{IEEEkeywords}
-Edge AI, Fleet Management, Orchestration, WebAssembly, Wasmtime, NATS IPC, Multi-Modal Inference, ONNX Runtime, Llama.cpp, SQLite WAL, Fault Tolerance, Over-The-Air Updates.
-\end{IEEEkeywords}
-
-\section{Introduction}
-Edge Artificial Intelligence (Edge AI) has emerged as a cornerstone of modern industrial automation, robotics, intelligent transportation systems, and autonomous infrastructure. By shifting inference workloads from centralized cloud data centers directly to distributed edge nodes (such as single-board computers, smart cameras, and industrial IoT gateways), edge computing substantially reduces round-trip network latency, conserves metered wide-area network (WAN) bandwidth, and enforces strict data sovereignty \cite{b1, b4}.
-
-However, deploying and managing large fleets of heterogeneous, geographically distributed edge devices introduces profound architectural and operational challenges:
-\begin{enumerate}
-    \item \textbf{Monolithic Runtime Vulnerability}: Remote edge devices deployed in volatile industrial environments frequently suffer catastrophic service failures. Conventional fleet management approaches rely on monolithic daemons or ad-hoc shell scripts. If a third-party AI model or user application panics, segfaults, or triggers an Out-Of-Memory (OOM) error, the entire host process crashes, severing remote management links and requiring manual, expensive on-site technician intervention.
-    \item \textbf{Infrastructure \& Container Bloat}: Mainstream orchestration frameworks such as Docker, Kubernetes, and K3s provide containerized workload management but impose prohibitive resource overhead \cite{b6, b7, b13}. Operating container daemons, dynamic routing proxies, and overlay networks routinely consumes 300\,MB to 1.5\,GB of RAM and multiple CPU cores simply to sustain the orchestration layer. This leaves insufficient computational headroom on resource-constrained edge hardware (e.g., 1--4\,GB RAM nodes such as Raspberry Pi 4/5 or entry-level industrial gateways).
-    \item \textbf{Compute Exhaustion \& Thermal Throttling}: Deep Neural Networks (DNNs) for computer vision and vibration analysis require millions of floating-point operations. Continuously executing full-scale neural network forward passes on raw, uncurated sensor streams rapidly depletes battery reserves and induces thermal throttling on fanless edge enclosures \cite{b5}.
-    \item \textbf{Metered WAN Instability \& Data Loss}: Industrial edge gateways frequently operate over intermittent, metered cellular (4G/5G) or satellite uplinks. Standard cloud-edge architectures make direct synchronous HTTP/REST requests. When connectivity drops, telemetry packets and anomaly alerts are discarded, compromising operational visibility and audit compliance.
-    \item \textbf{Update Downtime \& Frame Drops}: Industrial production lines operate 24/7. Traditional container restarts during Over-The-Air (OTA) updates introduce 3 to 10 seconds of downtime, resulting in thousands of dropped video frames and missed defect events during critical operational windows.
-    \item \textbf{Interpreted Runtime Overhead}: Prototype edge systems often rely on interpreted Python environments (CPython, PyTorch, Ultralytics). These dependencies create massive disk footprints ($>1.8$\,GB), introduce non-deterministic garbage collection pauses, and suffer from Global Interpreter Lock (GIL) contention, rendering them unsuitable for deterministic embedded control.
-\end{enumerate}
-
-To overcome these fundamental limitations, this paper presents \textbf{Tether-Edge}, a resilient, language-agnostic, and ultra-low-footprint fleet orchestration platform specifically engineered for distributed Edge AI systems. Tether-Edge introduces a modular, decoupled edge microservices architecture written in memory-safe native Rust, an ultra-fast WebAssembly (WASM) pre-filtering sandbox, a local NATS message bus over Unix Domain Sockets (UDS) / loopback IPC, an offline SQLite store-and-forward telemetry engine, a pure Rust multi-modal AI engine utilizing Microsoft ONNX Runtime (\texttt{ort}), an on-device GGUF diagnostic reasoner, and an atomic cryptographic Over-The-Air (OTA) \textit{Drain-and-Swap} mechanism.
-
-\section{Literature Survey}
-
-\subsection{Edge AI and Edge Computing}
-Pioneering research by Shi et al. \cite{b1} and Satyanarayanan \cite{b4} established the paradigm of edge computing to resolve the bandwidth and latency bottlenecks inherent in centralized cloud architectures. Bonomi et al. \cite{b2} and the OpenFog Consortium (IEEE 1934-2018) \cite{b3} further standardized fog computing frameworks for IoT environments. While edge intelligence provides substantial latency reductions, running complex neural networks continuously on low-power devices leads to thermal exhaustion and battery depletion, highlighting the necessity of tiered, hierarchical gating.
-
-\subsection{Containerization vs. WebAssembly Isolation}
-Docker containerization popularized microservice isolation by packaging runtime dependencies into standardized images \cite{b7, b8}. However, Paul et al. \cite{b13} demonstrated that running lightweight container orchestrators like K3s or MicroK8s on resource-constrained edge hardware consumes up to 40\% of available RAM before user workloads even execute. 
-
-In response, WebAssembly (WASM) and the WebAssembly System Interface (WASI) have emerged as lightweight, capability-based sandboxing technologies for server-side and edge computing \cite{b12}. Runtimes such as Wasmtime and WasmEdge provide instant instantiation ($<5$\,ms), strict linear memory isolation (operating within 64\,KB memory pages), and near-native execution speed. Tether-Edge leverages compiled WASM bytecodes to execute safety rules and pre-filtering logic without invoking full container runtimes.
-
-\subsection{Edge Orchestration and Fleet Management}
-Commercial cloud-edge platforms such as AWS IoT Greengrass \cite{b9} and Azure IoT Edge \cite{b10} provide device provisioning, telemetry routing, and deployment mechanisms. However, they bind edge devices tightly to proprietary cloud ecosystems and require heavy local runtime footprints. Classical distributed computing frameworks like Condor \cite{b11} established principles of resilient remote job management, but were designed for homogenous high-performance compute clusters. Tether-Edge addresses this gap by offering a fully decoupled, open architecture utilizing NATS pub/sub messaging and offline SQLite buffering.
-
-\subsection{Inter-Process Communication and Message Buses}
-Traditional microservice architectures rely on local HTTP/REST or loopback network sockets for inter-process communication (IPC). These protocols introduce significant kernel context-switching, TCP/IP stack overhead, and latency jitter. Deploying lightweight, asynchronous publish/subscribe message brokers---specifically NATS over Unix Domain Sockets (UDS) or loopback memory---decouples service dependencies, isolates worker crashes, and provides high-throughput IPC with sub-millisecond dispatch.
-
-\subsection{Multi-Modal Industrial Sensing \& Edge Vision}
-Industrial cyber-physical monitoring relies on complementary modalities. Single-stage object detectors from the YOLO family (YOLOv8, YOLO11) enable real-time visual inspection on embedded platforms. Concurrently, vibration analysis conforming to ISO-10816 standards provides definitive indicators of rotating machinery failure \cite{b5}. 1D Convolutional Neural Networks (1D-CNN) and discrete second-derivative impact filters have proven highly effective for extracting bearing ball-pass frequencies (BPFO). Simultaneously, acoustic Mel-spectrogram autoencoders capture ultrasonic energy dissipation caused by pump cavitation and friction rub. Tether-Edge unifies visual, vibrational, and acoustic modalities within a synchronized edge data bus.
-
-\subsection{On-Device Small Language Models (SLMs)}
-While Large Language Models (LLMs) have achieved state-of-the-art diagnostic reasoning, serving multi-billion-parameter models historically required data center GPUs running systems like vLLM with PagedAttention \cite{b14}. Recent advancements in 4-bit integer quantization (GGUF format) and pure C/C++ inference engines like \texttt{llama.cpp} \cite{b15} allow Small Language Models (SLMs, e.g., Qwen-0.6B) to run efficiently on standard edge CPUs. Tether-Edge integrates local GGUF reasoning directly into the edge daemon, enabling autonomous root-cause explanations without external network dependencies.
-
-\section{Objectives and Scope}
-
-\subsection{Objectives}
-The primary objective of Tether-Edge is to design, implement, and validate an industrial-grade, language-agnostic fleet orchestration platform for distributed Edge AI systems. The specific research and engineering objectives are:
-\begin{itemize}
-    \item \textbf{Deterministic Low Memory Footprint}: Maintain the total steady-state memory utilization of the entire edge client microservices suite below \textbf{520\,MB RAM}, allowing deployment on entry-level 1--4\,GB edge devices.
-    \item \textbf{Sub-Millisecond Event Gating}: Implement an ultra-fast WebAssembly (WASM) pre-filtering sandbox operating in $<0.02$\,ms, rejecting $>90\%$ of static or nominal sensor frames to reduce downstream neural compute power by $>70\%$.
-    \item \textbf{100\% Native Edge Execution (Zero Python)}: Eliminate all Python runtime dependencies, virtual environments, and GIL contention on the edge node, compiling the entire client suite into native Rust and C++ binaries.
-    \item \textbf{Synchronized Multi-Modal AI Ingestion}: Ingest and analyze real optical camera streams (\texttt{/dev/video0}), 3-axis vibration waveforms (1.6\,kHz), acoustic audio streams (44.1\,kHz), and kernel thermal metrics (\texttt{sysfs}).
-    \item \textbf{Zero Telemetry Loss via Offline Buffering}: Implement an offline SQLite Write-Ahead Logging (WAL) store-and-forward buffer that prevents data loss during WAN network outages and automatically synchronizes upon reconnection.
-    \item \textbf{Autonomous On-Device Diagnostic Reasoning}: Integrate an embedded 4-bit quantized GGUF language model capable of generating real-time root-cause diagnoses and operator instructions at $\ge 40$\,tokens/s on CPU with zero data leakage.
-    \item \textbf{Zero-Downtime Over-The-Air (OTA) Hot-Swapping}: Guarantee uninterrupted sensor ingestion (0 dropped frames and 0 daemon restarts) during dynamic AI model deployments via cryptographic SHA-256 staging, atomic POSIX \texttt{rename(2)} commits, and queue draining.
-\end{itemize}
-
-\subsection{Scope and Feasibility}
-The scope of Tether-Edge encompasses resource-constrained edge devices (1--4\,GB RAM) such as Raspberry Pi 4/5, NVIDIA Jetson Nano/Orin, and industrial x86 gateways. The platform manages device registration, dynamic sensor ingestion, sandboxed rule execution, model hot-reloading, offline telemetry buffering, and interactive fleet dashboard visualization.
-
-The project is highly feasible because it builds upon mature, battle-tested open-source components: the Rust language for memory safety and zero-cost abstractions, Bytecode Alliance Wasmtime for capability-based WASM sandboxing, Microsoft ONNX Runtime for SIMD-accelerated CPU tensor execution, SQLite in WAL mode for persistent buffering, NATS for lightweight pub/sub IPC, and \texttt{llama.cpp} for GGUF quantization. No specialized hardware root-of-trust or proprietary cloud runtime is required.
-
-\section{Proposed System Architecture}
-
-\subsection{Architectural Overview}
-Tether-Edge acts as an intelligent intermediary between centralized cloud management and distributed edge hardware. The system follows a decoupled, event-driven microservices architecture partitioned into two primary operational zones: the \textbf{Edge Hardware Platform} and the \textbf{Cloud Control Plane}, as illustrated in Fig.~\ref{fig:architecture}.
-
-\begin{figure*}[!t]
-\centering
-\includegraphics[width=0.92\textwidth]{architecture_diagram.png}
-\caption{System architecture of the Tether-Edge platform, depicting the physical hardware abstraction layer, local NATS IPC broker, WebAssembly pre-filter sandbox, pure Rust multi-modal AI inference engine, local GGUF reasoning engine, offline SQLite WAL storage service, and cloud fleet control plane.}
-\label{fig:architecture}
-\end{figure*}
-
-\subsection{Edge Microservices Breakdown}
-
-The edge client suite is decoupled into independent Linux processes communicating exclusively over a local NATS broker (\texttt{127.0.0.1:4222} or Unix Domain Sockets). This guarantees fault containment: if a single worker crashes or reloads, the remaining edge microservices continue operating uninterrupted.
-
-\subsubsection{\texttt{client\_daemon} (Master Orchestrator \& HAL)}
-Implemented in native Rust (\texttt{client\_daemon/src/main.rs}), the daemon serves as the master process supervisor and Hardware Abstraction Layer (HAL):
-\begin{itemize}
-    \item \textbf{Optical Camera HAL}: Utilizes an asynchronous GStreamer pipeline to capture MJPEG video frames directly from physical V4L2 device nodes (\texttt{/dev/video0}) into a memory-mapped buffer (\texttt{/tmp/edge\_live\_frame.jpg}). Computes normalized temporal luminance differentials ($\Delta L$) across frame boundaries.
-    \item \textbf{Thermal Kernel HAL}: Continuously reads hardware thermal zones directly from Linux sysfs (\texttt{/sys/class/thermal/thermal\_zone0/temp}).
-    \item \textbf{Vibration \& Audio HAL}: Ingests 3-axis accelerometer waveforms at 1.6\,kHz and acoustic sound pressure levels (SPL) at 44.1\,kHz.
-    \item \textbf{Telemetry Uplink}: Packages sensor payloads and publishes them to dedicated NATS topics (\texttt{sensor.camera}, \texttt{sensor.vibration}, \texttt{sensor.audio}). Streams high-frequency telemetry to the cloud gateway via \texttt{POST /api/v1/telemetry/live}.
-\end{itemize}
-
-\subsubsection{\texttt{wasm\_host} (High-Speed WASM Pre-Filtering Sandbox)}
-Powered by Bytecode Alliance Wasmtime 21.0 (\texttt{wasm\_host/src/main.rs}), this worker provides sub-millisecond event pre-filtering. Guest safety rules are compiled from Rust to \texttt{wasm32-wasip1} bytecode (\texttt{wasm\_worker.wasm}). 
-
-To achieve deterministic low latency, the host provisions a private 64\,KB linear memory sandbox. Host and guest communicate through a dedicated \textbf{2,048-byte linear memory mailbox}:
-\begin{enumerate}
-    \item The host queries the memory offset using the exported function \texttt{get\_buffer\_ptr()}.
-    \item The host writes raw telemetry bytes directly into the guest linear memory buffer.
-    \item The host invokes \texttt{process\_telemetry(input\_len)}.
-    \item The guest evaluates thresholds entirely in-memory and returns the output payload length.
-\end{enumerate}
-This mailbox eliminates JSON boundary serialization overhead, executing rule evaluations in $<0.02$\,ms. Static frames and nominal readings are discarded immediately, preventing unnecessary downstream neural compute.
-
-\subsubsection{\texttt{inference\_worker} (Pure Rust Multi-Modal AI Engine \& ONNX Overhead Mitigation)}
-Built entirely in Rust (\texttt{inference\_worker/src/main.rs}), this service replaces conventional Python/PyTorch inference setups with a high-efficiency native execution engine. Naive implementations of machine learning runtimes on embedded devices often introduce severe overhead, including memory leaks, thread oversubscription, and redundant tensor copies. Tether-Edge mitigates ONNX Runtime overhead through five explicit architectural controls via the \texttt{ort} crate:
-\begin{enumerate}
-    \item \textbf{Thread Pool Clamping}: By default, ONNX Runtime allocates worker threads matching the total logical core count, with each thread reserving an 8\,MB operating system stack. On constrained quad-core / octa-thread edge hardware, this creates $>64$\,MB of idle thread stack overhead. Tether-Edge explicitly clamps intra-op execution to 2 threads (\texttt{.with\_intra\_threads(2)}) and inter-op execution to 1 thread (\texttt{.with\_inter\_threads(1)}), eliminating thread stack bloat and reducing context switching.
-    \item \textbf{Deterministic Sequential Execution}: Parallel operator execution is disabled (\texttt{.with\_parallel\_execution(false)}), replacing dynamic task queue allocation with deterministic sequential scheduling.
-    \item \textbf{Static Memory Planning Pattern}: Enabling memory pattern optimization (\texttt{.with\_memory\_pattern(true)}) instructs ONNX Runtime to calculate intermediate activation buffer sizes upfront based on model graph topology. Activation memory is reused across consecutive layers rather than repeatedly allocated and deallocated on the system heap, eliminating heap fragmentation during continuous video evaluation.
-    \item \textbf{Graph-Level Kernel Fusion}: Level 3 graph optimization (\texttt{.with\_optimization\_level(GraphOptimizationLevel::Level3)}) fuses Convolution, Batch Normalization, and SiLU activations into contiguous SIMD passes during model load, eliminating dynamic graph compilation at runtime.
-    \item \textbf{Zero-Copy Borrowed Tensor Views}: Rather than cloning image buffers into the runtime heap, Tether-Edge utilizes borrowed slice views:
-    \begin{equation}
-        \texttt{TensorRef::from\_array\_view(([1, 3, 640, 640], \&data\_buf[..]))}
-    \end{equation}
-    This directly points the ONNX tensor descriptor to the existing preprocessed RGB planar slice in memory, achieving zero heap allocations during the forward pass.
-\end{enumerate}
-
-Alongside vision, the worker hosts a 1D-CNN ISO-10816 vibration classifier, an ultrasonic Mel-spectral acoustic cavitation detector, and an asynchronous client querying the embedded \texttt{llama-server} when anomalies are flagged.
-
-\subsubsection{\texttt{storage\_service} (Offline Buffer \& Staging Gatekeeper)}
-Implemented in Rust using SQLite configured in Write-Ahead Logging (WAL) mode with pragma \texttt{synchronous=NORMAL} (\texttt{storage\_service/src/main.rs}). It guarantees sub-millisecond audit logging with zero read-write lock contention. It also manages cryptographic model staging during Over-The-Air deployments.
-
-\subsubsection{\texttt{llama-server} (On-Device SLM Backend)}
-A native C++ server built from \texttt{llama.cpp} running on \texttt{127.0.0.1:9931}. It loads 4-bit quantized GGUF models (e.g., Qwen-0.6B Q4\_K\_M, 462\,MB). Generates technical diagnostic text at $\sim$45\,tokens/s on edge CPUs with zero external network connectivity.
-
-\subsubsection{\texttt{cloud\_server} (Control Plane \& Fleet Dashboard)}
-A Node.js/Express control plane (\texttt{cloud\_server/src/server.js}) providing device bootstrapping, token-based provisioning, model artifact cataloging, and an interactive developer web interface featuring a \textbf{Visual Pipeline Canvas} (drag-and-drop node graph) and a \textbf{Live AI Inspector} with real-time video streaming and bounding box overlays.
-
-\subsection{Inter-Process Communication (IPC)}
-Monolithic edge runtimes suffer from fate-sharing: a single memory corruption or segmentation fault in an AI model terminates the entire fleet management agent. Tether-Edge solves this by deploying a local \textbf{NATS IPC message bus} over Unix Domain Sockets (UDS) / loopback network. The pub/sub architecture decouples sensor producers from inference consumers:
-\begin{itemize}
-    \item \texttt{sensor.camera}, \texttt{sensor.vibration}, \texttt{sensor.audio}: High-frequency raw sensor telemetry.
-    \item \texttt{telemetry.sensor}, \texttt{telemetry.alert}: Gated events and safety anomaly alerts emitted by the WASM sandbox.
-    \item \texttt{inference.vision}, \texttt{inference.vibration}, \texttt{inference.response}: AI inference requests and diagnostic outputs.
-    \item \texttt{admin.reload}, \texttt{admin.health}: Fleet management lifecycle commands and heartbeat status reports.
-\end{itemize}
-
-\subsection{Offline SQLite Telemetry Buffer \& Store-and-Forward Sync}
-Direct cloud HTTP calls fail and drop packets during network dropouts on metered industrial networks. Tether-Edge implements a store-and-forward engine via \texttt{storage\_service}. All sensor events, anomaly alerts, and inference outputs are appended locally to \texttt{data/edge\_storage.db-wal}. When WAN connectivity is interrupted, the edge daemon continues writing locally without blocking. Upon reconnection, an asynchronous synchronization task streams buffered events to the cloud gateway, guaranteeing zero telemetry loss.
-
-\subsection{Cryptographic Zero-Downtime Drain-and-Swap OTA Protocol}
-Updating AI models on remote edge hardware typically requires stopping containers, causing operational downtime and dropped sensor frames. Tether-Edge implements a \textbf{Drain-and-Swap} hot-reloading lifecycle enforcing four distinct safety guarantees:
-\begin{enumerate}
-    \item \textbf{Staged Download}: The new model binary is downloaded strictly to a temporary staging path: \texttt{/data/models/\{model\_id\}.tmp}.
-    \item \textbf{Cryptographic SHA-256 Verification}: Before committing the binary, the file is hashed via a SHA-256 digest engine. If the computed checksum does not match the manifest dispatched by the cloud, the file is immediately deleted.
-    \item \textbf{Atomic POSIX Rename}: The validated file is committed using Linux POSIX \texttt{rename(2)}:
-    \begin{equation}
-        \text{POSIX: } \texttt{rename(/data/models/model.tmp, /data/models/model.bin)}
-    \end{equation}
-    Under Linux ext4 and XFS filesystems, \texttt{rename(2)} is an atomic directory metadata operation. The binary on disk is either 100\% old version or 100\% new version; partial or corrupted writes are physically impossible.
-    \item \textbf{Queue Draining \& Pointer Swapping}: Upon receiving \texttt{admin.reload} over NATS, the inference worker sets an atomic flag (\texttt{is\_swapping.store(true)}), pausing dequeuing from NATS while incoming requests buffer in RAM. In-flight tensor executions are granted an 80\,ms drain window to finish cleanly. The worker loads the new weights, executes an atomic \texttt{Arc<ModelContext>} pointer swap in linear memory, resets the swap flag, and emits a \texttt{READY} health report. The model swap completes with \textbf{zero dropped frames, zero daemon restarts, and zero memory spikes}.
-\end{enumerate}
-
-\section{Methodology and Implementation Details}
-
-\subsection{Mathematical Formulations}
-
-\subsubsection{Temporal Luminance Differencing ($\Delta L$) for Optical Gating}
-To prevent neural networks from executing on static video scenes, the camera HAL calculates the mean absolute luminance difference across consecutive frames $F_t$ and $F_{t-1}$. For a grid of $N$ pixels:
-\begin{equation}
-\Delta L = \frac{1}{N} \sum_{i=1}^{N} \left| Y_t(i) - Y_{t-1}(i) \right|
-\end{equation}
-where luminance $Y$ is computed from standard ITU-R BT.601 coefficients:
-\begin{equation}
-Y = 0.299R + 0.587G + 0.114B
-\end{equation}
-If $\Delta L < \tau_{\text{motion}}$ (where $\tau_{\text{motion}} = 0.04$), the frame is classified as static. The WASM pre-filter verifies the absence of motion anomalies and suppresses downstream NATS dispatch, achieving zero neural compute invocation.
-
-\subsubsection{Spatial Luminance Gradient for Defect Detection}
-For high-speed industrial conveyor inspection, spatial gradient convolution identifies surface fissures and cracks:
-\begin{equation}
-\Delta G_i = \left| P_i - P_{i-1} \right|
-\end{equation}
-\begin{equation}
-\text{Contrast Energy} = \text{clamp}\left( \frac{\max_{i}(\Delta G_i)}{255.0}, 0.0, 1.0 \right)
-\end{equation}
-A surface defect is triggered if $\text{Contrast Energy} > 0.15$, yielding confidence:
-\begin{equation}
-\text{Conf}_{\text{defect}} = \min\left( 0.75 + 0.23 \times \text{Contrast Energy}, 0.98 \right)
-\end{equation}
-
-\subsubsection{Tri-Axial Vibration RMS Velocity and ISO-10816 Harmonics}
-Conforming to international predictive maintenance standard ISO-10816, the vibration engine computes True Root Mean Square (RMS) velocity across all three orthogonal axes ($a_x, a_y, a_z$) sampled over window length $N$:
-\begin{equation}
-v_{\text{RMS}} = \sqrt{\frac{1}{N} \sum_{i=1}^{N} \left( x_i^2 + y_i^2 + z_i^2 \right)} \times \kappa
-\end{equation}
-where $\kappa = 3.5$ is the sensor calibration scalar. High-frequency impact harmonics are extracted using the discrete second-derivative filter:
-\begin{equation}
-d_i^2 = x_i - 2x_{i-1} + x_{i-2}
-\end{equation}
-\begin{equation}
-\text{Harmonic Ratio} = \frac{\sum_{i=2}^{N} (d_i^2)^2}{\sum_{i=2}^{N} |x_i| + \epsilon}
-\end{equation}
-Severity classification strictly enforces ISO-10816 thresholds:
-\begin{itemize}
-    \item $v_{\text{RMS}} \le 1.8 \text{ mm/s}$: \textbf{Class I (Nominal)}---Smooth bearing operation.
-    \item $1.8 < v_{\text{RMS}} \le 4.5 \text{ mm/s}$: \textbf{Class II (Warning)}---Unbalance and shaft misalignment.
-    \item $v_{\text{RMS}} > 4.5 \text{ mm/s}$ and $\text{Harmonic Ratio} > 0.8$: \textbf{Class III/IV (Critical)}---Outer race ball bearing degradation (BPFO).
-\end{itemize}
-
-\subsubsection{Mel-Spectral Acoustic Cavitation Anomaly Ratio}
-Ultrasonic energy dissipation from pump cavitation is extracted across 16 Mel-frequency bins:
-\begin{equation}
-\text{Anomaly Score} = \text{clamp}\left( \frac{\sum_{m=10}^{16} E_m}{\sum_{m=0}^{5} E_m + \epsilon} \times 0.5, 0.05, 0.96 \right)
-\end{equation}
-When $\text{Anomaly Score} > 0.65$, a critical cavitation alarm is triggered, automatically invoking the local SLM diagnostic reasoner.
-
-\section{Performance Evaluation and Empirical Results}
-
-\subsection{Experimental Testbed}
-All empirical evaluations were conducted on a physical Linux edge node under realistic operating conditions, as specified in Table~\ref{tab:testbed}.
-
-\begin{table}[htbp]
-\caption{Physical Edge Testbed Specifications}
-\label{tab:testbed}
-\centering
-\begin{tabular}{ll}
-\toprule
-\textbf{Parameter} & \textbf{Specification} \\
-\midrule
-Edge Processor & Intel Core i5-8250U (4 Cores / 8 Threads, 1.6--3.4\,GHz) \\
-System Memory & 8\,GB DDR4 (Software constrained to $<520$\,MB quota) \\
-Camera Hardware & HP TrueVision HD UVC Webcam (\texttt{/dev/video0}) \\
-Stream Format & 640$\times$480 @ 30\,FPS (Direct V4L2 MJPEG) \\
-Operating System & Ubuntu Linux 24.04 LTS (Kernel 6.8.0-generic) \\
-WASM Runtime & Bytecode Alliance Wasmtime 21.0.2 (\texttt{wasm32-wasip1}) \\
-ONNX Engine & \texttt{ort = 2.0.0-rc.15} (Microsoft ONNX Runtime 1.20) \\
-SLM Engine & \texttt{llama-server} with Qwen-0.6B Q4\_K\_M GGUF \\
-IPC Broker & Local NATS Server v2.10.14 (\texttt{127.0.0.1:4222}) \\
-Persistence & SQLite 3.45 in WAL Mode (\texttt{synchronous=NORMAL}) \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Tiered WASM Gating \& Energy Savings}
-We evaluated the effectiveness of the WebAssembly pre-filter sandbox over a continuous 1-hour optical monitoring benchmark (108,000 frames total at 30\,FPS) simulating an industrial workstation with intermittent motion (12\% active duty cycle).
-
-\begin{table}[htbp]
-\caption{Performance: Continuous Inference vs. Tiered WASM Gating}
-\label{tab:gating}
-\centering
-\begin{tabular}{lll}
-\toprule
-\textbf{Metric} & \textbf{Continuous Baseline} & \textbf{Tiered WASM Gating} \\
-\midrule
-Total Ingested Frames & 108,000 frames & 108,000 frames \\
-Pre-Filter Gating Latency & None (0\,ms) & \textbf{0.018\,ms (WASM Sandbox)} \\
-Neural Network Invocations & 108,000 passes & \textbf{12,960 passes (-88.0\%)} \\
-Static Frames Rejected & 0 frames & 95,040 frames (100\% accurate) \\
-Mean CPU Utilization & 78.4\% & \textbf{9.1\% (-88.4\% load)} \\
-Mean Package Power Draw & 18.2\,Watts & \textbf{4.6\,Watts (-74.7\% energy)} \\
-Peak Package Temperature & 74.2\,$^{\circ}$C & \textbf{46.8\,$^{\circ}$C (No throttling)} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-As shown in Table~\ref{tab:gating}, continuous inference caused high CPU load (78.4\%) and elevated temperatures (74.2\,$^{\circ}$C). The WASM sandbox evaluated frames in 0.018\,ms within the 64\,KB linear mailbox, rejecting 95,040 static frames, reducing active neural invocations by 88.0\%, lowering power draw from 18.2\,W to 4.6\,W, and preventing thermal throttling entirely.
-
-\subsection{Inference Engine Benchmark: Native Rust ORT vs. Alternatives}
-We benchmarked the native Rust ONNX Runtime engine (\texttt{ort}) against the legacy Python bridge (\texttt{ultralytics} + PyTorch) and Hugging Face Candle (\texttt{candle-core 0.11}) on identical 640$\times$480 camera frames.
-
-\begin{table}[htbp]
-\caption{Inference Engine Benchmark on CPU (640$\times$480 Frames)}
-\label{tab:inference}
-\centering
-\begin{tabular}{llll}
-\toprule
-\textbf{Metric} & \textbf{Python Bridge} & \textbf{HF Candle} & \textbf{Native Rust ORT} \\
-\midrule
-Language / Runtime & Python 3.12 + Torch & Pure Rust & \textbf{Pure Rust (\texttt{ort 2.0})} \\
-Model Format & PyTorch \texttt{.pt} & \texttt{.safetensors} & \textbf{ONNX \texttt{.onnx}} \\
-Preprocessing & 18.4\,ms & 38.2\,ms & \textbf{30.3\,ms} \\
-Tensor Forward Pass & 384.2\,ms & 462.8\,ms & \textbf{124.3\,ms (Fused SIMD)} \\
-NMS Post-Processing & 12.1\,ms & 14.5\,ms & \textbf{2.4\,ms (Vectorized)} \\
-Total Latency & 414.7\,ms & 515.5\,ms & \textbf{157.0\,ms ($\sim$6.4\,FPS)} \\
-Resident RAM (RSS) & 428\,MB & 68\,MB & \textbf{14.2\,MB (Zero Python)} \\
-Dependencies & Python, pip, venv & None & \textbf{None (Native ELF)} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-As detailed in Table~\ref{tab:inference}, the native Rust ONNX engine outperforms Candle by \textbf{3.28$\times$ in tensor forward latency} (124.3\,ms vs. 462.8\,ms). Candle's dynamic eager execution evaluates layers independently without kernel fusion. ONNX Runtime pre-fuses Convolution, Batch Normalization, and Activation kernels into contiguous SIMD passes. Crucially, eliminating Python reduced resident memory from 428\,MB to \textbf{14.2\,MB}, completely eliminating Python GIL contention.
-
-\subsection{System-Wide Memory Footprint and ONNX Overhead Audit}
-A critical concern when adopting C++ machine learning backends like ONNX Runtime on embedded hardware is runtime memory inflation. Unconstrained ONNX instances frequently allocate large virtual memory pools and unbounded memory arenas. Tether-Edge enforces strict memory ceiling controls through its clamped session configuration. Table~\ref{tab:memory} presents the audited memory profile across both quiescent (idle baseline) and peak active inference execution.
-
-\begin{table}[htbp]
-\caption{Comprehensive Edge Microservices Memory Audit (RSS)}
-\label{tab:memory}
-\centering
-\begin{tabular}{lllll}
-\toprule
-\textbf{Microservice Binary} & \textbf{Quiescent RSS} & \textbf{Peak Active RSS} & \textbf{Idle CPU} & \textbf{Active CPU} \\
-\midrule
-\texttt{client\_daemon} (HAL) & 13.9\,MB & 14.3\,MB & 1.2\% & 4.5\% \\
-\texttt{wasm\_host} (Wasmtime) & 8.2\,MB & 25.4\,MB & 0.2\% & 1.8\% \\
-\texttt{wasm\_worker.wasm} & 64\,KB & 64\,KB & 0.0\% & $<$0.02ms \\
-\texttt{inference\_worker} (ORT) & 14.2\,MB & \textbf{106.5\,MB} & 0.1\% & 28.4\% \\
-\texttt{storage\_service} (SQLite)& 3.4\,MB & 7.0\,MB & 0.1\% & 1.2\% \\
-\texttt{nats-server} (IPC Bus) & 11.5\,MB & 12.8\,MB & 0.3\% & 1.5\% \\
-\midrule
-\textbf{Core Orchestration Suite} & \textbf{51.2\,MB} & \textbf{166.0\,MB} & \textbf{1.9\%} & \textbf{37.4\%} \\
-\midrule
-\texttt{llama-server} (Qwen-0.6B)& 468.0\,MB & 859.4\,MB & 0.0\% & 98.2\% \\
-\midrule
-\textbf{Total Suite (with Local SLM)} & \textbf{519.2\,MB} & \textbf{1,025.4\,MB} & \textbf{1.9\%} & \textbf{135.6\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textit{ONNX Runtime Overhead Analysis}:
-When evaluated without configuration constraints, a standard ONNX Runtime session spawned 8 thread stacks (one per logical CPU thread) and initialized an unconstrained memory arena, consuming over 248\,MB RSS simply to load \texttt{yolov8n.onnx}. 
-
-By enforcing Tether-Edge's architectural optimizations:
-\begin{itemize}
-    \item \textbf{Thread Pool Clamping} (\texttt{with\_intra\_threads(2)}): Reduced operating system thread stack overhead by 75\%, saving 48\,MB of virtual memory.
-    \item \textbf{Static Memory Pattern} (\texttt{with\_memory\_pattern(true)}): Instructed the runtime to pre-plan activation tensor lifetimes, reusing scratchpad memory between layers. Peak memory allocation stabilized at exactly 106.5\,MB during full $640\times 640$ tensor execution with zero memory leakage across hours of continuous evaluation.
-    \item \textbf{Zero-Copy Borrowed Slices} (\texttt{TensorRef::from\_array\_view}): Eliminated heap allocation during input tensor construction, saving 4.9\,MB of repeated allocations per frame.
-\end{itemize}
-As a result, the entire core edge orchestration suite (excluding the optional large language model) executes within \textbf{166.0\,MB peak RAM}, leaving over 80\% of system resources available for other applications on 1--4\,GB edge gateways. When local LLM reasoning is active, the complete suite remains strictly within 1\,GB peak RAM. In contrast, equivalent Python-based deployments require 428\,MB quiescent and over 890\,MB peak for computer vision alone, before factoring in language model serving.
-
-\subsection{Zero-Downtime Over-The-Air (OTA) Hot-Swap}
-We evaluated 50 consecutive OTA deployment cycles, alternating between \texttt{yolov8n.onnx} and \texttt{yolo11n.onnx} while streaming physical video frames at 30\,FPS.
-
-\begin{table}[htbp]
-\caption{Over-The-Air (OTA) Drain-and-Swap Benchmark Metrics}
-\label{tab:ota}
-\centering
-\begin{tabular}{lll}
-\toprule
-\textbf{Deployment Phase} & \textbf{Average Duration} & \textbf{Safety Guarantee} \\
-\midrule
-1. Artifact Ingestion \& Staging & 82.4\,ms & Staged strictly to \texttt{*.tmp} \\
-2. Cryptographic SHA-256 Hashing & 14.1\,ms & Rejects corrupted binaries \\
-3. Atomic POSIX \texttt{rename(2)} & 0.4\,ms & Atomic directory metadata commit \\
-4. NATS Signal Dispatch & 0.2\,ms & Sub-millisecond broadcast \\
-5. In-Flight Execution Draining & 80.0\,ms & In-flight tensors complete cleanly \\
-6. Linear Memory Pointer Swap & 0.02\,ms & Atomic \texttt{Arc<ModelContext>} swap \\
-\midrule
-\textbf{Total Transition Duration} & \textbf{177.1\,ms} & \textbf{0 dropped frames, 0 restarts} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-As documented in Table~\ref{tab:ota}, the entire hot-swap transition completed in an average of \textbf{177.1\,ms}. Across all 50 OTA deployments, \textbf{0 frames were dropped} and \textbf{0 process crashes occurred}. Incoming frames captured during queue draining were safely buffered in NATS RAM and evaluated immediately following the 0.02\,ms pointer swap.
-
-\subsection{Multi-Modal Diagnostic Throughput}
-Table~\ref{tab:multimodal} summarizes the detection and diagnostic latency across modalities.
-
-\begin{table}[htbp]
-\caption{Multi-Modal Detection \& Diagnostic Latency Summary}
-\label{tab:multimodal}
-\centering
-\begin{tabular}{llll}
-\toprule
-\textbf{Modality} & \textbf{Target Metric} & \textbf{Model / Backend} & \textbf{Latency} \\
-\midrule
-Vision (COCO) & Objects (person, phone, cup) & \texttt{yolov8n.onnx} & 124.3\,ms \\
-Vision (Defect) & Conveyor crack / scratch & Spatial Convolution & 1.2\,ms \\
-Vibration & 3-Axis Bearing Degradation & 1D-CNN (ISO-10816) & 1.5\,ms \\
-Audio & Pump Cavitation Anomaly & Mel-Autoencoder & 1.8\,ms \\
-On-Device SLM & Root-Cause Operator Guidance & Qwen-0.6B GGUF & 45.3\,tok/s \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-When vibration exceeded the ISO-10816 Class IV threshold ($7.2\text{ mm/s} > 4.5\text{ mm/s}$), the 1D-CNN classified outer race degradation (BPFO) in 1.5\,ms. The inference worker queried the local \texttt{llama-server}, which synthesized actionable operator instructions (58 tokens) in 1.28 seconds at \textbf{45.3\,tokens/s on CPU}, with zero data transmitted over the internet.
-
-\section{Applications and Real-World Use Cases}
-The Tether-Edge platform addresses mission-critical applications across distributed environments:
-\begin{itemize}
-    \item \textbf{Industrial Manufacturing \& Predictive Maintenance}: Orchestrating multi-modal inspection nodes across factory floors, combining high-speed optical crack detection with 3-axis vibration monitoring to predict mechanical failure before catastrophic line shutdowns.
-    \item \textbf{Smart Cities \& Intelligent Transportation}: Deploying edge video analytics on traffic cameras to monitor vehicle congestion, road hazards, and pedestrian safety, storing historical metrics locally and syncing via metered 5G links.
-    \item \textbf{Critical Infrastructure \& Energy Grids}: Monitoring remote electrical substations, oil/gas pipelines, and wind turbines where network connections are intermittent, using local GGUF reasoning to provide autonomous diagnostic guidance.
-    \item \textbf{Healthcare \& Patient Monitoring}: Processing biometric and video streams on local bedside gateways, ensuring sensitive patient records never leave the local clinic premises.
-    \item \textbf{Defence \& Tactical Edge Deployments}: Maintaining continuous situational awareness and anomaly detection in disconnected, denied, or contested environments (DDIL) where cloud connectivity is unavailable.
-\end{itemize}
-
-\section{Expected Outcomes and Future Scope}
-
-\subsection{Expected Outcomes}
-Tether-Edge delivers a fully operational, production-ready fleet orchestration platform that guarantees continuous edge availability, eliminates memory bloat, and provides zero-loss telemetry synchronization. System administrators can remotely deploy AI models and WASM rules across distributed devices from a unified React dashboard, confident that field workloads will execute with deterministic performance, zero data loss, and zero downtime.
-
-\subsection{Future Scope}
-Future enhancements for Tether-Edge include:
-\begin{enumerate}
-    \item \textbf{Hardware NPU Acceleration}: Integrating specialized Neural Processing Unit (NPU) execution providers (e.g., Qualcomm QNN, Intel OpenVINO, ARM Ethos) into the native Rust ONNX runtime.
-    \item \textbf{Federated Edge Learning}: Implementing decentralized, privacy-preserving model training across edge nodes using the local SQLite write-ahead storage engine.
-    \item \textbf{Deterministic Real-Time Scheduling}: Incorporating Linux PREEMPT\_RT kernel extensions and Time-Sensitive Networking (TSN) IEEE 802.1Qbv standards for hard real-time industrial robotics.
-    \item \textbf{Cross-Attention Multi-Modal Fusion}: Fusing optical image tokens directly into the input embeddings of the local SLM via cross-attention layers for multimodal visual question answering.
-\end{enumerate}
-
-\section*{Acknowledgments}
-The authors wish to express their sincere gratitude to the Department of Computer Science \& Engineering at MIT-ADT University, Pune, and faculty guide Prof. Dr. Harshad Lokhande, for their continuous support, laboratory facilities, and insightful technical guidance throughout the development of this research project.
-
-\begin{thebibliography}{00}
-\bibitem{b1} W. Shi, J. Cao, Q. Zhang, Y. Li, and L. Xu, ``Edge Computing: Vision and Challenges,'' \textit{IEEE Internet of Things Journal}, vol. 3, no. 5, pp. 637--646, 2016.
-\bibitem{b2} F. Bonomi, R. Milito, J. Zhu, and S. Addepalli, ``Fog Computing and Its Role in the Internet of Things,'' \textit{Proc. 1st Edition of the MCC Workshop on Mobile Cloud Computing}, pp. 13--16, 2012.
-\bibitem{b3} OpenFog Consortium, ``OpenFog Reference Architecture for Fog Computing,'' 2017. (Adopted as IEEE Standard 1934-2018).
-\bibitem{b4} M. Satyanarayanan, ``The Emergence of Edge Computing,'' \textit{Computer}, vol. 50, no. 1, pp. 30--39, 2017.
-\bibitem{b5} B. Varghese and R. Buyya, ``Next Generation Cloud Computing: New Trends and Research Directions,'' \textit{Future Generation Computer Systems}, vol. 79, pp. 849--861, 2018.
-\bibitem{b6} B. Burns, B. Grant, D. Oppenheimer, E. Brewer, and J. Wilkes, ``Borg, Omega, and Kubernetes,'' \textit{Communications of the ACM}, vol. 59, no. 5, pp. 50--57, 2016.
-\bibitem{b7} D. Merkel, ``Docker: Lightweight Linux Containers for Consistent Development and Deployment,'' \textit{Linux Journal}, vol. 2014, no. 239, 2014.
-\bibitem{b8} C. Pahl and P. Jamshidi, ``Microservices: A Systematic Mapping Study,'' \textit{Proc. 6th Int. Conf. on Cloud Computing and Services Science}, pp. 137--146, 2016.
-\bibitem{b9} Amazon Web Services, ``AWS IoT Greengrass Architecture and Developer Guide,'' AWS Whitepapers, 2024.
-\bibitem{b10} Microsoft, ``Azure IoT Edge Architecture and Security Documentation,'' Microsoft Docs, 2024.
-\bibitem{b11} D. Thain, T. Tannenbaum, and M. Livny, ``Distributed Computing in Practice: The Condor Experience,'' \textit{Concurrency and Computation: Practice and Experience}, vol. 17, no. 2--4, pp. 323--356, 2005.
-\bibitem{b12} WebAssembly Community Group, ``WebAssembly Core Specification and Component Model,'' W3C Recommendation, 2024.
-\bibitem{b13} A. K. Paul et al., ``Comparative Analysis of Lightweight Kubernetes Distributions for Edge Computing: Performance and Resource Efficiency,'' \textit{arXiv preprint arXiv:2504.03656}, 2025.
-\bibitem{b14} W. Kwon et al., ``Efficient Memory Management for Large Language Model Serving with PagedAttention,'' \textit{Proc. 29th ACM Symp. on Operating Systems Principles (SOSP)}, 2023.
-\bibitem{b15} G. Gerganov et al., ``llama.cpp: Fast LLM Inference in C/C++ without Dependencies,'' GitHub Repository, 2024.
-\bibitem{b16} J. Redmon, S. Divvala, R. Girshick, and A. Farhadi, ``You Only Look Once: Unified, Real-Time Object Detection,'' \textit{Proc. IEEE Conf. Computer Vision and Pattern Recognition (CVPR)}, pp. 779--788, 2016.
-\bibitem{b17} G. Jocher, A. Chaurasia, and J. Qiu, ``Ultralytics YOLOv8 and YOLO11 Architecture Documentation,'' GitHub Repository, 2024.
-\bibitem{b18} Microsoft, ``ONNX Runtime: Cross-Platform High Performance ML Inferencing Accelerator,'' ONNX Runtime Documentation, 2024.
-\bibitem{b19} International Organization for Standardization, ``Mechanical Vibration---Evaluation of Machine Vibration by Measurements on Non-Rotating Parts,'' \textit{ISO Standard 10816-1}, 2016.
-\bibitem{b20} O. Abdeljaber et al., ``Real-Time Vibration-Based Structural Damage Detection Using One-Dimensional Convolutional Neural Networks,'' \textit{Journal of Sound and Vibration}, vol. 388, pp. 154--170, 2017.
-\bibitem{b21} Y. Koizumi et al., ``Acoustic Anomaly Detection in Machines Using Mel-Frequency Cepstral Coefficients and Autoencoders,'' \textit{Proc. IEEE Int. Conf. Acoustics, Speech and Signal Processing (ICASSP)}, pp. 855--859, 2019.
-\bibitem{b22} M. Manso, J. V. Silva, and R. Santos, ``Secure and Reliable Over-The-Air Firmware Updates for Industrial Internet of Things,'' \textit{IEEE Internet of Things Magazine}, vol. 4, no. 3, pp. 62--67, 2021.
-\end{thebibliography}
-
-\end{document}
+    \documentclass[conference]{IEEEtran}
+    \usepackage{cite}
+    \usepackage{amsmath,amssymb,amsfonts}
+    \usepackage{algorithmic}
+    \usepackage{graphicx}
+    \usepackage{textcomp}
+    \usepackage{xcolor}
+    \usepackage{booktabs}
+    \usepackage{url}
+
+    \begin{document}
+
+    \title{Tether-Edge: AI Orchestration for Distributed Edge Devices}
+
+    \author{
+    \IEEEauthorblockN{Anish Chakrabarti, Joshua DeNiese, Mohammad Sufiyan}
+    \IEEEauthorblockA{\textit{Department of Computer Science \& Engineering} \\
+    \textit{MIT-ADT University, MIT School of Computing}\\
+    Pune, Maharashtra, India \\}
+    \and
+    \IEEEauthorblockN{Prof. Dr. Harshad Lokhande}
+    \IEEEauthorblockA{\textit{Faculty Guide} \\
+    \textit{MIT-ADT University}\\
+    Pune, Maharashtra, India}
+    }
+
+    \maketitle
+
+    \begin{abstract}
+    AI is increasingly being installed directly onto physical hardware---such as security cameras, factory machinery, and robots---so they can process sensor data
+    on the spot without relying on the cloud. However, managing hundreds or thousands of these devices is very challenging. These devices have limited memory and
+    battery power, frequently lose internet connectivity, and traditional software management tools are often too heavy and slow. On many systems, everything runs
+    as a single large program; if an AI model crashes or runs out of memory, the entire device goes down and critical data is lost. Furthermore, running heavy AI
+    models continuously causes devices to overheat and quickly drains their batteries.
+
+    To solve these problems, this paper introduces Tether-Edge, a lightweight and reliable management platform designed specifically for fleets of edge AI devices.
+    Instead of running everything as one big program, Tether-Edge splits tasks into small, separate, and safe components that communicate with each other smoothly.
+    If an AI workload or rule crashes, it is safely contained so the device stays online and continues operating normally.
+
+    To save battery and prevent overheating, Tether-Edge uses a fast, lightweight filter that quickly checks incoming sensor data. It ignores normal, repetitive
+    scenes and only wakes up the heavy AI models when an actual change or physical problem is detected. Once triggered, the system can spot objects on camera,
+    check for abnormal machine vibrations or unusual sounds, and even generate a plain-English explanation of what went wrong using a built-in, on-device AI
+    assistant---all without sending data to an external cloud.
+
+    To handle unstable internet connections, Tether-Edge safely stores all reports and sensor logs on the device itself and uploads them automatically once the
+    network reconnects, ensuring zero data loss. In addition, when new AI models are updated remotely over the air, the system smoothly swaps in the new version in
+    the background without restarting the device or dropping a single camera frame. Tests show that Tether-Edge requires very little memory, cuts unnecessary
+    processing work, and runs reliably on small, low-cost edge computers.
+    \end{abstract}
+
+    \begin{IEEEkeywords}
+    Edge AI, Device Fleet Management, System Orchestration, Crash Protection, Smart Data Filtering, Multi-Sensor Inspection, Offline Reliability, Zero-Downtime
+    Updates.
+    \end{IEEEkeywords}
+
+    \section{Introduction}
+    Edge Artificial Intelligence (Edge AI) involves running machine learning models directly on physical edge devices---such as smart cameras, industrial 
+    machinery, and robotic systems---rather than sending raw data to distant cloud data centers. By processing sensor streams locally, edge computing significantly
+    reduces network latency, minimizes cellular data consumption, and preserves strict data privacy \cite{b1, b4}.
+
+    However, deploying, updating, and operating large fleets of geographically distributed edge devices presents several critical challenges:
+    \begin{enumerate}
+        \item \textbf{Device Outages from Single-Component Failures}: Many edge systems operate as monolithic applications. If a third-party AI model encounters an
+        unexpected software bug, memory leak, or crash, the entire application fails. This severs remote management connections and often requires an engineer to
+        travel on-site simply to restart the device.
+        \item \textbf{Excessive Infrastructure Overhead}: Mainstream container platforms, such as standard Docker or Kubernetes distributions, were primarily
+        engineered for high-performance cloud servers. Running these frameworks consumes substantial memory (often 300\,MB to over 1\,GB) and processing resources,
+        leaving insufficient headroom for AI workloads on low-power, entry-level hardware (e.g., 1--4\,GB RAM single-board computers) \cite{b6, b7}.
+        \item \textbf{Overheating and Battery Depletion}: Executing continuous neural network inference across every incoming video frame or high-frequency sensor
+        reading demands significant computational power. On fanless industrial enclosures or battery-operated platforms, this leads to rapid battery drain and 
+        severe thermal throttling \cite{b5}.
+        \item \textbf{Data Loss from Unstable Connectivity}: Remote edge hardware frequently connects through spotty cellular or satellite links. When
+        cloud-dependent systems experience network drops, real-time alerts, error logs, and sensor telemetry are discarded and permanently lost.
+        \item \textbf{Downtime and Missed Events During Updates}: In round-the-clock industrial environments, software updates typically require restarting
+        services. This introduces several seconds of operational downtime, during which cameras stop analyzing data and critical defects or safety violations can
+        pass unnoticed.
+        \item \textbf{Bulky and Non-Deterministic Runtimes}: Early prototype implementations frequently depend on heavy interpreted environments (such as Python
+        and PyTorch). These runtimes require gigabytes of disk storage and introduce unpredictable execution pauses, making them unsuitable for consistent, 
+        real-time edge operations.
+    \end{enumerate}
+
+    To address these challenges, this paper presents \textbf{Tether-Edge}, a lightweight, reliable, and fault-tolerant orchestration platform tailored for
+    distributed Edge AI fleets. Tether-Edge replaces monolithic architectures with small, decoupled, and memory-safe native Rust microservices that communicate
+    over an ultra-fast local message bus. To conserve energy and prevent thermal throttling, the platform uses a lightweight WebAssembly sandbox to pre-filter
+    sensory data, only triggering deep neural models when physical state changes are detected. Furthermore, Tether-Edge incorporates an offline store-and-forward
+    telemetry buffer to prevent data loss during network disconnections, a built-in on-device language model for local root-cause diagnostics, and a zero-downtime
+    model swap mechanism that applies updates without dropping a single sensor frame.
+
+    \section{Literature Survey}
+
+    \subsection{Edge AI and Edge Computing}
+    Seminal research by Shi et al. \cite{b1} and Satyanarayanan \cite{b4} demonstrated that processing data locally on edge hardware resolves the latency and
+    bandwidth limitations of centralized cloud architectures. Subsequent work by Bonomi et al. \cite{b2} and the OpenFog Consortium \cite{b3} standardized
+    distributed fog computing frameworks. However, running deep neural networks continuously on low-power hardware leads to rapid battery exhaustion and thermal
+    throttling, highlighting the need for efficient pre-filtering mechanisms that activate heavy AI models only when necessary.
+
+    \subsection{Containerization vs. WebAssembly Isolation}
+    Docker containerization popularized microservice isolation by bundling application dependencies into portable images \cite{b7, b8}. However, empirical studies
+    by Paul et al. \cite{b13} revealed that running container orchestrators (such as K3s or MicroK8s) on resource-constrained hardware can consume up to 40\% of
+    available system memory simply maintaining the orchestration layer. In response, WebAssembly (WASM) and the WebAssembly System Interface (WASI) have emerged as
+    lightweight sandboxing alternatives \cite{b12}. WebAssembly runtimes launch within milliseconds and enforce strict memory limits with minimal resource
+    overhead. Tether-Edge uses compiled WebAssembly modules to execute user rules and filter sensor data without the high memory footprint of traditional
+    containers.
+
+    \subsection{Edge Orchestration and Fleet Management}
+    Commercial platforms such as AWS IoT Greengrass \cite{b9} and Azure IoT Edge \cite{b10} offer device provisioning and remote application deployment. However,
+    these systems introduce proprietary vendor lock-in and require heavy local runtimes. Earlier distributed systems like Condor \cite{b11} provided resilient
+    remote job execution, but targeted large, high-performance computing clusters rather than resource-limited edge nodes. Tether-Edge fills this gap by providing
+    an open, lightweight architecture built on fast local messaging and local database buffering.
+
+    \subsection{Inter-Process Communication and Message Buses}
+    Microservices frequently communicate using local HTTP or network sockets, which introduce processing delays and operating system context-switching overhead.
+    Utilizing a lightweight publish/subscribe message broker (such as NATS over local system sockets) significantly reduces communication latency, decouples
+    individual software services, and ensures that an isolated application crash does not destabilize the broader system.
+
+    \subsection{Multi-Modal Industrial Sensing}
+    Effective industrial monitoring relies on combining complementary sensor inputs. Vision-based models (such as YOLO) provide real-time object and surface defect
+    detection, while vibration analysis conforming to international standards (ISO-10816) can identify mechanical imbalance and bearing degradation \cite{b5}. In
+    addition, acoustic analysis can detect early signs of pump friction and wear. Tether-Edge synchronizes visual, vibrational, and acoustic data into a unified
+    edge data stream for comprehensive equipment monitoring.
+
+    \subsection{On-Device Small Language Models (SLMs)}
+    While Large Language Models have shown outstanding diagnostic capabilities, serving them historically required powerful data center GPUs \cite{b14}. Recent
+    advancements in model quantization and lightweight inference software \cite{b15} allow compact Small Language Models to execute efficiently on standard
+    low-power processors. Tether-Edge incorporates an on-device language model to generate clear, natural language root-cause explanations directly at the edge
+    without requiring external network connectivity.
+
+    \section{Objectives and Scope}
+
+    \subsection{Objectives}
+    The primary objective of Tether-Edge is to design, implement, and validate an industrial-grade, lightweight fleet orchestration platform for distributed Edge
+    AI systems. The specific research and engineering objectives are:
+    \begin{itemize}
+        \item \textbf{Minimal Memory Footprint}: Maintain the total steady-state memory utilization of all edge client services below \textbf{520\,MB RAM},
+        enabling deployment on cost-effective edge devices equipped with 1--4\,GB of RAM.
+        \item \textbf{Rapid Sensor Event Gating}: Implement an ultra-fast WebAssembly (WASM) pre-filtering sandbox that inspects incoming data in under 0.02\,ms,
+        filtering out over 90\% of nominal sensor frames to reduce downstream AI processing load by more than 70\%.
+        \item \textbf{Pure Native Edge Execution}: Eliminate heavy interpreted runtime environments (such as Python and virtual environments) on edge devices,
+        compiling the entire client suite into lightweight, memory-safe native Rust and C++ binaries.
+        \item \textbf{Synchronized Multi-Modal Ingestion}: Simultaneously capture and analyze live optical camera streams, multi-axis machine vibration signals,
+        acoustic audio, and system thermal metrics within a synchronized pipeline.
+        \item \textbf{Zero Data Loss via Offline Buffering}: Implement a local store-and-forward SQLite database that safely buffers telemetry and anomaly alerts
+        during network outages, automatically synchronizing data once connectivity is restored.
+        \item \textbf{On-Device Diagnostic Reasoning}: Integrate a compact, 4-bit quantized language model capable of diagnosing equipment faults and generating
+        real-time operator guidance directly on the local processor without external network access.
+        \item \textbf{Zero-Downtime Over-The-Air (OTA) Updates}: Enable dynamic AI model updates in the background without requiring service restarts, ensuring 
+        continuous sensor ingestion and zero dropped camera frames during model transitions.
+    \end{itemize}
+
+    \subsection{Scope and Feasibility}
+    The scope of Tether-Edge encompasses resource-constrained edge hardware equipped with 1--4\,GB of RAM, including single-board computers (e.g., Raspberry Pi
+    4/5), embedded edge platforms (e.g., NVIDIA Jetson), and standard industrial x86 gateways. The platform manages device registration, multi-sensor data capture,
+    sandboxed rule execution, dynamic AI model updates, offline telemetry storage, and real-time fleet dashboard monitoring.
+
+    The project demonstrates high technical feasibility by leveraging mature, proven open-source technologies rather than requiring proprietary cloud runtimes or
+    specialized hardware security chips:
+    \begin{itemize}
+        \item \textbf{Rust}: Delivers native execution speed and strict memory safety without the overhead of runtime garbage collection.
+        \item \textbf{Wasmtime}: Provides lightweight, capability-based WebAssembly sandboxing to execute user rules safely with minimal memory usage.
+        \item \textbf{Microsoft ONNX Runtime}: Enables optimized, real-time neural network inference directly on low-power central processing units.
+        \item \textbf{SQLite}: Offers reliable local database buffering in Write-Ahead Logging mode to ensure persistent telemetry storage during network drops.
+        \item \textbf{NATS}: Supplies a fast, asynchronous publish/subscribe message broker for decoupled inter-process communication.
+        \item \textbf{\texttt{llama.cpp}}: Facilitates efficient on-device execution of quantized language models for real-time diagnostic reasoning without
+        internet access.
+    \end{itemize}
+
+    \section{Proposed System Architecture}
+
+    \subsection{Architectural Overview}
+    Tether-Edge acts as an intelligent intermediary between centralized cloud management and distributed edge hardware. The system follows a decoupled,
+    event-driven microservices architecture partitioned into two primary operational zones: the \textbf{Edge Hardware Platform} and the \textbf{Cloud Control
+    Plane}, as illustrated in Fig.~\ref{fig:architecture}.
+
+    \begin{figure*}[!t]
+    \centering
+    \includegraphics[width=0.92\textwidth]{architecture_diagram.png}
+    \caption{System architecture of the Tether-Edge platform, depicting the hardware abstraction layer, local message bus, WebAssembly pre-filter sandbox, native
+    multi-modal AI engine, on-device language model, offline storage buffer, and cloud control plane.}
+    \label{fig:architecture}
+    \end{figure*}
+
+    \subsection{Edge Microservices Breakdown}
+    The edge client suite is divided into independent, unprivileged processes communicating exclusively over an ultra-fast local NATS message bus. This design
+    guarantees fault isolation: if a specific worker fails or restarts, the remaining edge microservices continue operating without disruption.
+
+    \subsubsection{\texttt{client\_daemon} (Master Orchestrator \& Hardware Layer)}
+    Implemented in native Rust, this daemon supervises device operations and manages hardware inputs:
+    \begin{itemize}
+        \item \textbf{Optical Video}: Captures live video frames directly from camera hardware devices into shared memory and computes frame luminance variations.
+        \item \textbf{System Thermals}: Monitors hardware thermal sensors via the Linux kernel to track operating temperatures.
+        \item \textbf{Vibration and Audio}: Ingests multi-axis vibration signals and acoustic audio samples at native sampling rates.
+        \item \textbf{Telemetry Dispatch}: Formats sensor payloads and publishes them to dedicated internal message topics while streaming real-time status to the
+        cloud gateway.
+    \end{itemize}
+
+    \subsubsection{\texttt{wasm\_host} (High-Speed WASM Pre-Filtering Sandbox)}
+    Powered by Wasmtime, this worker executes safety rules and pre-filters incoming sensor data in under 0.02\,ms. Custom rules are compiled into WebAssembly
+    modules and executed within a strictly isolated memory sandbox. Host and guest exchange data via an efficient in-memory buffer, eliminating unnecessary
+    serialization overhead. Unchanged scenes and normal sensor readings are discarded immediately, preventing unnecessary downstream neural computation and saving
+    processor power.
+
+    \subsubsection{\texttt{inference\_worker} (Native Multi-Modal AI Engine)}
+    Built entirely in native Rust, this service replaces heavy Python machine learning stacks with an optimized inference engine using the Microsoft ONNX Runtime
+    (\texttt{ort}) library. To minimize system memory overhead on resource-constrained devices, Tether-Edge applies five key architectural optimizations:
+    \begin{enumerate}
+        \item \textbf{Thread Pool Clamping}: Limits internal execution threads to prevent excessive thread stack memory allocation and reduce operating system
+        context switching.
+        \item \textbf{Deterministic Execution}: Replaces dynamic parallel scheduling with sequential operator execution, maintaining predictable memory
+        utilization.
+        \item \textbf{Static Memory Reuse}: Pre-allocates intermediate memory buffers based on the model structure, reusing memory across consecutive layers and
+        preventing heap fragmentation.
+        \item \textbf{Graph Optimization}: Fuses consecutive neural network layers during model initialization to accelerate processing speed and streamline
+        execution.
+        \item \textbf{Zero-Copy Tensor Views}: Directly references existing image buffers in memory rather than duplicating tensor data across the system heap.
+    \end{enumerate}
+    In addition to computer vision, this worker handles vibration analysis, acoustic anomaly detection, and automated queries to the local diagnostic language
+    model.
+
+    \subsubsection{\texttt{storage\_service} (Offline Buffer \& Staging Gatekeeper)}
+    Implemented in Rust using SQLite in Write-Ahead Logging (WAL) mode, this service provides high-speed local data logging without lock contention, while also
+    managing safe model staging during remote updates.
+
+    \subsubsection{\texttt{llama-server} (On-Device Language Model)}
+    A lightweight, native executable based on \texttt{llama.cpp} that loads 4-bit quantized language models (e.g., Qwen-0.6B). It generates natural language 
+    diagnostic reports and operator guidance locally on the device CPU without requiring external internet access.
+
+    \subsubsection{\texttt{cloud\_server} (Control Plane \& Fleet Dashboard)}
+    A lightweight web server providing device registration, secure authentication, remote model cataloging, and an interactive fleet dashboard featuring a visual
+    pipeline canvas and live video inspector with bounding box overlays.
+
+    \subsection{Inter-Process Communication (IPC)}
+    Monolithic edge systems frequently crash entirely when a single AI model encounters a fault. Tether-Edge prevents this fate-sharing vulnerability by deploying
+    an asynchronous local \textbf{NATS message bus}. Individual services operate as independent producers and consumers across dedicated channels:
+    \begin{itemize}
+        \item Raw sensor channels for camera frames, vibration waveforms, and audio signals.
+        \item Filtered event and anomaly alert channels emitted by the WebAssembly sandbox.
+        \item Inference request and diagnostic output channels.
+        \item Fleet administrative channels for remote updates, health checks, and heartbeat monitoring.
+    \end{itemize}
+
+    \subsection{Offline SQLite Telemetry Buffer \& Store-and-Forward Sync}
+    Direct cloud HTTP connections routinely drop packets during intermittent network outages on industrial networks. Tether-Edge implements a store-and-forward
+    architecture managed by \texttt{storage\_service}. All sensor events, anomaly alerts, and diagnostic outputs are appended immediately to a local database file.
+    During network disconnections, edge services continue operating and logging locally without blocking. Once connectivity is re-established, the system
+    automatically synchronizes buffered records to the cloud, guaranteeing zero telemetry loss.
+
+    \subsection{Cryptographic Zero-Downtime Drain-and-Swap OTA Protocol}
+    Updating AI models on remote edge devices typically requires stopping containers, leading to service downtime and dropped video frames. Tether-Edge implements
+    a \textbf{Drain-and-Swap} hot-reloading lifecycle with four distinct reliability guarantees:
+    \begin{enumerate}
+        \item \textbf{Staged Download}: The new model binary is downloaded to a temporary staging location while the active model continues executing.
+        \item \textbf{Cryptographic Verification}: The file's SHA-256 checksum is validated against the cloud manifest; corrupted or incomplete downloads are
+        rejected immediately.
+        \item \textbf{Atomic File Commit}: The validated binary is committed using an atomic file rename operation, ensuring that the system never accesses a
+        partially written file on disk.
+        \item \textbf{Queue Draining and Pointer Swapping}: Upon receiving an update notification, the inference service temporarily pauses queue consumption while
+        in-flight frames finish execution. The worker loads the new model into memory, updates the active pointer, and resumes processing immediately. This process
+        completes with \textbf{zero dropped frames and zero service restarts}.
+    \end{enumerate}
+
+    \section{Methodology and Implementation Details}
+
+    \subsection{Multi-Modal Sensing and Detection Logic}
+
+    \subsubsection{Optical Frame Gating and Surface Defect Detection}
+    To prevent energy-intensive neural networks from executing continuously on static scenes, the camera layer calculates temporal luminance changes across 
+    consecutive video frames. If the mean pixel variation between frames remains below a 4\% motion threshold, the scene is classified as static. The WebAssembly
+    pre-filter suppresses downstream processing, preventing unnecessary AI compute cycles. When motion is detected, the pipeline evaluates spatial contrast
+    gradients across pixel boundaries; sudden high-contrast variations exceeding threshold limits are flagged as potential surface fissures or scratches.
+
+    \subsubsection{Tri-Axial Vibration and ISO-10816 Severity Classification}
+    Machine health is monitored using three-axis vibration velocity evaluated against the international predictive maintenance standard ISO-10816. The vibration
+    engine calculates the Root Mean Square (RMS) velocity across orthogonal axes and applies a discrete high-frequency impact filter to identify repetitive shock
+    pulses:
+    \begin{itemize}
+        \item \textbf{Class I (Nominal, $\le 1.8$\,mm/s)}: Smooth mechanical operation with no discernible bearing degradation.
+        \item \textbf{Class II (Warning, $1.8\text{--}4.5$\,mm/s)}: Elevated vibration indicating shaft misalignment or rotor unbalance.
+        \item \textbf{Class III/IV (Critical, $>4.5$\,mm/s)}: Excessive mechanical shock and high-frequency harmonic energy, indicating severe bearing degradation.
+    \end{itemize}
+
+    \subsubsection{Acoustic Cavitation and Friction Analysis}
+    Fluid handling equipment is monitored through acoustic frequency analysis. The audio pipeline computes the energy ratio between ultrasonic high-frequency bands
+    and baseline operational noise. A sustained energy shift toward high frequencies signals fluid turbulence, pump cavitation, or mechanical friction rub, which
+    automatically triggers diagnostic analysis.
+    
+    \section{Performance Evaluation and Empirical Results}
+    
+    \subsection{Experimental Testbed}
+    All empirical evaluations were conducted on a physical Linux edge node under realistic operating conditions, as detailed in Table~\ref{tab:testbed}.
+    
+    \begin{table}[htbp]
+    \caption{Physical Edge Testbed Specifications}
+    \label{tab:testbed}
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{ll}
+    \toprule
+    \textbf{Parameter} & \textbf{Specification} \\
+    \midrule
+    Edge Processor & 11th Gen Intel Core i5-1135G7 (4 Cores / 8 Threads, up to 4.2\,GHz) \\
+    System Memory & 8\,GB DDR4 (Software target budget $<520$\,MB) \\
+    Camera Interface & Physical UVC Webcam (\texttt{/dev/video0}) \\
+    Video Stream & 640$\times$480 @ 30\,FPS (Direct V4L2 MJPEG) \\
+    Operating System & Ubuntu Linux 24.04 LTS (x86\_64) \\
+    WASM Runtime & Bytecode Alliance Wasmtime 21.0 (\texttt{wasm32-wasip1}) \\
+    Inference Engine & Pure Rust with Microsoft ONNX Runtime (\texttt{ort 2.0}) \\
+    Local SLM & \texttt{llama-server} with Qwen-0.6B Q4\_K\_M GGUF \\
+    IPC Broker & Local NATS Server v2.10.14 \\
+    Storage Engine & SQLite 3.45 in Write-Ahead Logging (WAL) Mode \\
+    \bottomrule
+    \end{tabular}%
+    }
+    \end{table}
+    
+    \subsection{Tiered WASM Gating \& Computational Savings}
+    We evaluated the efficiency of the WebAssembly pre-filter sandbox during a continuous optical monitoring benchmark simulating an industrial environment with
+    intermittent activity (12\% active duty cycle).
+    
+    \begin{table}[htbp]
+    \caption{System Performance: Continuous Inference vs. Tiered Gating}
+    \label{tab:gating}
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{lll}
+    \toprule
+    \textbf{Metric} & \textbf{Continuous Baseline} & \textbf{Tiered WASM Gating} \\
+    \midrule
+    Total Processed Frames & 108,000 frames & 108,000 frames \\
+    Pre-Filter Gating Latency & None (0\,ms) & \textbf{$<$0.02\,ms (WASM Sandbox)} \\
+    Neural Network Invocations & 108,000 passes & \textbf{12,960 passes (-88.0\%)} \\
+    Static Frames Filtered & 0 frames & 95,040 frames (100\% accurate) \\
+    Mean CPU Utilization & 78.4\% & \textbf{9.1\% (-88.4\% load)} \\
+    Peak Package Temperature & 74.2\,$^{\circ}$C & \textbf{46.8\,$^{\circ}$C (No thermal throttling)} \\
+    \bottomrule
+    \end{tabular}%
+    }
+    \end{table}
+    
+    As shown in Table~\ref{tab:gating}, continuous inference caused high processor utilization (78.4\%) and elevated package temperatures (74.2\,$^{\circ}$C). In
+    contrast, the WebAssembly pre-filter evaluated frames in under 0.02\,ms, filtering out 95,040 static frames and reducing active AI execution by 88.0\%, which
+    dropped operating temperature by 27.4\,$^{\circ}$C and completely prevented thermal throttling.
+    
+    \subsection{Inference Engine Benchmark: Native Rust ORT vs. Python}
+    We benchmarked the native Rust ONNX Runtime implementation against the traditional Python/PyTorch stack on identical 640$\times$480 camera frames.
+    
+    \begin{table}[htbp]
+    \caption{Inference Engine Benchmark on CPU (640$\times$480 Frames)}
+    \label{tab:inference}
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{lll}
+    \toprule
+    \textbf{Metric} & \textbf{Python/PyTorch Bridge} & \textbf{Native Rust ORT} \\
+    \midrule
+    Runtime Environment & Python 3.12 + PyTorch & \textbf{Pure Rust (\texttt{ort 2.0})} \\
+    Model Format & PyTorch \texttt{.pt} & \textbf{ONNX \texttt{.onnx}} \\
+    Preprocessing Time & 18.4\,ms & \textbf{30.3\,ms} \\
+    Tensor Forward Pass & 384.2\,ms & \textbf{124.3\,ms (SIMD Fused)} \\
+    Post-Processing Time & 12.1\,ms & \textbf{2.4\,ms} \\
+    Total Latency & 414.7\,ms & \textbf{157.0\,ms ($\sim$6.4\,FPS)} \\
+    Resident Memory (RSS) & 428\,MB & \textbf{14.2\,MB (Zero Python)} \\
+    External Dependencies & Python, pip, virtualenv & \textbf{None (Static ELF)} \\
+    \bottomrule
+    \end{tabular}%
+    }
+    \end{table}
+    
+    As shown in Table~\ref{tab:inference}, the native Rust ONNX engine completes a forward pass in 124.3\,ms compared to 384.2\,ms in the Python bridge. More
+    importantly, eliminating the Python interpreter and virtual environment reduced the resident memory footprint from 428\,MB to just 14.2\,MB.
+    
+    \subsection{System-Wide Memory Footprint Audit}
+    Table~\ref{tab:memory} presents the audited memory profile across both idle and peak active inference execution.
+    
+    \begin{table}[htbp]
+    \caption{Comprehensive Edge Microservices Memory Audit (RSS)}
+    \label{tab:memory}
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{lllll}
+    \toprule
+    \textbf{Microservice Binary} & \textbf{Idle RSS} & \textbf{Peak RSS} & \textbf{Idle CPU} & \textbf{Active CPU} \\
+    \midrule
+    \texttt{client\_daemon} (HAL) & 13.9\,MB & 14.3\,MB & 1.2\% & 4.5\% \\
+    \texttt{wasm\_host} (Wasmtime) & 8.2\,MB & 25.4\,MB & 0.2\% & 1.8\% \\
+    \texttt{wasm\_worker.wasm} & 64\,KB & 64\,KB & 0.0\% & $<$0.02ms \\
+    \texttt{inference\_worker} (ORT) & 14.2\,MB & \textbf{106.5\,MB} & 0.1\% & 28.4\% \\
+    \texttt{storage\_service} (SQLite)& 3.4\,MB & 7.0\,MB & 0.1\% & 1.2\% \\
+    \texttt{nats-server} (IPC Bus) & 11.5\,MB & 12.8\,MB & 0.3\% & 1.5\% \\
+    \midrule
+    \textbf{Core Orchestration Suite} & \textbf{51.2\,MB} & \textbf{166.0\,MB} & \textbf{1.9\%} & \textbf{37.4\%} \\
+    \midrule
+    \texttt{llama-server} (Qwen-0.6B)& 468.0\,MB & 859.4\,MB & 0.0\% & 98.2\% \\
+    \midrule
+    \textbf{Total Suite (with Local SLM)} & \textbf{519.2\,MB} & \textbf{1,025.4\,MB} & \textbf{1.9\%} & \textbf{135.6\%} \\
+    \bottomrule
+    \end{tabular}%
+    }
+    \end{table}
+    
+    By enforcing thread clamping and static memory reuse, the core orchestration suite executes within \textbf{166.0\,MB peak RAM}, leaving ample resources
+    available on 1--4\,GB edge devices. Even when the local language model is actively generating diagnostic text, the entire system operates comfortably within
+    1\,GB of memory.
+    
+    \subsection{Multi-Modal Diagnostic Latency}
+    Table~\ref{tab:multimodal} summarizes the inference latency across all monitored modalities.
+    
+    \begin{table}[htbp]
+    \caption{Multi-Modal Detection \& Diagnostic Latency Summary}
+    \label{tab:multimodal}
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{llll}
+    \toprule
+    \textbf{Modality} & \textbf{Target Metric} & \textbf{Backend Engine} & \textbf{Latency} \\
+    \midrule
+    Vision (Objects) & COCO Object Classes & \texttt{yolov8n.onnx} & 124.3\,ms \\
+    Vision (Defects) & Surface Fissures & Spatial Convolution & 1.2\,ms \\
+    Vibration & 3-Axis Bearing Wear & 1D-CNN (ISO-10816) & 1.5\,ms \\
+    Acoustic & Pump Cavitation & Mel-Spectrum Ratio & 1.8\,ms \\
+    On-Device SLM & Operator Diagnostics & Qwen-0.6B GGUF & 45.3\,tok/s \\
+    \bottomrule
+    \end{tabular}%
+    }
+    \end{table}
+    
+    When vibration exceeded the ISO-10816 critical threshold ($>4.5\text{ mm/s}$), the vibration engine classified bearing degradation in 1.5\,ms. The inference
+    worker queried the local language model, which generated a 58-token plain-English diagnosis and repair recommendation in 1.28 seconds at
+    \textbf{45.3\,tokens/second directly on CPU}, with zero external cloud dependencies.
+    
+    \section{Applications and Real-World Use Cases}
+    The Tether-Edge platform addresses mission-critical applications across distributed environments:
+    \begin{itemize}
+        \item \textbf{Industrial Manufacturing \& Predictive Maintenance}: Orchestrates multi-modal inspection on factory floors, combining optical surface defect
+        detection with three-axis vibration monitoring to prevent unexpected equipment downtime.
+        \item \textbf{Smart Cities \& Intelligent Transportation}: Analyzes video streams directly on traffic cameras to monitor congestion and road hazards,
+        minimizing cellular bandwidth usage by transmitting only essential event summaries.
+        \item \textbf{Critical Infrastructure \& Energy Grids}: Monitors remote power substations, pipelines, and wind turbines where network coverage is
+        intermittent, utilizing the on-device language model to deliver autonomous diagnostic guidance.
+        \item \textbf{Healthcare \& Patient Monitoring}: Evaluates patient vitals and room cameras on local bedside gateways, ensuring sensitive health records
+        never leave hospital premises.
+        \item \textbf{Remote \& Tactical Field Deployments}: Maintains continuous situational awareness in disconnected environments where cloud access is
+        unavailable.
+    \end{itemize}
+    
+    \section{Expected Outcomes and Future Scope}
+    
+    \subsection{Expected Outcomes}
+    Tether-Edge delivers a production-grade, lightweight fleet orchestration platform that ensures continuous edge device availability, eliminates runtime memory
+    bloat, and prevents telemetry loss during network outages. System administrators can remotely deploy AI models and safety rules across distributed devices
+    through a unified web dashboard, ensuring reliable performance, zero data loss, and zero-downtime updates.
+    
+    \subsection{Future Scope}
+    Future enhancements for Tether-Edge include:
+    \begin{enumerate}
+        \item \textbf{Dedicated NPU Acceleration}: Integrating hardware Neural Processing Unit (NPU) backends to further accelerate inference on specialized mobile
+        silicon.
+        \item \textbf{Privacy-Preserving Federated Learning}: Enabling decentralized model training across edge fleets using local database storage without
+        centralizing private data.
+        \item \textbf{Deterministic Real-Time Scheduling}: Incorporating real-time Linux kernel scheduling extensions for mission-critical robotic control.
+        \item \textbf{Multi-Modal Visual Question Answering}: Connecting camera image features directly into the on-device language model to enable interactive
+        visual troubleshooting for machine operators.
+    \end{enumerate}
+    
+    \section*{Acknowledgments}
+    The authors express their sincere gratitude to the Department of Computer Science \& Engineering at MIT-ADT University, Pune, and faculty guide Prof. Dr.
+    Harshad Lokhande, for their continuous support, laboratory facilities, and technical guidance throughout this research.
+    
+    \begin{thebibliography}{00}
+    \bibitem{b1} W. Shi, J. Cao, Q. Zhang, Y. Li, and L. Xu, ``Edge Computing: Vision and Challenges,'' \textit{IEEE Internet of Things Journal}, vol. 3, no. 5,
+    pp. 637--646, 2016.
+    \bibitem{b2} F. Bonomi, R. Milito, J. Zhu, and S. Addepalli, ``Fog Computing and Its Role in the Internet of Things,'' \textit{Proc. 1st Edition of the MCC
+    Workshop on Mobile Cloud Computing}, pp. 13--16, 2012.
+    \bibitem{b3} OpenFog Consortium, ``OpenFog Reference Architecture for Fog Computing,'' 2017. (Adopted as IEEE Standard 1934-2018).
+    \bibitem{b4} M. Satyanarayanan, ``The Emergence of Edge Computing,'' \textit{Computer}, vol. 50, no. 1, pp. 30--39, 2017.
+    \bibitem{b5} B. Varghese and R. Buyya, ``Next Generation Cloud Computing: New Trends and Research Directions,'' \textit{Future Generation Computer Systems},
+    vol. 79, pp. 849--861, 2018.
+    \bibitem{b6} B. Burns, B. Grant, D. Oppenheimer, E. Brewer, and J. Wilkes, ``Borg, Omega, and Kubernetes,'' \textit{Communications of the ACM}, vol. 59, no. 5,
+    pp. 50--57, 2016.
+    \bibitem{b7} D. Merkel, ``Docker: Lightweight Linux Containers for Consistent Development and Deployment,'' \textit{Linux Journal}, vol. 2014, no. 239, 2014.
+    \bibitem{b8} C. Pahl and P. Jamshidi, ``Microservices: A Systematic Mapping Study,'' \textit{Proc. 6th Int. Conf. on Cloud Computing and Services Science}, pp.
+    137--146, 2016.
+    \bibitem{b9} Amazon Web Services, ``AWS IoT Greengrass Architecture and Developer Guide,'' AWS Whitepapers, 2024.
+    \bibitem{b10} Microsoft, ``Azure IoT Edge Architecture and Security Documentation,'' Microsoft Docs, 2024.
+    \bibitem{b11} D. Thain, T. Tannenbaum, and M. Livny, ``Distributed Computing in Practice: The Condor Experience,'' \textit{Concurrency and Computation:
+    Practice and Experience}, vol. 17, no. 2--4, pp. 323--356, 2005.
+    \bibitem{b12} WebAssembly Community Group, ``WebAssembly Core Specification and Component Model,'' W3C Recommendation, 2024.
+    \bibitem{b13} A. K. Paul et al., ``Comparative Analysis of Lightweight Kubernetes Distributions for Edge Computing: Performance and Resource Efficiency,''
+    \textit{arXiv preprint arXiv:2504.03656}, 2025.
+    \bibitem{b14} W. Kwon et al., ``Efficient Memory Management for Large Language Model Serving with PagedAttention,'' \textit{Proc. 29th ACM Symp. on Operating
+    Systems Principles (SOSP)}, 2023.
+    \bibitem{b15} G. Gerganov et al., ``llama.cpp: Fast LLM Inference in C/C++ without Dependencies,'' GitHub Repository, 2024.
+    \bibitem{b16} J. Redmon, S. Divvala, R. Girshick, and A. Farhadi, ``You Only Look Once: Unified, Real-Time Object Detection,'' \textit{Proc. IEEE Conf.
+    Computer Vision and Pattern Recognition (CVPR)}, pp. 779--788, 2016.
+    \bibitem{b17} G. Jocher, A. Chaurasia, and J. Qiu, ``Ultralytics YOLOv8 and YOLO11 Architecture Documentation,'' GitHub Repository, 2024.
+    \bibitem{b18} Microsoft, ``ONNX Runtime: Cross-Platform High Performance ML Inferencing Accelerator,'' ONNX Runtime Documentation, 2024.
+    \bibitem{b19} International Organization for Standardization, ``Mechanical Vibration---Evaluation of Machine Vibration by Measurements on Non-Rotating Parts,''
+    \textit{ISO Standard 10816-1}, 2016.
+    \bibitem{b20} O. Abdeljaber et al., ``Real-Time Vibration-Based Structural Damage Detection Using One-Dimensional Convolutional Neural Networks,''
+    \textit{Journal of Sound and Vibration}, vol. 388, pp. 154--170, 2017.
+    \bibitem{b21} Y. Koizumi et al., ``Acoustic Anomaly Detection in Machines Using Mel-Frequency Cepstral Coefficients and Autoencoders,'' \textit{Proc. IEEE Int.
+    Conf. Acoustics, Speech and Signal Processing (ICASSP)}, pp. 855--859, 2019.
+    \bibitem{b22} M. Manso, J. V. Silva, and R. Santos, ``Secure and Reliable Over-The-Air Firmware Updates for Industrial Internet of Things,'' \textit{IEEE
+    Internet of Things Magazine}, vol. 4, no. 3, pp. 62--67, 2021.
+    \end{thebibliography}
+
+    \end{document}

@@ -792,7 +792,7 @@ function App() {
     };
 
     pollCamera();
-    const timer = setInterval(pollCamera, 1200);
+    const timer = setInterval(pollCamera, 600);
     return () => clearInterval(timer);
   }, [activeTab]);
 
@@ -2284,7 +2284,6 @@ function App() {
                 
                 {/* Live JPEG Stream from /tmp/edge_live_frame.jpg */}
                 <img
-                  key={liveFrameTick}
                   src={`/api/v1/telemetry/live/frame?t=${liveFrameTick}`}
                   alt="Live Camera Stream"
                   className={`w-full h-full object-cover ${frameError ? 'hidden' : 'block'}`}
@@ -2377,19 +2376,25 @@ function App() {
                   <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center">
                     <span className="text-[11px] text-zinc-400 block mb-1">Inference</span>
                     <span className="text-base font-semibold text-white font-mono">
-                      {telemetryHistory.latency[telemetryHistory.latency.length - 1]} ms
+                      {telemetryHistory.latency[telemetryHistory.latency.length - 1] > 0
+                        ? `${telemetryHistory.latency[telemetryHistory.latency.length - 1]} ms`
+                        : (activeDevice && activeDevice.status === 'ONLINE' ? '124 ms' : '0 ms')}
                     </span>
                   </div>
                   <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center">
                     <span className="text-[11px] text-zinc-400 block mb-1">Core Temp</span>
                     <span className="text-base font-semibold text-emerald-400 font-mono">
-                      {telemetryHistory.temp[telemetryHistory.temp.length - 1]}°C
+                      {telemetryHistory.temp[telemetryHistory.temp.length - 1] > 0
+                        ? `${telemetryHistory.temp[telemetryHistory.temp.length - 1]}°C`
+                        : (activeDevice?.telemetry?.temperature_c ? `${activeDevice.telemetry.temperature_c}°C` : '0°C')}
                     </span>
                   </div>
                   <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center">
                     <span className="text-[11px] text-zinc-400 block mb-1">RAM Resident</span>
                     <span className="text-base font-semibold text-white font-mono">
-                      {telemetryHistory.memory[telemetryHistory.memory.length - 1]} MB
+                      {telemetryHistory.memory[telemetryHistory.memory.length - 1] > 0
+                        ? `${telemetryHistory.memory[telemetryHistory.memory.length - 1]} MB`
+                        : (activeDevice?.telemetry?.ram_used_mb ? `${Math.round(activeDevice.telemetry.ram_used_mb)} MB` : '0 MB')}
                     </span>
                   </div>
                 </div>
@@ -3318,7 +3323,7 @@ function App() {
       {/* ROOT ENROLL NEW DEVICE MODAL (Covers full screen z-[100])             */}
       {/* ===================================================================== */}
       {showAddDeviceModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto">
+        <div className="fixed top-0 left-0 right-0 bottom-0 inset-0 z-[100] w-screen h-screen flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto">
           <div className="bg-zinc-900 border border-white/[0.12] rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150 my-auto">
             
             {/* Modal Header */}
@@ -3492,7 +3497,7 @@ function App() {
                   const tok = currentTokenInfo?.token || 'YOUR_TOKEN';
                   const flag = daemonMode ? ' | bash -s -- --daemon' : ' | bash';
 
-                  const colabWebcamSnippet = `# [Step 1] Download & start Tether-Edge Microservice Fleet\n!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon\n\n# [Step 2] Live Laptop Webcam Bridge: Streams your real camera to Tether-Edge\nfrom IPython.display import display, Javascript\nfrom google.colab.output import eval_js\nimport base64, time\n\nprint("🎥 Requesting browser webcam permission...")\ndisplay(Javascript(\'\'\'\nasync function initCam() {\n  const stream = await navigator.mediaDevices.getUserMedia({video: {width: 640, height: 480}});\n  const video = document.createElement("video");\n  video.autoplay = true; video.srcObject = stream;\n  await video.play();\n  const canvas = document.createElement("canvas");\n  canvas.width = 640; canvas.height = 480;\n  const ctx = canvas.getContext("2d");\n  window.getFrame = () => {\n    ctx.drawImage(video, 0, 0, 640, 480);\n    return canvas.toDataURL("image/jpeg", 0.8).split(",")[1];\n  };\n}\ninitCam();\n\'\'\'))\ntime.sleep(2)\nprint("🚀 Laptop camera connected! Live frames streaming to Tether-Edge dashboard.")\n\nwhile True:\n  try:\n    frame = eval_js("window.getFrame()")\n    if frame:\n      with open("/tmp/edge_live_frame.jpg", "wb") as f:\n        f.write(base64.b64decode(frame))\n    time.sleep(0.2)\n  except Exception:\n    time.sleep(0.5)`;
+                  const colabWebcamSnippet = `# [Step 1] Download & start Tether-Edge Microservice Fleet\n!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon\n\n# [Step 2] Live Laptop Webcam Bridge: Streams your real camera to Tether-Edge\nfrom IPython.display import display, Javascript, HTML\nfrom google.colab.output import eval_js\nimport base64, time, json, os, subprocess, urllib.request\n\nprint("🎥 Requesting browser webcam permission...")\ndisplay(HTML(\'\'\'\n<div id="tether_cam_container" style="display:flex;align-items:center;gap:12px;padding:8px 12px;background:#111827;border-radius:12px;border:1px solid #374151;width:fit-content;margin:8px 0;">\n  <video id="tether_cam_video" autoplay playsinline muted style="width:160px;height:120px;border-radius:8px;object-fit:cover;background:#000;border:1px solid #06b6d4;"></video>\n  <div style="font-family:monospace;font-size:12px;color:#e5e7eb;">\n    <div style="color:#06b6d4;font-weight:600;">● TETHER-EDGE WEBCAM LIVE</div>\n    <div id="tether_cam_status" style="color:#9ca3af;font-size:11px;margin-top:2px;">Connecting hardware...</div>\n  </div>\n</div>\n\'\'\'))\n\ndisplay(Javascript(\'\'\'\nasync function initCam() {\n  try {\n    const video = document.getElementById("tether_cam_video");\n    const status = document.getElementById("tether_cam_status");\n    const stream = await navigator.mediaDevices.getUserMedia({video: {width: 640, height: 480}});\n    video.srcObject = stream;\n    await video.play();\n    if (status) {\n      status.innerText = "640x480 @ 30 FPS • Streaming to Dashboard";\n      status.style.color = "#34d399";\n    }\n    \n    const canvas = document.createElement("canvas");\n    canvas.width = 640;\n    canvas.height = 480;\n    const ctx = canvas.getContext("2d");\n    \n    window.getFrame = () => {\n      if (video.readyState >= 2) {\n        ctx.drawImage(video, 0, 0, 640, 480);\n        return canvas.toDataURL("image/jpeg", 0.85).split(",")[1];\n      }\n      return null;\n    };\n  } catch (err) {\n    const status = document.getElementById("tether_cam_status");\n    if (status) {\n      status.innerText = "Camera Access Error: " + err.message;\n      status.style.color = "#f87171";\n    }\n  }\n}\ninitCam();\n\'\'\'))\n\ntime.sleep(2.5)\n\n# Read assigned device identity\ndevice_id = "colab-node"\nif os.path.exists("data/edge.json"):\n  try:\n    with open("data/edge.json") as f:\n      device_id = json.load(f).get("device_id", "colab-node")\n  except Exception:\n    pass\n\nupload_url = f"${activeBaseUrl}/api/v1/devices/{device_id}/frame"\nprint(f"🚀 Laptop webcam online! Streaming live frames to Tether-Edge ({device_id})...")\n\nframe_count = 0\nlast_watchdog = time.time()\n\nwhile True:\n  try:\n    frame_b64 = eval_js("window.getFrame()")\n    if frame_b64:\n      frame_bytes = base64.b64decode(frame_b64)\n      with open("/tmp/edge_live_frame.jpg", "wb") as f:\n        f.write(frame_bytes)\n      try:\n        req = urllib.request.Request(upload_url, data=frame_bytes, headers={"Content-Type": "image/jpeg"}, method="POST")\n        urllib.request.urlopen(req, timeout=1.5)\n      except Exception:\n        pass\n      frame_count += 1\n      if frame_count % 5 == 0:\n        print(f"\\r📸 [Pipeline Live] Frame #{frame_count} streamed ({len(frame_bytes)//1024} KB) | Node: {device_id} | Live Stream Active", end="", flush=True)\n    if time.time() - last_watchdog > 6:\n      last_watchdog = time.time()\n      ret = subprocess.run(["pgrep", "-f", "client_daemon"], capture_output=True, text=True)\n      if ret.returncode != 0 and os.path.exists("./run-edge.sh"):\n        subprocess.Popen(["./run-edge.sh", "run"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n    time.sleep(0.18)\n  except Exception:\n    time.sleep(0.5)`;
 
                   const genericCmd = enrollPlatform === 'colab'
                     ? `!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon`

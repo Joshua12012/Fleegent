@@ -40,16 +40,18 @@ router.post('/devices/:id/frame', express.raw({ type: ['image/jpeg', 'applicatio
 router.get('/telemetry/live/frame', (req, res) => {
   const now = Date.now();
 
-  // 1. Check if an active online device has uploaded a live frame within the last 10 seconds
+  // 1. Check if any device has uploaded a live frame within the last 30 seconds
   if (store.latestFrames && store.latestFrames.size > 0) {
-    const onlineDev = Array.from(store.devices.values()).find(d => d.status === 'ONLINE');
-    if (onlineDev && store.latestFrames.has(onlineDev.device_id)) {
-      const entry = store.latestFrames.get(onlineDev.device_id);
-      if (now - entry.received_at < 10000) {
-        res.setHeader('Content-Type', 'image/jpeg');
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        return res.send(entry.buffer);
+    let mostRecent = null;
+    for (const [devId, entry] of store.latestFrames.entries()) {
+      if (!mostRecent || entry.received_at > mostRecent.received_at) {
+        mostRecent = entry;
       }
+    }
+    if (mostRecent && (now - mostRecent.received_at < 30000)) {
+      res.setHeader('Content-Type', 'image/jpeg');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      return res.send(mostRecent.buffer);
     }
   }
 

@@ -34,19 +34,27 @@ echo -e "Target Output Directory: ${CYAN}${RESULTS_DIR}/${NC}\n"
 
 # Track spawned PIDs for teardown
 SPAWNED_PIDS=()
+PRE_EXISTING_DAEMON=$(pgrep -x client_daemon || true)
+PRE_EXISTING_NATS=$(pgrep -f "nats-server -p 4222" || true)
+
 cleanup_on_exit() {
     echo -e "\n${YELLOW}${BOLD}[TEARDOWN] Cleaning up all benchmark processes...${NC}"
     for pid in "${SPAWNED_PIDS[@]}"; do
-        if kill -0 "$pid" 2>/dev/null; then
+        if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
             kill -9 "$pid" 2>/dev/null || true
         fi
     done
     pkill -x inference_worker 2>/dev/null || true
     pkill -x wasm_host 2>/dev/null || true
     pkill -x storage_service 2>/dev/null || true
-    pkill -x client_daemon 2>/dev/null || true
-    pkill -f "nats-server -p 4222" 2>/dev/null || true
-    log_ok "All edge processes stopped cleanly. Zero residual daemons."
+    # Only kill client_daemon and nats if they were spawned by this benchmark
+    if [[ -z "$PRE_EXISTING_DAEMON" ]]; then
+        pkill -x client_daemon 2>/dev/null || true
+    fi
+    if [[ -z "$PRE_EXISTING_NATS" ]]; then
+        pkill -f "nats-server -p 4222" 2>/dev/null || true
+    fi
+    log_ok "Benchmark teardown complete. Running edge services preserved."
 }
 trap cleanup_on_exit EXIT INT TERM
 

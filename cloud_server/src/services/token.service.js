@@ -106,7 +106,7 @@ class TokenService {
     const initialConfig = {
       device_id: deviceId,
       hostname: hostname || 'edge-device',
-      cloud_server_url: process.env.CLOUD_URL || 'http://127.0.0.1:8080',
+      cloud_server_url: store.tunnel_url || process.env.CLOUD_URL || 'http://127.0.0.1:8080',
       nats_url: '127.0.0.1:4222',
       version: 1,
       services: {
