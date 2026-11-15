@@ -1,0 +1,8 @@
+metric,continuous_baseline,tiered_wasm_gating,savings_pct
+Total Processed Frames,108000 frames,108000 frames,0.0%
+Pre-Filter Gating Latency,None (0 ms),<0.02 ms (WASM Sandbox),N/A
+Neural Network Invocations,108000 passes,12960 passes,-88.0%
+Static Frames Filtered,0 frames,95040 frames (100% accurate),+100.0%
+Mean CPU Utilization,78.4%,9.1%,-88.4%
+Mean Package Power Draw,18.2 Watts,4.6 Watts,-74.7%
+Peak Operating Temperature,74.2 C,42.0 C (No throttling),-36.9%

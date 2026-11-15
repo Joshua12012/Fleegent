@@ -181,6 +181,9 @@ case "$COMMAND" in
     test|verify)
         ./run-edge.sh test
         ;;
+    benchmark|bench)
+        ./scripts/benchmark_paper.sh "$@"
+        ;;
     purge|uninstall|clean-all|delete)
         cmd_purge "$@"
         ;;
@@ -189,10 +192,11 @@ case "$COMMAND" in
         echo "Usage: ./edge-ctl [command]"
         echo ""
         echo "Client Lifecycle Commands:"
-        echo "  1. ./edge-ctl setup   - Download/setup all files, dirs, and bundled binaries"
-        echo "  2. ./edge-ctl run     - Run the edge client and connect to the Cloud Server"
-        echo "  3. ./edge-ctl stop    - Gracefully stop edge microservices (preserves data)"
-        echo "  4. ./edge-ctl purge   - Stop all processes and completely purge all files & data"
+        echo "  1. ./edge-ctl setup     - Download/setup all files, dirs, and bundled binaries"
+        echo "  2. ./edge-ctl run       - Run the edge client and connect to the Cloud Server"
+        echo "  3. ./edge-ctl stop      - Gracefully stop edge microservices (preserves data)"
+        echo "  4. ./edge-ctl benchmark - Automated paper metrics benchmark (exports CSV tables & shuts down)"
+        echo "  5. ./edge-ctl purge     - Stop all processes and completely purge all files & data"
         exit 1
         ;;
 esac
