@@ -1,4 +1,3 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 // ==============================================================================
 // TETHER-EDGE — PROFESSIONAL MINIMALIST FLEET CONTROL PLANE
 // ==============================================================================
@@ -22,510 +21,488 @@ const Icon = ({
 }) => {
   switch (name) {
     case 'video':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("polygon", {
-          points: "23 7 16 12 23 17 23 7"
-        }), /*#__PURE__*/_jsx("rect", {
-          x: "1",
-          y: "5",
-          width: "15",
-          height: "14",
-          rx: "2",
-          ry: "2"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("polygon", {
+        points: "23 7 16 12 23 17 23 7"
+      }), /*#__PURE__*/React.createElement("rect", {
+        x: "1",
+        y: "5",
+        width: "15",
+        height: "14",
+        rx: "2",
+        ry: "2"
+      }));
     case 'server':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("rect", {
-          x: "2",
-          y: "2",
-          width: "20",
-          height: "8",
-          rx: "2",
-          ry: "2"
-        }), /*#__PURE__*/_jsx("rect", {
-          x: "2",
-          y: "14",
-          width: "20",
-          height: "8",
-          rx: "2",
-          ry: "2"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "6",
-          y1: "6",
-          x2: "6.01",
-          y2: "6"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "6",
-          y1: "18",
-          x2: "6.01",
-          y2: "18"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("rect", {
+        x: "2",
+        y: "2",
+        width: "20",
+        height: "8",
+        rx: "2",
+        ry: "2"
+      }), /*#__PURE__*/React.createElement("rect", {
+        x: "2",
+        y: "14",
+        width: "20",
+        height: "8",
+        rx: "2",
+        ry: "2"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "6",
+        y1: "6",
+        x2: "6.01",
+        y2: "6"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "6",
+        y1: "18",
+        x2: "6.01",
+        y2: "18"
+      }));
     case 'brain':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("path", {
-          d: "M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04"
-        }), /*#__PURE__*/_jsx("path", {
-          d: "M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("path", {
+        d: "M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04"
+      }));
     case 'shield':
-      return /*#__PURE__*/_jsx("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: /*#__PURE__*/_jsx("path", {
-          d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-        })
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("path", {
+        d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+      }));
     case 'workflow':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("rect", {
-          x: "3",
-          y: "3",
-          width: "6",
-          height: "6",
-          rx: "1.5"
-        }), /*#__PURE__*/_jsx("rect", {
-          x: "15",
-          y: "3",
-          width: "6",
-          height: "6",
-          rx: "1.5"
-        }), /*#__PURE__*/_jsx("rect", {
-          x: "9",
-          y: "15",
-          width: "6",
-          height: "6",
-          rx: "1.5"
-        }), /*#__PURE__*/_jsx("path", {
-          d: "M6 9v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "13",
-          x2: "12",
-          y2: "15"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("rect", {
+        x: "3",
+        y: "3",
+        width: "6",
+        height: "6",
+        rx: "1.5"
+      }), /*#__PURE__*/React.createElement("rect", {
+        x: "15",
+        y: "3",
+        width: "6",
+        height: "6",
+        rx: "1.5"
+      }), /*#__PURE__*/React.createElement("rect", {
+        x: "9",
+        y: "15",
+        width: "6",
+        height: "6",
+        rx: "1.5"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M6 9v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "13",
+        x2: "12",
+        y2: "15"
+      }));
     case 'activity':
-      return /*#__PURE__*/_jsx("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: /*#__PURE__*/_jsx("polyline", {
-          points: "22 12 18 12 15 21 9 3 6 12 2 12"
-        })
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("polyline", {
+        points: "22 12 18 12 15 21 9 3 6 12 2 12"
+      }));
     case 'copy':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("rect", {
-          x: "9",
-          y: "9",
-          width: "13",
-          height: "13",
-          rx: "2",
-          ry: "2"
-        }), /*#__PURE__*/_jsx("path", {
-          d: "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("rect", {
+        x: "9",
+        y: "9",
+        width: "13",
+        height: "13",
+        rx: "2",
+        ry: "2"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+      }));
     case 'check':
-      return /*#__PURE__*/_jsx("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: /*#__PURE__*/_jsx("polyline", {
-          points: "20 6 9 17 4 12"
-        })
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("polyline", {
+        points: "20 6 9 17 4 12"
+      }));
     case 'upload':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("path", {
-          d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-        }), /*#__PURE__*/_jsx("polyline", {
-          points: "17 8 12 3 7 8"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "3",
-          x2: "12",
-          y2: "15"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("path", {
+        d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+      }), /*#__PURE__*/React.createElement("polyline", {
+        points: "17 8 12 3 7 8"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "3",
+        x2: "12",
+        y2: "15"
+      }));
     case 'refresh':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("polyline", {
-          points: "23 4 23 10 17 10"
-        }), /*#__PURE__*/_jsx("polyline", {
-          points: "1 20 1 14 7 14"
-        }), /*#__PURE__*/_jsx("path", {
-          d: "M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("polyline", {
+        points: "23 4 23 10 17 10"
+      }), /*#__PURE__*/React.createElement("polyline", {
+        points: "1 20 1 14 7 14"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
+      }));
     case 'send':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("line", {
-          x1: "22",
-          y1: "2",
-          x2: "11",
-          y2: "13"
-        }), /*#__PURE__*/_jsx("polygon", {
-          points: "22 2 15 22 11 13 2 9 22 2"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("line", {
+        x1: "22",
+        y1: "2",
+        x2: "11",
+        y2: "13"
+      }), /*#__PURE__*/React.createElement("polygon", {
+        points: "22 2 15 22 11 13 2 9 22 2"
+      }));
     case 'cpu':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("rect", {
-          x: "4",
-          y: "4",
-          width: "16",
-          height: "16",
-          rx: "2",
-          ry: "2"
-        }), /*#__PURE__*/_jsx("rect", {
-          x: "9",
-          y: "9",
-          width: "6",
-          height: "6"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "9",
-          y1: "1",
-          x2: "9",
-          y2: "4"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "15",
-          y1: "1",
-          x2: "15",
-          y2: "4"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "9",
-          y1: "20",
-          x2: "9",
-          y2: "23"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "15",
-          y1: "20",
-          x2: "15",
-          y2: "23"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "20",
-          y1: "9",
-          x2: "23",
-          y2: "9"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "20",
-          y1: "14",
-          x2: "23",
-          y2: "14"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "1",
-          y1: "9",
-          x2: "4",
-          y2: "9"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "1",
-          y1: "14",
-          x2: "4",
-          y2: "14"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("rect", {
+        x: "4",
+        y: "4",
+        width: "16",
+        height: "16",
+        rx: "2",
+        ry: "2"
+      }), /*#__PURE__*/React.createElement("rect", {
+        x: "9",
+        y: "9",
+        width: "6",
+        height: "6"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "9",
+        y1: "1",
+        x2: "9",
+        y2: "4"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "15",
+        y1: "1",
+        x2: "15",
+        y2: "4"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "9",
+        y1: "20",
+        x2: "9",
+        y2: "23"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "15",
+        y1: "20",
+        x2: "15",
+        y2: "23"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "20",
+        y1: "9",
+        x2: "23",
+        y2: "9"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "20",
+        y1: "14",
+        x2: "23",
+        y2: "14"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "1",
+        y1: "9",
+        x2: "4",
+        y2: "9"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "1",
+        y1: "14",
+        x2: "4",
+        y2: "14"
+      }));
     case 'zap':
-      return /*#__PURE__*/_jsx("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: /*#__PURE__*/_jsx("polygon", {
-          points: "13 2 3 14 12 14 11 22 21 10 12 10 13 2"
-        })
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("polygon", {
+        points: "13 2 3 14 12 14 11 22 21 10 12 10 13 2"
+      }));
     case 'plus':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "5",
-          x2: "12",
-          y2: "19"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "5",
-          y1: "12",
-          x2: "19",
-          y2: "12"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "5",
+        x2: "12",
+        y2: "19"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "5",
+        y1: "12",
+        x2: "19",
+        y2: "12"
+      }));
     case 'trash':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("polyline", {
-          points: "3 6 5 6 21 6"
-        }), /*#__PURE__*/_jsx("path", {
-          d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("polyline", {
+        points: "3 6 5 6 21 6"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+      }));
     case 'sliders':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("line", {
-          x1: "4",
-          y1: "21",
-          x2: "4",
-          y2: "14"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "4",
-          y1: "10",
-          x2: "4",
-          y2: "3"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "21",
-          x2: "12",
-          y2: "12"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "8",
-          x2: "12",
-          y2: "3"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "20",
-          y1: "21",
-          x2: "20",
-          y2: "16"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "20",
-          y1: "12",
-          x2: "20",
-          y2: "3"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "1",
-          y1: "14",
-          x2: "7",
-          y2: "14"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "9",
-          y1: "8",
-          x2: "15",
-          y2: "8"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "17",
-          y1: "16",
-          x2: "23",
-          y2: "16"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("line", {
+        x1: "4",
+        y1: "21",
+        x2: "4",
+        y2: "14"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "4",
+        y1: "10",
+        x2: "4",
+        y2: "3"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "21",
+        x2: "12",
+        y2: "12"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "8",
+        x2: "12",
+        y2: "3"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "20",
+        y1: "21",
+        x2: "20",
+        y2: "16"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "20",
+        y1: "12",
+        x2: "20",
+        y2: "3"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "1",
+        y1: "14",
+        x2: "7",
+        y2: "14"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "9",
+        y1: "8",
+        x2: "15",
+        y2: "8"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "17",
+        y1: "16",
+        x2: "23",
+        y2: "16"
+      }));
     case 'terminal':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("polyline", {
-          points: "4 17 10 11 4 5"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "19",
-          x2: "20",
-          y2: "19"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("polyline", {
+        points: "4 17 10 11 4 5"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "19",
+        x2: "20",
+        y2: "19"
+      }));
     case 'play':
-      return /*#__PURE__*/_jsx("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: /*#__PURE__*/_jsx("polygon", {
-          points: "5 3 19 12 5 21 5 3"
-        })
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("polygon", {
+        points: "5 3 19 12 5 21 5 3"
+      }));
     case 'stop':
-      return /*#__PURE__*/_jsx("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: /*#__PURE__*/_jsx("rect", {
-          x: "4",
-          y: "4",
-          width: "16",
-          height: "16",
-          rx: "2",
-          ry: "2"
-        })
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("rect", {
+        x: "4",
+        y: "4",
+        width: "16",
+        height: "16",
+        rx: "2",
+        ry: "2"
+      }));
     case 'power':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("path", {
-          d: "M18.36 6.64a9 9 0 1 1-12.73 0"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "2",
-          x2: "12",
-          y2: "12"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("path", {
+        d: "M18.36 6.64a9 9 0 1 1-12.73 0"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "2",
+        x2: "12",
+        y2: "12"
+      }));
     case 'info':
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("circle", {
-          cx: "12",
-          cy: "12",
-          r: "10"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "16",
-          x2: "12",
-          y2: "12"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "8",
-          x2: "12.01",
-          y2: "8"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("circle", {
+        cx: "12",
+        cy: "12",
+        r: "10"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "16",
+        x2: "12",
+        y2: "12"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "8",
+        x2: "12.01",
+        y2: "8"
+      }));
     default:
-      return /*#__PURE__*/_jsxs("svg", {
+      return /*#__PURE__*/React.createElement("svg", {
         className: className,
         viewBox: "0 0 24 24",
         fill: "none",
         stroke: "currentColor",
         strokeWidth: "2",
         strokeLinecap: "round",
-        strokeLinejoin: "round",
-        children: [/*#__PURE__*/_jsx("circle", {
-          cx: "12",
-          cy: "12",
-          r: "10"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "8",
-          x2: "12",
-          y2: "12"
-        }), /*#__PURE__*/_jsx("line", {
-          x1: "12",
-          y1: "16",
-          x2: "12.01",
-          y2: "16"
-        })]
-      });
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("circle", {
+        cx: "12",
+        cy: "12",
+        r: "10"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "8",
+        x2: "12",
+        y2: "12"
+      }), /*#__PURE__*/React.createElement("line", {
+        x1: "12",
+        y1: "16",
+        x2: "12.01",
+        y2: "16"
+      }));
   }
 };
 
@@ -607,203 +584,166 @@ function MetricGraph({
   const theme = colorMap[color] || colorMap.cyan;
   const ptsArr = points.split(' ');
   const lastPoint = ptsArr[ptsArr.length - 1].split(',');
-  return /*#__PURE__*/_jsxs("div", {
-    className: `p-3.5 rounded-2xl bg-zinc-950/80 border transition space-y-2 ${isActive ? 'border-white/[0.08] hover:border-white/[0.14]' : 'border-white/[0.04] opacity-70'}`,
-    children: [/*#__PURE__*/_jsxs("div", {
-      className: "flex items-center justify-between",
-      children: [/*#__PURE__*/_jsxs("div", {
-        children: [/*#__PURE__*/_jsxs("div", {
-          className: "flex items-center space-x-2",
-          children: [/*#__PURE__*/_jsx("span", {
-            className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider",
-            children: title
-          }), isActive ? /*#__PURE__*/_jsxs("span", {
-            className: "flex items-center space-x-1 text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded-full border border-emerald-500/20",
-            children: [/*#__PURE__*/_jsx("span", {
-              className: "w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"
-            }), /*#__PURE__*/_jsx("span", {
-              children: "STREAMING"
-            })]
-          }) : /*#__PURE__*/_jsx("span", {
-            className: "text-[9px] font-mono text-zinc-500 bg-zinc-800/80 px-1.5 py-0.2 rounded-full border border-white/[0.06]",
-            children: "NO ACTIVE SIGNAL"
-          })]
-        }), subtitle && /*#__PURE__*/_jsx("p", {
-          className: "text-[10px] text-zinc-500 mt-0.5",
-          children: subtitle
-        })]
-      }), /*#__PURE__*/_jsx("div", {
-        className: "text-right",
-        children: /*#__PURE__*/_jsx("span", {
-          className: `px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold border ${isActive ? theme.badge : 'bg-zinc-900 text-zinc-500 border-white/[0.06]'}`,
-          children: isActive ? `${currentVal} ${unit}` : `-- ${unit}`
-        })
-      })]
-    }), /*#__PURE__*/_jsx("div", {
-      className: "w-full relative",
-      children: /*#__PURE__*/_jsxs("svg", {
-        viewBox: `0 0 ${width} ${height}`,
-        className: "w-full h-auto overflow-visible select-none",
-        children: [/*#__PURE__*/_jsxs("defs", {
-          children: [/*#__PURE__*/_jsxs("linearGradient", {
-            id: `grad-${color}-${title.replace(/[^a-zA-Z0-9]/g, '')}`,
-            x1: "0%",
-            y1: "0%",
-            x2: "0%",
-            y2: "100%",
-            children: [/*#__PURE__*/_jsx("stop", {
-              offset: "0%",
-              stopColor: theme.stroke,
-              stopOpacity: isActive ? 0.22 : 0.03
-            }), /*#__PURE__*/_jsx("stop", {
-              offset: "100%",
-              stopColor: theme.stroke,
-              stopOpacity: "0.0"
-            })]
-          }), /*#__PURE__*/_jsx("pattern", {
-            id: "tech-grid",
-            width: "16",
-            height: "16",
-            patternUnits: "userSpaceOnUse",
-            children: /*#__PURE__*/_jsx("path", {
-              d: "M 16 0 L 0 0 0 16",
-              fill: "none",
-              stroke: "rgba(255,255,255,0.025)",
-              strokeWidth: "1"
-            })
-          })]
-        }), /*#__PURE__*/_jsx("rect", {
-          x: paddingLeft,
-          y: paddingTop,
-          width: plotWidth,
-          height: plotHeight,
-          fill: "url(#tech-grid)",
-          rx: "4"
-        }), /*#__PURE__*/_jsx("rect", {
-          x: paddingLeft,
-          y: paddingTop,
-          width: plotWidth,
-          height: plotHeight,
-          fill: "none",
-          stroke: "rgba(255,255,255,0.06)",
-          strokeWidth: "1",
-          rx: "4"
-        }), /*#__PURE__*/_jsx("text", {
-          x: paddingLeft - 6,
-          y: paddingTop + 6,
-          fill: "#71717a",
-          fontSize: "8",
-          textAnchor: "end",
-          fontFamily: "monospace",
-          children: Number(dMax).toFixed(0)
-        }), /*#__PURE__*/_jsx("text", {
-          x: paddingLeft - 6,
-          y: paddingTop + plotHeight / 2 + 3,
-          fill: "#52525b",
-          fontSize: "8",
-          textAnchor: "end",
-          fontFamily: "monospace",
-          children: Number((dMax + dMin) / 2).toFixed(0)
-        }), /*#__PURE__*/_jsx("text", {
-          x: paddingLeft - 6,
-          y: paddingTop + plotHeight,
-          fill: "#71717a",
-          fontSize: "8",
-          textAnchor: "end",
-          fontFamily: "monospace",
-          children: Number(dMin).toFixed(0)
-        }), /*#__PURE__*/_jsx("line", {
-          x1: paddingLeft,
-          y1: paddingTop + plotHeight / 2,
-          x2: paddingLeft + plotWidth,
-          y2: paddingTop + plotHeight / 2,
-          stroke: "rgba(255,255,255,0.04)",
-          strokeDasharray: "2 2"
-        }), thresholdY !== null && /*#__PURE__*/_jsxs("g", {
-          children: [/*#__PURE__*/_jsx("line", {
-            x1: paddingLeft,
-            y1: thresholdY,
-            x2: paddingLeft + plotWidth,
-            y2: thresholdY,
-            stroke: "#ef4444",
-            strokeWidth: "1",
-            strokeDasharray: "3 3",
-            opacity: "0.8"
-          }), /*#__PURE__*/_jsx("text", {
-            x: paddingLeft + plotWidth - 4,
-            y: thresholdY - 3,
-            fill: "#ef4444",
-            fontSize: "8",
-            textAnchor: "end",
-            fontFamily: "monospace",
-            children: thresholdLabel || `Limit ${threshold} ${unit}`
-          })]
-        }), /*#__PURE__*/_jsx("path", {
-          d: areaPath,
-          fill: `url(#grad-${color}-${title.replace(/[^a-zA-Z0-9]/g, '')})`
-        }), /*#__PURE__*/_jsx("polyline", {
-          fill: "none",
-          stroke: isActive ? theme.stroke : '#3f3f46',
-          strokeWidth: "1.75",
-          strokeLinecap: "round",
-          strokeLinejoin: "round",
-          points: points
-        }), isActive && /*#__PURE__*/_jsxs("g", {
-          children: [/*#__PURE__*/_jsx("circle", {
-            cx: lastPoint[0],
-            cy: lastPoint[1],
-            r: "4",
-            fill: theme.stroke,
-            opacity: "0.4",
-            className: "animate-ping"
-          }), /*#__PURE__*/_jsx("circle", {
-            cx: lastPoint[0],
-            cy: lastPoint[1],
-            r: "3",
-            fill: theme.stroke
-          }), /*#__PURE__*/_jsx("circle", {
-            cx: lastPoint[0],
-            cy: lastPoint[1],
-            r: "1.5",
-            fill: "#ffffff"
-          })]
-        }), /*#__PURE__*/_jsx("text", {
-          x: paddingLeft,
-          y: height - 4,
-          fill: "#52525b",
-          fontSize: "7.5",
-          textAnchor: "start",
-          fontFamily: "monospace",
-          children: "-30s"
-        }), /*#__PURE__*/_jsx("text", {
-          x: paddingLeft + plotWidth / 2,
-          y: height - 4,
-          fill: "#52525b",
-          fontSize: "7.5",
-          textAnchor: "middle",
-          fontFamily: "monospace",
-          children: "-15s"
-        }), /*#__PURE__*/_jsx("text", {
-          x: paddingLeft + plotWidth,
-          y: height - 4,
-          fill: "#52525b",
-          fontSize: "7.5",
-          textAnchor: "end",
-          fontFamily: "monospace",
-          children: "Now (0s)"
-        })]
-      })
-    }), /*#__PURE__*/_jsxs("div", {
-      className: "flex items-center justify-between text-[10px] text-zinc-500 font-mono px-1",
-      children: [/*#__PURE__*/_jsxs("span", {
-        children: ["Min: ", isActive ? Math.min(...effectiveData) : 0, " ", unit]
-      }), /*#__PURE__*/_jsxs("span", {
-        children: ["Avg: ", isActive ? (effectiveData.reduce((a, b) => a + b, 0) / effectiveData.length).toFixed(1) : 0, " ", unit]
-      }), /*#__PURE__*/_jsxs("span", {
-        children: ["Max: ", isActive ? Math.max(...effectiveData) : 0, " ", unit]
-      })]
-    })]
-  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: `p-3.5 rounded-2xl bg-zinc-950/80 border transition space-y-2 ${isActive ? 'border-white/[0.08] hover:border-white/[0.14]' : 'border-white/[0.04] opacity-70'}`
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider"
+  }, title), isActive ? /*#__PURE__*/React.createElement("span", {
+    className: "flex items-center space-x-1 text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded-full border border-emerald-500/20"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"
+  }), /*#__PURE__*/React.createElement("span", null, "STREAMING")) : /*#__PURE__*/React.createElement("span", {
+    className: "text-[9px] font-mono text-zinc-500 bg-zinc-800/80 px-1.5 py-0.2 rounded-full border border-white/[0.06]"
+  }, "NO ACTIVE SIGNAL")), subtitle && /*#__PURE__*/React.createElement("p", {
+    className: "text-[10px] text-zinc-500 mt-0.5"
+  }, subtitle)), /*#__PURE__*/React.createElement("div", {
+    className: "text-right"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold border ${isActive ? theme.badge : 'bg-zinc-900 text-zinc-500 border-white/[0.06]'}`
+  }, isActive ? `${currentVal} ${unit}` : `-- ${unit}`))), /*#__PURE__*/React.createElement("div", {
+    className: "w-full relative"
+  }, /*#__PURE__*/React.createElement("svg", {
+    viewBox: `0 0 ${width} ${height}`,
+    className: "w-full h-auto overflow-visible select-none"
+  }, /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("linearGradient", {
+    id: `grad-${color}-${title.replace(/[^a-zA-Z0-9]/g, '')}`,
+    x1: "0%",
+    y1: "0%",
+    x2: "0%",
+    y2: "100%"
+  }, /*#__PURE__*/React.createElement("stop", {
+    offset: "0%",
+    stopColor: theme.stroke,
+    stopOpacity: isActive ? 0.22 : 0.03
+  }), /*#__PURE__*/React.createElement("stop", {
+    offset: "100%",
+    stopColor: theme.stroke,
+    stopOpacity: "0.0"
+  })), /*#__PURE__*/React.createElement("pattern", {
+    id: "tech-grid",
+    width: "16",
+    height: "16",
+    patternUnits: "userSpaceOnUse"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M 16 0 L 0 0 0 16",
+    fill: "none",
+    stroke: "rgba(255,255,255,0.025)",
+    strokeWidth: "1"
+  }))), /*#__PURE__*/React.createElement("rect", {
+    x: paddingLeft,
+    y: paddingTop,
+    width: plotWidth,
+    height: plotHeight,
+    fill: "url(#tech-grid)",
+    rx: "4"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: paddingLeft,
+    y: paddingTop,
+    width: plotWidth,
+    height: plotHeight,
+    fill: "none",
+    stroke: "rgba(255,255,255,0.06)",
+    strokeWidth: "1",
+    rx: "4"
+  }), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft - 6,
+    y: paddingTop + 6,
+    fill: "#71717a",
+    fontSize: "8",
+    textAnchor: "end",
+    fontFamily: "monospace"
+  }, Number(dMax).toFixed(0)), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft - 6,
+    y: paddingTop + plotHeight / 2 + 3,
+    fill: "#52525b",
+    fontSize: "8",
+    textAnchor: "end",
+    fontFamily: "monospace"
+  }, Number((dMax + dMin) / 2).toFixed(0)), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft - 6,
+    y: paddingTop + plotHeight,
+    fill: "#71717a",
+    fontSize: "8",
+    textAnchor: "end",
+    fontFamily: "monospace"
+  }, Number(dMin).toFixed(0)), /*#__PURE__*/React.createElement("line", {
+    x1: paddingLeft,
+    y1: paddingTop + plotHeight / 2,
+    x2: paddingLeft + plotWidth,
+    y2: paddingTop + plotHeight / 2,
+    stroke: "rgba(255,255,255,0.04)",
+    strokeDasharray: "2 2"
+  }), thresholdY !== null && /*#__PURE__*/React.createElement("g", null, /*#__PURE__*/React.createElement("line", {
+    x1: paddingLeft,
+    y1: thresholdY,
+    x2: paddingLeft + plotWidth,
+    y2: thresholdY,
+    stroke: "#ef4444",
+    strokeWidth: "1",
+    strokeDasharray: "3 3",
+    opacity: "0.8"
+  }), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft + plotWidth - 4,
+    y: thresholdY - 3,
+    fill: "#ef4444",
+    fontSize: "8",
+    textAnchor: "end",
+    fontFamily: "monospace"
+  }, thresholdLabel || `Limit ${threshold} ${unit}`)), /*#__PURE__*/React.createElement("path", {
+    d: areaPath,
+    fill: `url(#grad-${color}-${title.replace(/[^a-zA-Z0-9]/g, '')})`
+  }), /*#__PURE__*/React.createElement("polyline", {
+    fill: "none",
+    stroke: isActive ? theme.stroke : '#3f3f46',
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    points: points
+  }), isActive && /*#__PURE__*/React.createElement("g", null, /*#__PURE__*/React.createElement("circle", {
+    cx: lastPoint[0],
+    cy: lastPoint[1],
+    r: "4",
+    fill: theme.stroke,
+    opacity: "0.4",
+    className: "animate-ping"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: lastPoint[0],
+    cy: lastPoint[1],
+    r: "3",
+    fill: theme.stroke
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: lastPoint[0],
+    cy: lastPoint[1],
+    r: "1.5",
+    fill: "#ffffff"
+  })), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft,
+    y: height - 4,
+    fill: "#52525b",
+    fontSize: "7.5",
+    textAnchor: "start",
+    fontFamily: "monospace"
+  }, "-30s"), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft + plotWidth / 2,
+    y: height - 4,
+    fill: "#52525b",
+    fontSize: "7.5",
+    textAnchor: "middle",
+    fontFamily: "monospace"
+  }, "-15s"), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft + plotWidth,
+    y: height - 4,
+    fill: "#52525b",
+    fontSize: "7.5",
+    textAnchor: "end",
+    fontFamily: "monospace"
+  }, "Now (0s)"))), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between text-[10px] text-zinc-500 font-mono px-1"
+  }, /*#__PURE__*/React.createElement("span", null, "Min: ", isActive ? Math.min(...effectiveData) : 0, " ", unit), /*#__PURE__*/React.createElement("span", null, "Avg: ", isActive ? (effectiveData.reduce((a, b) => a + b, 0) / effectiveData.length).toFixed(1) : 0, " ", unit), /*#__PURE__*/React.createElement("span", null, "Max: ", isActive ? Math.max(...effectiveData) : 0, " ", unit)));
 }
 
 // ------------------------------------------------------------------------------
@@ -2156,2293 +2096,1694 @@ function App() {
   const onlineDevicesCount = devices.filter(d => d.status === 'ONLINE').length;
   const activeDevice = devices.find(d => d.status === 'ONLINE') || devices[0];
   const selectedNode = pipelineNodes.find(n => n.id === selectedNodeId);
-  return /*#__PURE__*/_jsxs("div", {
-    className: "min-h-screen flex flex-col bg-[#090a0f] text-zinc-100 font-sans selection:bg-indigo-500 selection:text-white",
-    children: [notification && /*#__PURE__*/_jsxs("div", {
-      className: "fixed top-5 right-5 z-50 flex items-center space-x-2.5 px-4 py-2.5 rounded-full border shadow-2xl text-xs font-medium bg-zinc-900/95 border-zinc-700/80 text-zinc-200 backdrop-blur-md animate-in fade-in slide-in-from-top-3 duration-200",
-      children: [/*#__PURE__*/_jsx("span", {
-        className: `w-2 h-2 rounded-full ${notification.type === 'error' ? 'bg-rose-500 ring-4 ring-rose-500/20' : 'bg-emerald-400 ring-4 ring-emerald-400/20'}`
-      }), /*#__PURE__*/_jsx("span", {
-        children: notification.text
-      })]
-    }), /*#__PURE__*/_jsxs("header", {
-      className: "sticky top-0 z-40 backdrop-blur-xl bg-[#090a0f]/80 border-b border-white/[0.06] px-6 py-3.5 flex items-center justify-between",
-      children: [/*#__PURE__*/_jsxs("div", {
-        className: "flex items-center space-x-3",
-        children: [/*#__PURE__*/_jsx("div", {
-          className: "w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-400 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-bold text-xs tracking-wider",
-          children: "TE"
-        }), /*#__PURE__*/_jsx("div", {
-          children: /*#__PURE__*/_jsxs("div", {
-            className: "flex items-center space-x-2",
-            children: [/*#__PURE__*/_jsx("span", {
-              className: "font-semibold text-sm tracking-tight text-white",
-              children: "Tether-Edge"
-            }), /*#__PURE__*/_jsx("span", {
-              className: "text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-zinc-400 border border-white/[0.05]",
-              children: "Control Plane"
-            })]
-          })
-        })]
-      }), /*#__PURE__*/_jsx("nav", {
-        className: "flex items-center space-x-1 p-1 rounded-full bg-white/[0.04] border border-white/[0.08] shadow-inner text-xs",
-        children: [{
-          id: 'live',
-          label: 'Live Stream',
-          icon: 'video'
-        }, {
-          id: 'pipeline',
-          label: 'Pipeline Graph',
-          icon: 'workflow'
-        }, {
-          id: 'fleet',
-          label: 'Fleet Devices',
-          icon: 'server',
-          badge: devices.length
-        }, {
-          id: 'catalog',
-          label: 'AI Models',
-          icon: 'brain',
-          badge: catalog.length
-        }, {
-          id: 'security',
-          label: 'Security',
-          icon: 'shield'
-        }].map(tab => {
-          const isActive = activeTab === tab.id;
-          return /*#__PURE__*/_jsxs("button", {
-            onClick: () => setActiveTab(tab.id),
-            className: `flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${isActive ? 'bg-white text-zinc-950 shadow-md shadow-white/10' : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'}`,
-            children: [/*#__PURE__*/_jsx(Icon, {
-              name: tab.icon,
-              className: "w-3.5 h-3.5"
-            }), /*#__PURE__*/_jsx("span", {
-              children: tab.label
-            }), tab.badge !== undefined && /*#__PURE__*/_jsx("span", {
-              className: `text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-zinc-200 text-zinc-900' : 'bg-white/[0.08] text-zinc-400'}`,
-              children: tab.badge
-            })]
-          }, tab.id);
-        })
-      }), /*#__PURE__*/_jsxs("div", {
-        className: "flex items-center space-x-3 text-xs",
-        children: [/*#__PURE__*/_jsxs("div", {
-          className: "flex items-center space-x-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06]",
-          children: [/*#__PURE__*/_jsx("span", {
-            className: `w-2 h-2 rounded-full ${onlineDevicesCount > 0 ? 'bg-emerald-400 shadow-sm shadow-emerald-400 animate-pulse' : 'bg-zinc-600'}`
-          }), /*#__PURE__*/_jsx("span", {
-            className: "text-zinc-300 font-medium",
-            children: onlineDevicesCount > 0 ? `${onlineDevicesCount} Online` : 'Awaiting Nodes'
-          })]
-        }), /*#__PURE__*/_jsxs("button", {
-          onClick: () => setShowTerminalDrawer(!showTerminalDrawer),
-          title: "Open Diagnostic Edge Terminal",
-          className: `flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition ${showTerminalDrawer ? 'bg-cyan-500 text-zinc-950 font-semibold shadow-md shadow-cyan-500/20' : 'bg-white/[0.04] text-zinc-300 hover:text-white hover:bg-white/[0.08] border border-white/[0.08]'}`,
-          children: [/*#__PURE__*/_jsx(Icon, {
-            name: "terminal",
-            className: "w-3.5 h-3.5"
-          }), /*#__PURE__*/_jsx("span", {
-            children: "Terminal"
-          })]
-        }), /*#__PURE__*/_jsx("button", {
-          onClick: fetchAllData,
-          title: "Refresh state",
-          className: "p-2 rounded-full text-zinc-400 hover:text-white hover:bg-white/[0.06] transition",
-          children: /*#__PURE__*/_jsx(Icon, {
-            name: "refresh",
-            className: "w-3.5 h-3.5"
-          })
-        })]
-      })]
-    }), /*#__PURE__*/_jsxs("main", {
-      className: "flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col",
-      children: [activeTab === 'pipeline' && /*#__PURE__*/_jsxs("div", {
-        className: "space-y-5",
-        children: [/*#__PURE__*/_jsxs("div", {
-          className: "flex flex-wrap items-center justify-between gap-3 p-4 rounded-3xl bg-zinc-950/70 border border-white/[0.08] shadow-lg",
-          children: [/*#__PURE__*/_jsxs("div", {
-            className: "space-y-0.5",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2",
-              children: [/*#__PURE__*/_jsx("h3", {
-                className: "text-sm font-semibold text-white",
-                children: "Edge Data Pipeline Architecture"
-              }), /*#__PURE__*/_jsxs("span", {
-                className: "text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20",
-                children: [pipelineNodes.length, " Nodes • ", pipelineConnections.length, " Cables"]
-              })]
-            }), /*#__PURE__*/_jsx("p", {
-              className: "text-xs text-zinc-400",
-              children: "Drag nodes to organize. Click pins to connect. Customize parameters directly on each node."
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "flex items-center flex-wrap gap-2 text-xs",
-            children: [/*#__PURE__*/_jsxs("button", {
-              onClick: handleClearPipeline,
-              className: "px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-xl text-xs font-medium transition shadow-sm flex items-center space-x-1.5",
-              title: "Clear all nodes to build your pipeline completely from scratch",
-              children: [/*#__PURE__*/_jsx(Icon, {
-                name: "trash",
-                className: "w-3.5 h-3.5 text-rose-400"
-              }), /*#__PURE__*/_jsx("span", {
-                children: "Clear (From Scratch)"
-              })]
-            }), /*#__PURE__*/_jsxs("select", {
-              onChange: e => handleLoadPreset(e.target.value),
-              className: "bg-zinc-900 border border-white/10 rounded-xl px-3 py-1.5 text-zinc-300 hover:text-white text-xs focus:outline-none cursor-pointer",
-              defaultValue: "multimodal",
-              children: [/*#__PURE__*/_jsx("option", {
-                value: "multimodal",
-                children: "Preset: Industrial Sentinel (Full)"
-              }), /*#__PURE__*/_jsx("option", {
-                value: "vision_only",
-                children: "Preset: Vision-Only Edge"
-              }), /*#__PURE__*/_jsx("option", {
-                value: "predictive",
-                children: "Preset: Predictive Maintenance"
-              }), /*#__PURE__*/_jsx("option", {
-                value: "blank",
-                children: "Blank Canvas (Start from Scratch)"
-              })]
-            }), /*#__PURE__*/_jsxs("button", {
-              onClick: handleAutoArrange,
-              className: "px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/10 rounded-xl text-xs font-medium transition shadow-sm flex items-center space-x-1.5",
-              title: "Auto-arrange nodes neatly in sequence",
-              children: [/*#__PURE__*/_jsx(Icon, {
-                name: "sliders",
-                className: "w-3.5 h-3.5 text-indigo-400"
-              }), /*#__PURE__*/_jsx("span", {
-                children: "Auto-Arrange"
-              })]
-            }), /*#__PURE__*/_jsx("button", {
-              onClick: handleResetPan,
-              className: "px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/10 rounded-xl text-xs font-medium transition shadow-sm",
-              title: "Reset Pan Center (0,0)",
-              children: "Center View"
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "relative",
-              children: [/*#__PURE__*/_jsxs("button", {
-                onClick: () => {
-                  setShowAddNodeMenu(!showAddNodeMenu);
-                  setNodeSearchTerm('');
-                  setNodeFilterCat('All');
-                },
-                className: "px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-medium transition shadow-sm flex items-center space-x-1.5",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "plus",
-                  className: "w-3.5 h-3.5"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "Add Node"
-                })]
-              }), showAddNodeMenu && /*#__PURE__*/_jsxs("div", {
-                className: "absolute right-0 top-11 z-50 w-80 bg-zinc-900/95 backdrop-blur-md border border-white/[0.12] rounded-2xl shadow-2xl p-3 space-y-2.5 animate-in fade-in zoom-in-95 duration-100 text-xs",
-                children: [/*#__PURE__*/_jsxs("div", {
-                  className: "relative",
-                  children: [/*#__PURE__*/_jsx("input", {
-                    type: "text",
-                    placeholder: "Search nodes (e.g. YOLO, Camera, SLM)...",
-                    value: nodeSearchTerm,
-                    onChange: e => setNodeSearchTerm(e.target.value),
-                    autoFocus: true,
-                    className: "w-full bg-black/50 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500"
-                  }), nodeSearchTerm && /*#__PURE__*/_jsx("button", {
-                    onClick: () => setNodeSearchTerm(''),
-                    className: "absolute right-2.5 top-2 text-zinc-500 hover:text-white text-[10px]",
-                    children: "✕"
-                  })]
-                }), /*#__PURE__*/_jsx("div", {
-                  className: "flex items-center space-x-1 overflow-x-auto pb-1 text-[10px]",
-                  children: ['All', 'Sensors', 'Gatekeepers', 'AI Engines', 'Storage & Sinks'].map(cat => /*#__PURE__*/_jsx("button", {
-                    onClick: () => setNodeFilterCat(cat),
-                    className: `px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition ${nodeFilterCat === cat ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white/[0.04] text-zinc-400 hover:text-zinc-200'}`,
-                    children: cat
-                  }, cat))
-                }), /*#__PURE__*/_jsx("div", {
-                  className: "max-h-64 overflow-y-auto space-y-1 pr-1 overscroll-contain",
-                  children: (() => {
-                    const filtered = Object.entries(NODE_LIBRARY).filter(([key, item]) => {
-                      const matchCat = nodeFilterCat === 'All' || item.category === nodeFilterCat;
-                      const matchSearch = !nodeSearchTerm || item.title.toLowerCase().includes(nodeSearchTerm.toLowerCase()) || item.subtitle.toLowerCase().includes(nodeSearchTerm.toLowerCase()) || item.category.toLowerCase().includes(nodeSearchTerm.toLowerCase());
-                      return matchCat && matchSearch;
-                    });
-                    if (filtered.length === 0) {
-                      return /*#__PURE__*/_jsx("div", {
-                        className: "py-6 text-center text-zinc-500 text-xs",
-                        children: "No matching nodes found."
-                      });
-                    }
-                    return filtered.map(([key, item]) => /*#__PURE__*/_jsxs("button", {
-                      onClick: () => {
-                        handleAddNodeFromLibrary(key);
-                        setShowAddNodeMenu(false);
-                      },
-                      className: "w-full text-left p-2 rounded-xl hover:bg-white/[0.08] bg-white/[0.02] border border-white/[0.04] flex items-center justify-between group transition",
-                      children: [/*#__PURE__*/_jsxs("div", {
-                        className: "flex items-center space-x-2.5 min-w-0",
-                        children: [/*#__PURE__*/_jsx("div", {
-                          className: "w-6 h-6 rounded-lg bg-white/[0.05] group-hover:bg-indigo-500/20 text-indigo-400 flex items-center justify-center transition",
-                          children: /*#__PURE__*/_jsx(Icon, {
-                            name: item.icon,
-                            className: "w-3.5 h-3.5"
-                          })
-                        }), /*#__PURE__*/_jsxs("div", {
-                          className: "truncate",
-                          children: [/*#__PURE__*/_jsx("div", {
-                            className: "font-medium text-xs text-zinc-200 group-hover:text-white transition truncate",
-                            children: item.title
-                          }), /*#__PURE__*/_jsx("div", {
-                            className: "text-[10px] text-zinc-500 truncate",
-                            children: item.subtitle
-                          })]
-                        })]
-                      }), /*#__PURE__*/_jsx("span", {
-                        className: "text-[10px] font-mono text-zinc-500 group-hover:text-indigo-400 pl-2",
-                        children: "+ Add"
-                      })]
-                    }, key));
-                  })()
-                })]
-              })]
-            }), /*#__PURE__*/_jsxs("button", {
-              onClick: handleDeployPipelineToEdge,
-              className: "px-3.5 py-1.5 bg-white text-zinc-950 hover:bg-zinc-200 rounded-xl text-xs font-medium transition shadow-sm flex items-center space-x-1.5",
-              children: [/*#__PURE__*/_jsx(Icon, {
-                name: "zap",
-                className: "w-3.5 h-3.5 text-zinc-950"
-              }), /*#__PURE__*/_jsx("span", {
-                children: "Deploy to Fleet"
-              })]
-            })]
-          })]
-        }), connectingSource && /*#__PURE__*/_jsxs("div", {
-          className: "p-2.5 rounded-xl bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs flex items-center justify-between",
-          children: [/*#__PURE__*/_jsxs("span", {
-            children: ["Wiring cable from ", /*#__PURE__*/_jsx("strong", {
-              children: pipelineNodes.find(n => n.id === connectingSource.nodeId)?.title
-            }), ". Click any target node to connect."]
-          }), /*#__PURE__*/_jsx("button", {
-            onClick: () => setConnectingSource(null),
-            className: "px-2 py-0.5 bg-cyan-900/50 hover:bg-cyan-800 rounded-md text-[11px]",
-            children: "Cancel"
-          })]
-        }), /*#__PURE__*/_jsxs("div", {
-          ref: canvasRef,
-          onMouseDown: handleCanvasMouseDown,
-          onMouseMove: handleCanvasMouseMove,
-          onClick: () => {
-            if (showAddNodeMenu) setShowAddNodeMenu(false);
-            if (connectingSource) setConnectingSource(null);
-          },
-          style: {
-            minHeight: '560px',
-            height: '580px',
-            cursor: isPanning ? 'grabbing' : 'default'
-          },
-          className: "relative w-full rounded-3xl overflow-hidden canvas-dots border border-white/[0.08] shadow-2xl select-none",
-          children: [/*#__PURE__*/_jsxs("div", {
-            className: "absolute top-3 right-3 z-30 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] text-zinc-400 font-mono pointer-events-none flex items-center space-x-2",
-            children: [/*#__PURE__*/_jsx("span", {
-              className: "w-1.5 h-1.5 rounded-full bg-cyan-400"
-            }), /*#__PURE__*/_jsxs("span", {
-              children: ["Canvas: (", Math.round(panOffset.x), ", ", Math.round(panOffset.y), ")"]
-            }), /*#__PURE__*/_jsx("span", {
-              className: "text-zinc-600",
-              children: "•"
-            }), /*#__PURE__*/_jsx("span", {
-              children: "Drag background to pan"
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            style: {
-              transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
-              willChange: 'transform'
-            },
-            className: "absolute inset-0 pointer-events-none",
-            children: [/*#__PURE__*/_jsxs("svg", {
-              className: "absolute inset-0 w-[4000px] h-[4000px] pointer-events-none overflow-visible",
-              children: [/*#__PURE__*/_jsx("defs", {
-                children: /*#__PURE__*/_jsxs("linearGradient", {
-                  id: "cable-grad",
-                  x1: "0%",
-                  y1: "0%",
-                  x2: "100%",
-                  y2: "0%",
-                  children: [/*#__PURE__*/_jsx("stop", {
-                    offset: "0%",
-                    stopColor: "#06b6d4"
-                  }), /*#__PURE__*/_jsx("stop", {
-                    offset: "100%",
-                    stopColor: "#8b5cf6"
-                  })]
-                })
-              }), pipelineConnections.map(conn => {
-                const fromNode = pipelineNodes.find(n => n.id === conn.from);
-                const toNode = pipelineNodes.find(n => n.id === conn.to);
-                if (!fromNode || !toNode) return null;
-                const startX = fromNode.x + 260;
-                const startY = fromNode.y + 36;
-                const endX = toNode.x;
-                const endY = toNode.y + 36;
-                const dx = endX - startX;
-                const curvature = Math.max(35, Math.abs(dx) * 0.45);
-                const pathD = `M ${startX} ${startY} C ${startX + curvature} ${startY}, ${endX - curvature} ${endY}, ${endX} ${endY}`;
-                const midX = (startX + endX) / 2;
-                const midY = (startY + endY) / 2;
-                return /*#__PURE__*/_jsxs("g", {
-                  className: "pointer-events-auto group cursor-pointer cable-hit",
-                  children: [/*#__PURE__*/_jsx("path", {
-                    d: pathD,
-                    fill: "none",
-                    stroke: "transparent",
-                    strokeWidth: "18",
-                    onClick: e => {
-                      e.stopPropagation();
-                      handleDeleteConnection(conn.id);
-                    }
-                  }), /*#__PURE__*/_jsx("path", {
-                    d: pathD,
-                    fill: "none",
-                    stroke: "#06b6d4",
-                    strokeWidth: "5",
-                    opacity: "0.18"
-                  }), /*#__PURE__*/_jsx("path", {
-                    d: pathD,
-                    fill: "none",
-                    stroke: "#0284c7",
-                    strokeWidth: "2.5",
-                    strokeLinecap: "round"
-                  }), /*#__PURE__*/_jsx("path", {
-                    d: pathD,
-                    fill: "none",
-                    stroke: "#67e8f9",
-                    strokeWidth: "1.5",
-                    strokeLinecap: "round",
-                    className: "wire-animated"
-                  }), /*#__PURE__*/_jsxs("g", {
-                    className: "opacity-0 group-hover:opacity-100 transition duration-150 cursor-pointer",
-                    onClick: e => {
-                      e.stopPropagation();
-                      handleDeleteConnection(conn.id);
-                    },
-                    children: [/*#__PURE__*/_jsx("circle", {
-                      cx: midX,
-                      cy: midY,
-                      r: "9",
-                      fill: "#ef4444"
-                    }), /*#__PURE__*/_jsx("text", {
-                      x: midX,
-                      y: midY + 3.5,
-                      textAnchor: "middle",
-                      fill: "#ffffff",
-                      fontSize: "10",
-                      fontWeight: "bold",
-                      children: "✕"
-                    })]
-                  })]
-                }, conn.id);
-              }), connectingSource && mouseCanvasPos && (() => {
-                const src = pipelineNodes.find(n => n.id === connectingSource.nodeId);
-                if (!src) return null;
-                const startX = src.x + 260;
-                const startY = src.y + 36;
-                const endX = mouseCanvasPos.x;
-                const endY = mouseCanvasPos.y;
-                const dx = endX - startX;
-                const curvature = Math.max(30, Math.abs(dx) * 0.4);
-                return /*#__PURE__*/_jsx("path", {
-                  d: `M ${startX} ${startY} C ${startX + curvature} ${startY}, ${endX - curvature} ${endY}, ${endX} ${endY}`,
-                  fill: "none",
-                  stroke: "#a855f7",
-                  strokeWidth: "2.5",
-                  strokeDasharray: "4 4",
-                  opacity: "0.9"
-                });
-              })()]
-            }), pipelineNodes.map(node => {
-              const isSelected = selectedNodeId === node.id;
-              const colorMap = {
-                emerald: {
-                  bar: 'bg-emerald-500',
-                  badge: 'bg-emerald-500/10 text-emerald-400',
-                  border: 'border-emerald-500/30'
-                },
-                indigo: {
-                  bar: 'bg-indigo-500',
-                  badge: 'bg-indigo-500/10 text-indigo-400',
-                  border: 'border-indigo-500/30'
-                },
-                cyan: {
-                  bar: 'bg-cyan-500',
-                  badge: 'bg-cyan-500/10 text-cyan-400',
-                  border: 'border-cyan-500/30'
-                },
-                amber: {
-                  bar: 'bg-amber-500',
-                  badge: 'bg-amber-500/10 text-amber-400',
-                  border: 'border-amber-500/30'
-                },
-                violet: {
-                  bar: 'bg-violet-500',
-                  badge: 'bg-violet-500/10 text-violet-400',
-                  border: 'border-violet-500/30'
-                },
-                rose: {
-                  bar: 'bg-rose-500',
-                  badge: 'bg-rose-500/10 text-rose-400',
-                  border: 'border-rose-500/30'
-                }
-              };
-              const theme = colorMap[node.color] || colorMap.cyan;
-              return /*#__PURE__*/_jsxs("div", {
-                style: {
-                  position: 'absolute',
-                  left: `${node.x}px`,
-                  top: `${node.y}px`,
-                  width: '260px'
-                },
-                onClick: e => {
-                  e.stopPropagation();
-                  if (connectingSource && connectingSource.nodeId !== node.id) {
-                    handleEndConnect(node.id);
-                  } else {
-                    setSelectedNodeId(node.id);
-                  }
-                },
-                className: `rounded-2xl bg-zinc-900/95 backdrop-blur-md border shadow-2xl pointer-events-auto node-card select-none ${isSelected ? 'border-white/60 ring-2 ring-indigo-500/60 shadow-indigo-500/20 z-20' : 'border-white/[0.12] hover:border-white/30 z-10'}`,
-                children: [/*#__PURE__*/_jsx("div", {
-                  className: `h-1.5 w-full rounded-t-2xl ${theme.bar}`
-                }), node.inputs > 0 && /*#__PURE__*/_jsx("div", {
-                  onClick: e => {
-                    e.stopPropagation();
-                    handleEndConnect(node.id);
-                  },
-                  className: `absolute -left-2.5 top-8 w-5 h-5 rounded-full bg-zinc-950 border-2 border-indigo-400 flex items-center justify-center cursor-pointer transition hover:scale-125 z-30 port-pin ${connectingSource && connectingSource.nodeId !== node.id ? 'ring-4 ring-cyan-400 animate-pulse' : ''}`,
-                  title: "Input Port: Click to link incoming cable",
-                  children: /*#__PURE__*/_jsx("div", {
-                    className: "w-1.5 h-1.5 rounded-full bg-white"
-                  })
-                }), node.outputs > 0 && /*#__PURE__*/_jsx("div", {
-                  onClick: e => {
-                    e.stopPropagation();
-                    handleStartConnect(node.id);
-                  },
-                  className: "absolute -right-2.5 top-8 w-5 h-5 rounded-full bg-zinc-950 border-2 border-cyan-400 flex items-center justify-center cursor-pointer transition hover:scale-125 z-30 port-pin",
-                  title: "Output Port: Click to drag wire to another node",
-                  children: /*#__PURE__*/_jsx("div", {
-                    className: "w-1.5 h-1.5 rounded-full bg-white"
-                  })
-                }), /*#__PURE__*/_jsxs("div", {
-                  onMouseDown: e => handleNodeMouseDown(e, node.id),
-                  className: "p-3 pb-2 flex items-center justify-between border-b border-white/[0.06] cursor-grab active:cursor-grabbing hover:bg-white/[0.03] rounded-t-2xl",
-                  children: [/*#__PURE__*/_jsxs("div", {
-                    className: "flex items-center space-x-2 truncate",
-                    children: [/*#__PURE__*/_jsx("div", {
-                      className: `w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${theme.badge}`,
-                      children: /*#__PURE__*/_jsx(Icon, {
-                        name: node.icon,
-                        className: "w-3.5 h-3.5"
-                      })
-                    }), /*#__PURE__*/_jsxs("div", {
-                      className: "truncate",
-                      children: [/*#__PURE__*/_jsx("h4", {
-                        className: "text-xs font-semibold text-white leading-tight truncate",
-                        children: node.title
-                      }), /*#__PURE__*/_jsx("span", {
-                        className: "text-[10px] text-zinc-400 block truncate",
-                        children: node.subtitle
-                      })]
-                    })]
-                  }), /*#__PURE__*/_jsxs("div", {
-                    className: "flex items-center space-x-1 shrink-0",
-                    children: [/*#__PURE__*/_jsxs("span", {
-                      className: "text-[9px] font-mono text-zinc-500 px-1 rounded bg-white/[0.04]",
-                      children: [node.x, ",", node.y]
-                    }), /*#__PURE__*/_jsx("button", {
-                      onClick: e => {
-                        e.stopPropagation();
-                        handleDeleteNode(node.id);
-                      },
-                      className: "text-zinc-500 hover:text-rose-400 p-1 rounded-md transition text-xs shrink-0",
-                      title: "Delete Node",
-                      children: "✕"
-                    })]
-                  })]
-                }), /*#__PURE__*/_jsxs("div", {
-                  className: "p-3 space-y-2 text-[11px]",
-                  onMouseDown: e => e.stopPropagation(),
-                  children: [node.type === 'sensor_cam' && /*#__PURE__*/_jsxs("div", {
-                    className: "space-y-1",
-                    children: [/*#__PURE__*/_jsxs("div", {
-                      className: "flex items-center justify-between text-zinc-400",
-                      children: [/*#__PURE__*/_jsx("span", {
-                        children: "Capture Rate:"
-                      }), /*#__PURE__*/_jsxs("span", {
-                        className: "font-mono text-white font-medium",
-                        children: [node.config?.fps || 5, " FPS"]
-                      })]
-                    }), /*#__PURE__*/_jsx("input", {
-                      type: "range",
-                      min: "1",
-                      max: "30",
-                      value: node.config?.fps || 5,
-                      onMouseDown: e => e.stopPropagation(),
-                      onChange: e => handleUpdateNodeConfig(node.id, 'fps', Number(e.target.value)),
-                      className: "w-full accent-emerald-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
-                    })]
-                  }), node.type === 'wasm_filter' && /*#__PURE__*/_jsxs("div", {
-                    className: "space-y-1",
-                    children: [/*#__PURE__*/_jsxs("div", {
-                      className: "flex items-center justify-between text-zinc-400",
-                      children: [/*#__PURE__*/_jsx("span", {
-                        children: "ISO-10816 Limit:"
-                      }), /*#__PURE__*/_jsxs("span", {
-                        className: "font-mono text-white font-medium",
-                        children: [node.config?.threshold || 4.5, " mm/s"]
-                      })]
-                    }), /*#__PURE__*/_jsx("input", {
-                      type: "range",
-                      min: "1.0",
-                      max: "8.0",
-                      step: "0.5",
-                      value: node.config?.threshold || 4.5,
-                      onMouseDown: e => e.stopPropagation(),
-                      onChange: e => handleUpdateNodeConfig(node.id, 'threshold', Number(e.target.value)),
-                      className: "w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
-                    })]
-                  }), node.type === 'custom_rule' && /*#__PURE__*/_jsxs("div", {
-                    className: "space-y-2",
-                    children: [/*#__PURE__*/_jsxs("div", {
-                      className: "grid grid-cols-2 gap-1.5",
-                      children: [/*#__PURE__*/_jsxs("div", {
-                        children: [/*#__PURE__*/_jsx("span", {
-                          className: "text-[9px] text-zinc-500 uppercase font-mono block",
-                          children: "Condition Metric"
-                        }), /*#__PURE__*/_jsxs("select", {
-                          value: node.config?.metric || 'confidence',
-                          onMouseDown: e => e.stopPropagation(),
-                          onChange: e => {
-                            const m = e.target.value;
-                            const defVal = m === 'confidence' ? 70 : m === 'motion' ? 12 : m === 'latency' ? 150 : m === 'temperature' ? 80 : m === 'vibration' ? 4.5 : 75;
-                            handleUpdateNodeConfig(node.id, 'metric', m);
-                            handleUpdateNodeConfig(node.id, 'threshold', defVal);
-                          },
-                          className: "w-full bg-zinc-950 border border-white/10 rounded-lg px-1.5 py-1 text-white text-[10px] focus:outline-none cursor-pointer",
-                          children: [/*#__PURE__*/_jsx("option", {
-                            value: "confidence",
-                            children: "Confidence (%)"
-                          }), /*#__PURE__*/_jsx("option", {
-                            value: "motion",
-                            children: "Motion Delta (%)"
-                          }), /*#__PURE__*/_jsx("option", {
-                            value: "latency",
-                            children: "Inference Latency (ms)"
-                          }), /*#__PURE__*/_jsx("option", {
-                            value: "temperature",
-                            children: "Core Temp (°C)"
-                          }), /*#__PURE__*/_jsx("option", {
-                            value: "vibration",
-                            children: "Vibration (mm/s)"
-                          }), /*#__PURE__*/_jsx("option", {
-                            value: "audio",
-                            children: "Acoustic (dB)"
-                          })]
-                        })]
-                      }), /*#__PURE__*/_jsxs("div", {
-                        children: [/*#__PURE__*/_jsx("span", {
-                          className: "text-[9px] text-zinc-500 uppercase font-mono block",
-                          children: "Operator"
-                        }), /*#__PURE__*/_jsxs("select", {
-                          value: node.config?.operator || '>=',
-                          onMouseDown: e => e.stopPropagation(),
-                          onChange: e => handleUpdateNodeConfig(node.id, 'operator', e.target.value),
-                          className: "w-full bg-zinc-950 border border-white/10 rounded-lg px-1.5 py-1 text-white text-[10px] focus:outline-none font-mono cursor-pointer",
-                          children: [/*#__PURE__*/_jsx("option", {
-                            value: ">=",
-                            children: ">= (GTE)"
-                          }), /*#__PURE__*/_jsx("option", {
-                            value: "<=",
-                            children: "<= (LTE)"
-                          }), /*#__PURE__*/_jsx("option", {
-                            value: ">",
-                            children: "> (GT)"
-                          }), /*#__PURE__*/_jsx("option", {
-                            value: "<",
-                            children: "< (LT)"
-                          })]
-                        })]
-                      })]
-                    }), /*#__PURE__*/_jsxs("div", {
-                      className: "flex items-center justify-between text-zinc-400 text-[10px]",
-                      children: [/*#__PURE__*/_jsx("span", {
-                        children: "Trigger Threshold:"
-                      }), /*#__PURE__*/_jsxs("span", {
-                        className: "font-mono text-white font-medium",
-                        children: [node.config?.threshold != null ? node.config.threshold : 70, node.config?.metric === 'confidence' || node.config?.metric === 'motion' ? '%' : node.config?.metric === 'latency' ? ' ms' : node.config?.metric === 'temperature' ? '°C' : node.config?.metric === 'vibration' ? ' mm/s' : ' dB']
-                      })]
-                    }), /*#__PURE__*/_jsx("input", {
-                      type: "range",
-                      min: node.config?.metric === 'vibration' ? 0.5 : node.config?.metric === 'temperature' ? 40 : 1,
-                      max: node.config?.metric === 'vibration' ? 10 : node.config?.metric === 'latency' ? 500 : 100,
-                      step: node.config?.metric === 'vibration' ? 0.1 : 1,
-                      value: node.config?.threshold != null ? node.config.threshold : 70,
-                      onMouseDown: e => e.stopPropagation(),
-                      onChange: e => handleUpdateNodeConfig(node.id, 'threshold', Number(e.target.value)),
-                      className: "w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
-                    })]
-                  }), node.type === 'ai_yolo' && /*#__PURE__*/_jsxs("div", {
-                    className: "space-y-1",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      className: "text-[10px] text-zinc-400 block",
-                      children: "Active ONNX Model:"
-                    }), /*#__PURE__*/_jsx("select", {
-                      value: node.config?.model || 'yolov8n-coco',
-                      onMouseDown: e => e.stopPropagation(),
-                      onChange: e => handleUpdateNodeConfig(node.id, 'model', e.target.value),
-                      className: "w-full bg-zinc-950 border border-white/10 rounded-lg px-2 py-1 text-white text-[11px] focus:outline-none",
-                      children: catalog.map(m => /*#__PURE__*/_jsx("option", {
-                        value: m.model_id,
-                        children: m.name.split(' (')[0]
-                      }, m.model_id))
-                    })]
-                  }), node.type === 'sensor_imu' && /*#__PURE__*/_jsxs("div", {
-                    className: "flex items-center justify-between text-zinc-400",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      children: "Sample Rate:"
-                    }), /*#__PURE__*/_jsx("span", {
-                      className: "font-mono text-emerald-300",
-                      children: "2000 Hz (±16g)"
-                    })]
-                  }), node.type === 'ai_vibration' && /*#__PURE__*/_jsxs("div", {
-                    className: "flex items-center justify-between text-zinc-400",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      children: "Harmonic FFT:"
-                    }), /*#__PURE__*/_jsx("span", {
-                      className: "font-mono text-cyan-300",
-                      children: "1024-pt SIMD"
-                    })]
-                  }), node.type === 'storage_wal' && /*#__PURE__*/_jsxs("div", {
-                    className: "flex items-center justify-between text-zinc-400",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      children: "Ring Buffer:"
-                    }), /*#__PURE__*/_jsxs("span", {
-                      className: "font-mono text-amber-300",
-                      children: [node.config?.ring_buffer || 512, " frames"]
-                    })]
-                  }), node.type === 'cloud_sync' && /*#__PURE__*/_jsxs("div", {
-                    className: "flex items-center justify-between text-zinc-400",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      children: "Security:"
-                    }), /*#__PURE__*/_jsx("span", {
-                      className: "font-mono text-violet-300",
-                      children: "ChaCha20-Poly1305"
-                    })]
-                  })]
-                }), /*#__PURE__*/_jsxs("div", {
-                  className: "px-3 py-1.5 bg-black/40 border-t border-white/[0.04] rounded-b-2xl flex items-center justify-between",
-                  children: [/*#__PURE__*/_jsx("span", {
-                    className: "text-[9px] text-zinc-500 uppercase tracking-wider",
-                    children: node.type.split('_')[0]
-                  }), /*#__PURE__*/_jsx("button", {
-                    onClick: e => {
-                      e.stopPropagation();
-                      handleStartConnect(node.id);
-                    },
-                    className: "text-[10px] text-indigo-400 hover:text-indigo-300 font-medium flex items-center space-x-0.5",
-                    children: /*#__PURE__*/_jsx("span", {
-                      children: "Wire ➔"
-                    })
-                  })]
-                })]
-              }, node.id);
-            })]
-          }), pipelineNodes.length === 0 && /*#__PURE__*/_jsxs("div", {
-            className: "absolute inset-0 flex flex-col items-center justify-center p-6 text-center select-none z-10 pointer-events-none",
-            children: [/*#__PURE__*/_jsx("div", {
-              className: "w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-3 shadow-xl",
-              children: /*#__PURE__*/_jsx(Icon, {
-                name: "sliders",
-                className: "w-7 h-7"
-              })
-            }), /*#__PURE__*/_jsx("h4", {
-              className: "font-medium text-sm text-zinc-200",
-              children: "Blank Canvas Ready"
-            }), /*#__PURE__*/_jsx("p", {
-              className: "text-xs max-w-sm text-zinc-400 mt-1 mb-4",
-              children: "Assemble your edge pipeline from scratch. Click any button below to drop your first block:"
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "flex flex-wrap items-center justify-center gap-2 pointer-events-auto",
-              children: [/*#__PURE__*/_jsxs("button", {
-                onClick: () => handleAddNodeFromLibrary('sensor_cam'),
-                className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1.5",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "video",
-                  className: "w-3.5 h-3.5"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "Camera Stream"
-                })]
-              }), /*#__PURE__*/_jsxs("button", {
-                onClick: () => handleAddNodeFromLibrary('ai_yolo'),
-                className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-cyan-400 border border-cyan-500/30 transition flex items-center space-x-1.5",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "brain",
-                  className: "w-3.5 h-3.5"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "YOLOv8 Vision"
-                })]
-              }), /*#__PURE__*/_jsxs("button", {
-                onClick: () => handleAddNodeFromLibrary('sensor_imu'),
-                className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1.5",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "activity",
-                  className: "w-3.5 h-3.5"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "Vibration IMU"
-                })]
-              }), /*#__PURE__*/_jsxs("button", {
-                onClick: () => handleAddNodeFromLibrary('custom_rule'),
-                className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-indigo-400 border border-indigo-500/30 transition flex items-center space-x-1.5",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "shield",
-                  className: "w-3.5 h-3.5"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "Custom Rule"
-                })]
-              }), /*#__PURE__*/_jsxs("button", {
-                onClick: () => handleAddNodeFromLibrary('storage_wal'),
-                className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-amber-400 border border-amber-500/30 transition flex items-center space-x-1.5",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "cpu",
-                  className: "w-3.5 h-3.5"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "SQLite WAL"
-                })]
-              })]
-            })]
-          })]
-        }), selectedNode && /*#__PURE__*/_jsxs("div", {
-          className: "p-4 rounded-3xl bg-zinc-950/70 border border-white/[0.08] shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4",
-          children: [/*#__PURE__*/_jsxs("div", {
-            className: "space-y-1",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2",
-              children: [/*#__PURE__*/_jsxs("span", {
-                className: "text-xs font-semibold text-white",
-                children: [selectedNode.title, " Parameters"]
-              }), /*#__PURE__*/_jsx("span", {
-                className: "px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-mono border border-emerald-500/20",
-                children: "Active"
-              })]
-            }), /*#__PURE__*/_jsx("p", {
-              className: "text-xs text-zinc-400",
-              children: selectedNode.subtitle
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "flex flex-wrap items-center gap-3 text-xs w-full md:w-auto",
-            children: [Object.entries(selectedNode.config || {}).map(([k, v]) => /*#__PURE__*/_jsxs("div", {
-              className: "p-2.5 rounded-xl bg-zinc-900 border border-white/[0.04]",
-              children: [/*#__PURE__*/_jsx("span", {
-                className: "text-[10px] text-zinc-500 block uppercase font-bold",
-                children: k
-              }), /*#__PURE__*/_jsx("span", {
-                className: "font-mono text-zinc-200 text-[11px] font-medium",
-                children: String(v)
-              })]
-            }, k)), /*#__PURE__*/_jsx("button", {
-              onClick: () => handleDeleteNode(selectedNode.id),
-              className: "p-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-medium transition",
-              children: "Delete Node"
-            })]
-          })]
-        }), (() => {
-          const isDeviceOnline = devices.some(d => d.status === 'ONLINE');
-          const hasVision = pipelineNodes.some(n => n.type.startsWith('ai_yolo') || n.type.startsWith('ai_'));
-          const hasImu = pipelineNodes.some(n => n.type === 'sensor_imu' || n.type === 'ai_vibration');
-          const hasMic = pipelineNodes.some(n => n.type === 'sensor_mic' || n.type === 'ai_audio');
-          return /*#__PURE__*/_jsxs("div", {
-            className: "space-y-3 pt-2",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center justify-between px-1",
-              children: [/*#__PURE__*/_jsxs("div", {
-                className: "flex items-center space-x-2",
-                children: [/*#__PURE__*/_jsx("h4", {
-                  className: "text-xs font-semibold text-zinc-300 uppercase tracking-wider",
-                  children: "Pipeline Telemetry Streams"
-                }), /*#__PURE__*/_jsx("span", {
-                  className: `text-[10px] font-mono px-2 py-0.5 rounded-full ${isDeviceOnline ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-400'}`,
-                  children: isDeviceOnline ? '● Live Hardware Feed (1.5s)' : '○ Standby — Awaiting Edge Connection'
-                })]
-              }), /*#__PURE__*/_jsx("span", {
-                className: "text-[11px] text-zinc-500 font-mono",
-                children: "Real Edge Hardware Feedback"
-              })]
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
-              children: [/*#__PURE__*/_jsx(MetricGraph, {
-                title: "Inference Latency",
-                subtitle: hasVision ? 'Pure Rust ONNX Runtime Engine' : 'Not configured in active pipeline',
-                data: telemetryHistory.latency,
-                unit: "ms",
-                min: 0,
-                max: 200,
-                color: "cyan",
-                threshold: 150,
-                thresholdLabel: "Budget: 150 ms",
-                isActive: isDeviceOnline && hasVision
-              }), /*#__PURE__*/_jsx(MetricGraph, {
-                title: "Vibration Velocity (ISO-10816)",
-                subtitle: hasImu ? 'Accelerometer Harmonics' : 'Not configured in active pipeline',
-                data: telemetryHistory.vibration,
-                unit: "mm/s",
-                min: 0,
-                max: 6.0,
-                color: "emerald",
-                threshold: 4.5,
-                thresholdLabel: "Limit: 4.5 mm/s",
-                isActive: isDeviceOnline && hasImu
-              }), /*#__PURE__*/_jsx(MetricGraph, {
-                title: "Acoustic Sound Pressure",
-                subtitle: hasMic ? 'MEMS Microphone Decibels' : 'Not configured in active pipeline',
-                data: telemetryHistory.audio,
-                unit: "dB",
-                min: 0,
-                max: 100,
-                color: "amber",
-                threshold: 75,
-                thresholdLabel: "Alert: 75 dB",
-                isActive: isDeviceOnline && hasMic
-              }), /*#__PURE__*/_jsx(MetricGraph, {
-                title: "CPU Utilization",
-                subtitle: isDeviceOnline ? 'Host Kernel Load' : 'Awaiting device heartbeat',
-                data: telemetryHistory.cpu,
-                unit: "%",
-                min: 0,
-                max: 100,
-                color: "violet",
-                isActive: isDeviceOnline
-              }), /*#__PURE__*/_jsx(MetricGraph, {
-                title: "RAM Resident Footprint",
-                subtitle: isDeviceOnline ? 'RSS Memory Alloc' : 'Awaiting device heartbeat',
-                data: telemetryHistory.memory,
-                unit: "MB",
-                min: 0,
-                max: 120,
-                color: "cyan",
-                isActive: isDeviceOnline
-              }), /*#__PURE__*/_jsx(MetricGraph, {
-                title: "Sensor Core Temperature",
-                subtitle: isDeviceOnline ? 'Hardware Thermal Zone' : 'Awaiting device heartbeat',
-                data: telemetryHistory.temp,
-                unit: "°C",
-                min: 0,
-                max: 90,
-                color: "rose",
-                threshold: 85,
-                thresholdLabel: "Thermal Cap: 85°C",
-                isActive: isDeviceOnline
-              })]
-            })]
-          });
-        })()]
-      }), activeTab === 'live' && /*#__PURE__*/_jsxs("div", {
-        className: "flex-1 flex flex-col space-y-6",
-        children: [/*#__PURE__*/_jsxs("div", {
-          className: "flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06]",
-          children: [/*#__PURE__*/_jsxs("div", {
-            children: [/*#__PURE__*/_jsx("h2", {
-              className: "text-base font-semibold text-white",
-              children: "Live Vision & Neural Telemetry"
-            }), /*#__PURE__*/_jsx("p", {
-              className: "text-xs text-zinc-400 mt-0.5",
-              children: "Real-time optical inference stream from active edge hardware."
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "flex items-center space-x-3 text-xs",
-            children: [/*#__PURE__*/_jsx("span", {
-              className: "text-zinc-400",
-              children: "Active Model:"
-            }), /*#__PURE__*/_jsx("select", {
-              value: activeModel,
-              disabled: isDeployingModel,
-              onChange: e => handleDeployModel(e.target.value),
-              className: "bg-zinc-900 border border-white/[0.12] rounded-xl px-3.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 cursor-pointer shadow-sm",
-              children: catalog.map(m => /*#__PURE__*/_jsxs("option", {
-                value: m.model_id,
-                children: [m.name, " [", m.modality, "]"]
-              }, m.model_id))
-            }), /*#__PURE__*/_jsxs("button", {
-              onClick: () => handleDeployCanaryModel(activeModel),
-              disabled: isDeployingModel,
-              title: "Staged Canary: deploy to 1 node, verify 10s, then promote to fleet",
-              className: "px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-medium transition flex items-center space-x-1.5 shadow-sm",
-              children: [/*#__PURE__*/_jsx(Icon, {
-                name: "shield",
-                className: "w-3.5 h-3.5"
-              }), /*#__PURE__*/_jsx("span", {
-                children: "Canary Deploy"
-              })]
-            }), /*#__PURE__*/_jsxs("button", {
-              onClick: () => setActiveTab('pipeline'),
-              className: "px-3.5 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-medium transition flex items-center space-x-1.5 shadow-sm",
-              title: "Switch to visual node graph pipeline editor (TIF Sandbox)",
-              children: [/*#__PURE__*/_jsx(Icon, {
-                name: "workflow",
-                className: "w-3.5 h-3.5 text-indigo-400"
-              }), /*#__PURE__*/_jsx("span", {
-                children: "Pipeline Studio (TIF Sandbox)"
-              })]
-            }), isDeployingModel && /*#__PURE__*/_jsx("span", {
-              className: "text-xs text-indigo-400 animate-pulse",
-              children: "Hot-swapping..."
-            })]
-          })]
-        }), /*#__PURE__*/_jsxs("div", {
-          className: "grid grid-cols-1 lg:grid-cols-3 gap-6 items-start",
-          children: [/*#__PURE__*/_jsxs("div", {
-            className: "lg:col-span-2 relative rounded-3xl overflow-hidden bg-black border border-white/[0.08] shadow-2xl aspect-[4/3] flex items-center justify-center group",
-            children: [/*#__PURE__*/_jsx("img", {
-              src: `/api/v1/telemetry/live/frame?t=${liveFrameTick}`,
-              alt: "Live Camera Stream",
-              className: `w-full h-full object-cover ${frameError ? 'hidden' : 'block'}`,
-              onError: () => setFrameError(true),
-              onLoad: () => setFrameError(false)
-            }), frameError && /*#__PURE__*/_jsxs("div", {
-              className: "w-full h-full flex flex-col items-center justify-center space-y-3 bg-zinc-950/90 text-zinc-500 p-6 text-center",
-              children: [/*#__PURE__*/_jsx("div", {
-                className: "w-12 h-12 rounded-2xl bg-white/[0.04] flex items-center justify-center text-zinc-400",
-                children: /*#__PURE__*/_jsx(Icon, {
-                  name: "video",
-                  className: "w-6 h-6"
-                })
-              }), /*#__PURE__*/_jsx("div", {
-                className: "text-sm font-medium text-zinc-300",
-                children: "Camera Feed Standby"
-              }), /*#__PURE__*/_jsx("p", {
-                className: "text-xs max-w-sm text-zinc-500",
-                children: "Start the edge client on your Raspberry Pi, Jetson, or PC to stream live frames:"
-              }), /*#__PURE__*/_jsx("code", {
-                className: "px-3 py-1 rounded-lg bg-zinc-900 border border-white/[0.08] text-xs font-mono text-zinc-300",
-                children: "./run-edge.sh"
-              })]
-            }), liveDetections.map((det, idx) => {
-              const [x, y, w, h] = det.bbox || [40, 40, 100, 100];
-              const leftPct = x / 640 * 100;
-              const topPct = y / 480 * 100;
-              const widthPct = w / 640 * 100;
-              const heightPct = h / 480 * 100;
-              return /*#__PURE__*/_jsx("div", {
-                style: {
-                  position: 'absolute',
-                  left: `${leftPct}%`,
-                  top: `${topPct}%`,
-                  width: `${widthPct}%`,
-                  height: `${heightPct}%`
-                },
-                className: "border-2 border-emerald-400 bg-emerald-400/10 rounded-lg pointer-events-none transition-all duration-300 shadow-lg",
-                children: /*#__PURE__*/_jsxs("span", {
-                  className: "absolute -top-6 left-0 px-2 py-0.5 rounded-md bg-emerald-500 text-black text-[10px] font-bold tracking-wide uppercase shadow",
-                  children: [det.label, " ", Math.round(det.confidence * 100), "%"]
-                })
-              }, idx);
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "absolute top-4 left-4 flex items-center space-x-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] font-medium text-white",
-              children: [/*#__PURE__*/_jsx("span", {
-                className: "w-2 h-2 rounded-full bg-rose-500 animate-pulse"
-              }), /*#__PURE__*/_jsx("span", {
-                children: "LIVE /dev/video0"
-              }), /*#__PURE__*/_jsx("span", {
-                className: "text-zinc-500",
-                children: "•"
-              }), /*#__PURE__*/_jsx("span", {
-                className: "text-zinc-300",
-                children: "Native Rust ORT"
-              }), /*#__PURE__*/_jsx("button", {
-                onClick: () => setLiveFrameTick(Date.now()),
-                title: "Refresh camera snapshot",
-                className: "ml-1 text-zinc-400 hover:text-cyan-400 transition",
-                children: /*#__PURE__*/_jsx(Icon, {
-                  name: "refresh",
-                  className: "w-3 h-3"
-                })
-              })]
-            }), /*#__PURE__*/_jsx("div", {
-              className: "absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs pointer-events-none",
-              children: /*#__PURE__*/_jsx("div", {
-                className: "flex flex-wrap gap-1.5",
-                children: liveDetections.length === 0 ? /*#__PURE__*/_jsx("span", {
-                  className: "px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-zinc-400 border border-white/10",
-                  children: "Inspecting scene (nominal)"
-                }) : liveDetections.map((d, i) => /*#__PURE__*/_jsxs("span", {
-                  className: "px-2.5 py-1 rounded-lg bg-emerald-500/20 backdrop-blur-md text-emerald-300 border border-emerald-500/40 font-mono text-[11px]",
-                  children: [d.label, " ", Math.round(d.confidence * 100), "%"]
-                }, i))
-              })
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "space-y-4",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "grid grid-cols-3 gap-3",
-              children: [/*#__PURE__*/_jsxs("div", {
-                className: "p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center",
-                children: [/*#__PURE__*/_jsx("span", {
-                  className: "text-[11px] text-zinc-400 block mb-1",
-                  children: "Inference"
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-base font-semibold text-white font-mono",
-                  children: telemetryHistory.latency[telemetryHistory.latency.length - 1] > 0 ? `${telemetryHistory.latency[telemetryHistory.latency.length - 1]} ms` : activeDevice && activeDevice.status === 'ONLINE' ? '124 ms' : '0 ms'
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                className: "p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center",
-                children: [/*#__PURE__*/_jsx("span", {
-                  className: "text-[11px] text-zinc-400 block mb-1",
-                  children: "Core Temp"
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-base font-semibold text-emerald-400 font-mono",
-                  children: telemetryHistory.temp[telemetryHistory.temp.length - 1] > 0 ? `${telemetryHistory.temp[telemetryHistory.temp.length - 1]}°C` : activeDevice?.telemetry?.temperature_c ? `${activeDevice.telemetry.temperature_c}°C` : '0°C'
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                className: "p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center",
-                children: [/*#__PURE__*/_jsx("span", {
-                  className: "text-[11px] text-zinc-400 block mb-1",
-                  children: "RAM Resident"
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-base font-semibold text-white font-mono",
-                  children: telemetryHistory.memory[telemetryHistory.memory.length - 1] > 0 ? `${telemetryHistory.memory[telemetryHistory.memory.length - 1]} MB` : activeDevice?.telemetry?.ram_used_mb ? `${Math.round(activeDevice.telemetry.ram_used_mb)} MB` : '0 MB'
-                })]
-              })]
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between",
-              children: [/*#__PURE__*/_jsxs("div", {
-                className: "flex items-center space-x-2.5",
-                children: [/*#__PURE__*/_jsx("div", {
-                  className: `w-8 h-8 rounded-xl flex items-center justify-center ${driftMetrics?.drift_detected ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}`,
-                  children: /*#__PURE__*/_jsx(Icon, {
-                    name: "activity",
-                    className: "w-4 h-4"
-                  })
-                }), /*#__PURE__*/_jsxs("div", {
-                  children: [/*#__PURE__*/_jsxs("div", {
-                    className: "text-xs font-semibold text-white flex items-center space-x-1.5",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      children: "Confidence & Drift"
-                    }), /*#__PURE__*/_jsx("span", {
-                      className: `text-[10px] px-1.5 py-0.2 rounded-full font-mono ${driftMetrics?.drift_detected ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'}`,
-                      children: driftMetrics?.drift_detected ? 'DRIFT ALERT' : 'STABLE'
-                    })]
-                  }), /*#__PURE__*/_jsxs("div", {
-                    className: "text-[11px] text-zinc-400 mt-0.5",
-                    children: ["Mean: ", /*#__PURE__*/_jsx("span", {
-                      className: "font-mono text-zinc-200",
-                      children: driftMetrics ? `${(driftMetrics.mean_confidence * 100).toFixed(0)}%` : '88%'
-                    }), " • Samples: ", /*#__PURE__*/_jsx("span", {
-                      className: "font-mono text-zinc-200",
-                      children: driftMetrics?.sample_count || 30
-                    })]
-                  })]
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                className: "text-right",
-                children: [/*#__PURE__*/_jsx("span", {
-                  className: "text-[10px] text-zinc-500 block",
-                  children: "Variance"
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-xs font-mono text-zinc-300",
-                  children: driftMetrics ? Number(driftMetrics.variance).toFixed(4) : '0.0040'
-                })]
-              })]
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "p-4 rounded-3xl bg-white/[0.03] border border-white/[0.06] flex flex-col space-y-3",
-              children: [/*#__PURE__*/_jsxs("div", {
-                className: "flex items-center justify-between",
-                children: [/*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center space-x-2",
-                  children: [/*#__PURE__*/_jsx("div", {
-                    className: "w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center",
-                    children: /*#__PURE__*/_jsx(Icon, {
-                      name: "brain",
-                      className: "w-3.5 h-3.5"
-                    })
-                  }), /*#__PURE__*/_jsx("span", {
-                    className: "text-xs font-semibold text-white",
-                    children: "Edge AI Assistant (Qwen SLM)"
-                  })]
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-[10px] px-2 py-0.5 rounded-full bg-indigo-950/60 text-indigo-300 border border-indigo-800/60 font-mono",
-                  children: "Local GGUF"
-                })]
-              }), /*#__PURE__*/_jsx("p", {
-                className: "text-xs text-zinc-400 leading-relaxed",
-                children: "Ask on-device AI to analyze visual targets or inspect machine health."
-              }), /*#__PURE__*/_jsx("div", {
-                className: "flex flex-wrap gap-1.5",
-                children: ["Summarize camera scene", "Check safety compliance", "Diagnose machine health"].map((prompt, idx) => /*#__PURE__*/_jsx("button", {
-                  onClick: () => handleAskAssistant(prompt),
-                  className: "text-[11px] px-2.5 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border border-white/[0.06] transition",
-                  children: prompt
-                }, idx))
-              }), (assistantReply || isAssistantThinking) && /*#__PURE__*/_jsx("div", {
-                className: "p-3 rounded-2xl bg-zinc-950/80 border border-white/[0.08] text-xs text-zinc-200 leading-relaxed min-h-[60px] flex items-center",
-                children: isAssistantThinking ? /*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center space-x-2 text-zinc-400",
-                  children: [/*#__PURE__*/_jsx("span", {
-                    className: "w-2 h-2 rounded-full bg-indigo-400 animate-ping"
-                  }), /*#__PURE__*/_jsx("span", {
-                    children: "Local SLM reasoning..."
-                  })]
-                }) : /*#__PURE__*/_jsx("span", {
-                  children: assistantReply
-                })
-              }), /*#__PURE__*/_jsxs("form", {
-                onSubmit: e => {
-                  e.preventDefault();
-                  handleAskAssistant();
-                },
-                className: "flex items-center space-x-2 pt-1",
-                children: [/*#__PURE__*/_jsx("input", {
-                  type: "text",
-                  placeholder: "Ask edge diagnostic assistant...",
-                  value: assistantPrompt,
-                  onChange: e => setAssistantPrompt(e.target.value),
-                  className: "flex-1 bg-zinc-950 border border-white/[0.1] rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500"
-                }), /*#__PURE__*/_jsx("button", {
-                  type: "submit",
-                  disabled: isAssistantThinking || !assistantPrompt.trim(),
-                  className: "p-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white transition shadow-sm",
-                  children: /*#__PURE__*/_jsx(Icon, {
-                    name: "send",
-                    className: "w-4 h-4"
-                  })
-                })]
-              })]
-            })]
-          })]
-        }), (() => {
-          const isDeviceOnline = devices.some(d => d.status === 'ONLINE');
-          const hasVision = pipelineNodes.some(n => n.type.startsWith('ai_yolo') || n.type.startsWith('ai_'));
-          return /*#__PURE__*/_jsxs("div", {
-            className: "grid grid-cols-1 md:grid-cols-2 gap-4",
-            children: [/*#__PURE__*/_jsx(MetricGraph, {
-              title: "Inference Latency (Native SIMD ORT)",
-              subtitle: hasVision ? 'Active Computer Vision Pipeline' : 'No vision model in pipeline',
-              data: telemetryHistory.latency,
-              unit: "ms",
-              min: 0,
-              max: 200,
-              color: "cyan",
-              threshold: 150,
-              thresholdLabel: "Budget: 150 ms",
-              isActive: isDeviceOnline && hasVision
-            }), /*#__PURE__*/_jsx(MetricGraph, {
-              title: "Host System RAM Footprint",
-              subtitle: isDeviceOnline ? 'Edge Client Resident Memory' : 'Device offline / awaiting heartbeat',
-              data: telemetryHistory.memory,
-              unit: "MB",
-              min: 0,
-              max: 120,
-              color: "emerald",
-              threshold: 90,
-              thresholdLabel: "Cap: 90 MB",
-              isActive: isDeviceOnline
-            })]
-          });
-        })()]
-      }), activeTab === 'fleet' && /*#__PURE__*/_jsxs("div", {
-        className: "space-y-6",
-        children: [/*#__PURE__*/_jsxs("div", {
-          className: "p-6 rounded-3xl bg-gradient-to-br from-indigo-950/30 via-zinc-900/40 to-zinc-950 border border-indigo-500/20 shadow-xl space-y-4",
-          children: [/*#__PURE__*/_jsxs("div", {
-            className: "flex flex-col sm:flex-row sm:items-center justify-between gap-2",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2.5",
-              children: [/*#__PURE__*/_jsx("div", {
-                className: "w-7 h-7 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center",
-                children: /*#__PURE__*/_jsx(Icon, {
-                  name: "zap",
-                  className: "w-4 h-4"
-                })
-              }), /*#__PURE__*/_jsxs("div", {
-                children: [/*#__PURE__*/_jsx("h3", {
-                  className: "font-semibold text-sm text-white",
-                  children: "Zero-Touch Edge Device Provisioning"
-                }), /*#__PURE__*/_jsx("p", {
-                  className: "text-[11px] text-zinc-400",
-                  children: "Streamlined one-line installer — claims hardware ID, stages configs, and boots microservices automatically."
-                })]
-              })]
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2 shrink-0",
-              children: [/*#__PURE__*/_jsxs("button", {
-                onClick: () => setShowAddDeviceModal(true),
-                className: "px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition flex items-center space-x-1.5 cursor-pointer",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "plus",
-                  className: "w-3.5 h-3.5"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "Add Device"
-                })]
-              }), currentTokenInfo && /*#__PURE__*/_jsxs("span", {
-                className: "text-[10px] font-mono px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20",
-                children: ["Token: ", currentTokenInfo.token.substring(0, 16), "... (Active 24h)"]
-              }), /*#__PURE__*/_jsxs("button", {
-                onClick: () => setShowQuickRef(!showQuickRef),
-                className: "px-2.5 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 text-xs font-medium border border-white/[0.08] transition flex items-center space-x-1",
-                title: "Toggle Server & SLM Cheatsheet",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "terminal",
-                  className: "w-3.5 h-3.5 text-indigo-400"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: showQuickRef ? 'Hide Reference' : 'Server & CLI Reference'
-                })]
-              })]
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "flex items-center justify-between text-xs pt-1",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2",
-              children: [/*#__PURE__*/_jsx("span", {
-                className: "text-zinc-400",
-                children: "Execution Mode:"
-              }), /*#__PURE__*/_jsx("button", {
-                onClick: () => setDaemonMode(false),
-                className: `px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${!daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'bg-zinc-800 text-zinc-400 hover:text-white'}`,
-                children: "Live Streaming (Foreground)"
-              }), /*#__PURE__*/_jsx("button", {
-                onClick: () => setDaemonMode(true),
-                className: `px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'bg-zinc-800 text-zinc-400 hover:text-white'}`,
-                children: "Background Daemon (--daemon)"
-              })]
-            }), /*#__PURE__*/_jsx("div", {
-              className: "hidden sm:flex items-center space-x-2 text-[11px] text-zinc-500 font-mono",
-              children: /*#__PURE__*/_jsx("span", {
-                children: "Zero Python • Pure Rust & C++ ELF"
-              })
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 rounded-2xl bg-zinc-950/90 border border-white/[0.08] text-xs gap-3",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-3",
-              children: [/*#__PURE__*/_jsxs("div", {
-                className: "relative flex items-center justify-center",
-                children: [/*#__PURE__*/_jsx("span", {
-                  className: `w-2.5 h-2.5 rounded-full ${tunnelInfo.active ? 'bg-cyan-400 animate-pulse' : 'bg-zinc-600'}`
-                }), tunnelInfo.active && /*#__PURE__*/_jsx("span", {
-                  className: "absolute w-4 h-4 rounded-full bg-cyan-400/30 animate-ping"
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                children: [/*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center space-x-2",
-                  children: [/*#__PURE__*/_jsx("span", {
-                    className: "font-semibold text-white",
-                    children: tunnelInfo.active ? 'Public Cloudflare Tunnel Active' : 'Local Network Mode'
-                  }), tunnelInfo.active ? /*#__PURE__*/_jsx("span", {
-                    className: "text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20",
-                    children: "Colab, Kaggle & WAN Ready"
-                  }) : /*#__PURE__*/_jsx("span", {
-                    className: "text-[10px] text-zinc-500 font-mono",
-                    children: "LAN / Localhost only"
-                  })]
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-[11px] text-zinc-400 font-mono block mt-0.5",
-                  children: tunnelInfo.active ? tunnelInfo.url : `http://${window.location.host}`
-                })]
-              })]
-            }), /*#__PURE__*/_jsx("div", {
-              className: "flex items-center space-x-2 shrink-0 w-full sm:w-auto justify-end",
-              children: tunnelInfo.active ? /*#__PURE__*/_jsxs("button", {
-                onClick: handleStopTunnel,
-                className: "px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-medium transition flex items-center space-x-1.5",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "stop",
-                  className: "w-3.5 h-3.5"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "Stop Tunnel"
-                })]
-              }) : /*#__PURE__*/_jsxs("button", {
-                onClick: handleStartTunnel,
-                disabled: isStartingTunnel,
-                className: "px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-medium transition shadow-sm flex items-center space-x-1.5",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "refresh",
-                  className: `w-3.5 h-3.5 ${isStartingTunnel ? 'animate-spin' : ''}`
-                }), /*#__PURE__*/_jsx("span", {
-                  children: isStartingTunnel ? 'Connecting Cloudflare...' : '🌐 Start Cloudflare Tunnel'
-                })]
-              })
-            })]
-          }), (() => {
-            const isTunnelActive = tunnelInfo.active && tunnelInfo.url;
-            const activeBaseUrl = isTunnelActive ? tunnelInfo.url : `http://${window.location.host}`;
-            const tok = currentTokenInfo?.token || 'YOUR_TOKEN';
-            const cmd = `curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok}${daemonMode ? ' | bash -s -- --daemon' : ' | bash'}`;
-            const colabCmd = `!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon`;
-            const activeDev = devices.find(d => d.status === 'ONLINE') || devices[0];
-            const isClientOnline = activeDev?.status === 'ONLINE';
-            return /*#__PURE__*/_jsxs("div", {
-              className: "space-y-3",
-              children: [isTunnelActive && /*#__PURE__*/_jsxs("div", {
-                className: "p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-zinc-900/60 to-cyan-500/10 border border-amber-500/30 space-y-2 text-xs",
-                children: [/*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center justify-between",
-                  children: [/*#__PURE__*/_jsxs("span", {
-                    className: "font-semibold text-amber-300 flex items-center space-x-1.5",
-                    children: [/*#__PURE__*/_jsx(Icon, {
-                      name: "zap",
-                      className: "w-3.5 h-3.5 text-amber-400"
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: "Google Colab & Kaggle 1-Click Code Cell"
-                    })]
-                  }), /*#__PURE__*/_jsx("span", {
-                    className: "text-[10px] text-zinc-400 font-mono",
-                    children: "Shift+Enter in Colab"
-                  })]
-                }), /*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center space-x-2 bg-black/60 p-2 rounded-xl border border-white/[0.06] font-mono text-xs text-amber-200",
-                  children: [/*#__PURE__*/_jsx("span", {
-                    className: "flex-1 select-all truncate pl-1",
-                    children: colabCmd
-                  }), /*#__PURE__*/_jsx("button", {
-                    onClick: () => {
-                      navigator.clipboard.writeText(colabCmd);
-                      setCopiedColab(true);
-                      setTimeout(() => setCopiedColab(false), 2000);
-                    },
-                    className: "px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg text-xs font-sans font-medium transition shrink-0 border border-amber-500/30",
-                    children: copiedColab ? 'Copied!' : 'Copy Colab Code'
-                  })]
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                className: "flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 bg-zinc-950/80 p-2.5 rounded-2xl border border-white/[0.1] font-mono text-xs text-indigo-300",
-                children: [/*#__PURE__*/_jsx("span", {
-                  className: "flex-1 select-all truncate pl-2",
-                  children: cmd
-                }), /*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center space-x-2 shrink-0",
-                  children: [/*#__PURE__*/_jsxs("button", {
-                    onClick: handleGenerateNewToken,
-                    disabled: isGeneratingToken,
-                    className: "px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-xl text-xs font-sans font-medium transition shadow-sm flex items-center space-x-1.5 border border-white/[0.08]",
-                    title: "Generate a fresh enrollment token",
-                    children: [/*#__PURE__*/_jsx(Icon, {
-                      name: "refresh",
-                      className: `w-3.5 h-3.5 ${isGeneratingToken ? 'animate-spin' : ''}`
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: "New Token"
-                    })]
-                  }), /*#__PURE__*/_jsxs("button", {
-                    onClick: () => {
-                      navigator.clipboard.writeText(cmd);
-                      setCopiedQuick(true);
-                      setTimeout(() => setCopiedQuick(false), 2000);
-                    },
-                    className: "px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-sans font-medium transition shadow-sm flex items-center space-x-1.5",
-                    children: [/*#__PURE__*/_jsx(Icon, {
-                      name: copiedQuick ? "check" : "copy",
-                      className: "w-3.5 h-3.5"
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: copiedQuick ? 'Copied!' : 'Copy Command'
-                    })]
-                  })]
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                className: "flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/[0.04]",
-                children: [/*#__PURE__*/_jsx("p", {
-                  className: "text-[11px] text-zinc-400",
-                  children: "Run the command in your edge terminal, or launch locally right from this browser:"
-                }), /*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center space-x-2",
-                  children: [isClientOnline ? /*#__PURE__*/_jsxs("button", {
-                    onClick: () => handleStopDevice(activeDev.device_id),
-                    className: "px-3 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium transition flex items-center space-x-1.5",
-                    children: [/*#__PURE__*/_jsx(Icon, {
-                      name: "stop",
-                      className: "w-3.5 h-3.5"
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: "Stop Edge Client"
-                    })]
-                  }) : /*#__PURE__*/_jsxs("button", {
-                    onClick: () => handleStartDevice(activeDev?.device_id || 'my-edge-device-6dec8a'),
-                    className: "px-3 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-medium transition flex items-center space-x-1.5",
-                    children: [/*#__PURE__*/_jsx(Icon, {
-                      name: "play",
-                      className: "w-3.5 h-3.5"
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: "▶ Start Edge Client"
-                    })]
-                  }), activeDev && /*#__PURE__*/_jsxs("button", {
-                    onClick: () => handlePurgeDevice(activeDev.device_id),
-                    className: "px-3 py-1 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-medium transition flex items-center space-x-1.5",
-                    title: "Stop microservices and completely wipe local data & databases",
-                    children: [/*#__PURE__*/_jsx(Icon, {
-                      name: "trash",
-                      className: "w-3.5 h-3.5"
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: "Purge & Delete Data"
-                    })]
-                  })]
-                })]
-              })]
-            });
-          })(), showQuickRef && /*#__PURE__*/_jsxs("div", {
-            className: "p-4 rounded-2xl bg-zinc-950/70 border border-white/[0.06] space-y-3 animate-in fade-in duration-150",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center justify-between",
-              children: [/*#__PURE__*/_jsx("span", {
-                className: "text-xs font-semibold text-zinc-300 uppercase tracking-wider",
-                children: "Startup Guidelines & CLI Quick Reference"
-              }), /*#__PURE__*/_jsx("span", {
-                className: "text-[10px] text-zinc-500 font-mono",
-                children: "Edge Platform v1.0"
-              })]
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono",
-              children: [/*#__PURE__*/_jsxs("div", {
-                className: "p-3 rounded-xl bg-zinc-900 border border-white/[0.06] space-y-1.5",
-                children: [/*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center justify-between text-zinc-400 font-sans font-semibold text-[11px]",
-                  children: [/*#__PURE__*/_jsx("span", {
-                    children: "1. Cloud Fleet Server"
-                  }), /*#__PURE__*/_jsx("span", {
-                    className: "text-emerald-400",
-                    children: "Port 8080"
-                  })]
-                }), /*#__PURE__*/_jsx("div", {
-                  className: "text-[11px] text-zinc-300 select-all bg-black/40 p-1.5 rounded border border-white/[0.04]",
-                  children: "node cloud_server/src/server.js"
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                className: "p-3 rounded-xl bg-zinc-900 border border-white/[0.06] space-y-1.5",
-                children: [/*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center justify-between text-zinc-400 font-sans font-semibold text-[11px]",
-                  children: [/*#__PURE__*/_jsx("span", {
-                    children: "2. Local SLM (Llama.cpp)"
-                  }), /*#__PURE__*/_jsx("span", {
-                    className: "text-purple-400",
-                    children: "Port 9931"
-                  })]
-                }), /*#__PURE__*/_jsx("div", {
-                  className: "text-[11px] text-zinc-300 select-all bg-black/40 p-1.5 rounded border border-white/[0.04] truncate",
-                  title: "llama-server --host 127.0.0.1 --port 9931 -m data/models/qwen.gguf -c 1024 -t 4 --reasoning off",
-                  children: "llama-server -p 9931 --reasoning off"
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                className: "p-3 rounded-xl bg-zinc-900 border border-white/[0.06] space-y-1.5",
-                children: [/*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center justify-between text-zinc-400 font-sans font-semibold text-[11px]",
-                  children: [/*#__PURE__*/_jsx("span", {
-                    children: "3. Edge Client CLI"
-                  }), /*#__PURE__*/_jsx("span", {
-                    className: "text-cyan-400",
-                    children: "./edge-ctl"
-                  })]
-                }), /*#__PURE__*/_jsx("div", {
-                  className: "text-[11px] text-zinc-300 select-all bg-black/40 p-1.5 rounded border border-white/[0.04]",
-                  children: "./edge-ctl [run | stop | purge]"
-                })]
-              })]
-            })]
-          })]
-        }), /*#__PURE__*/_jsxs("div", {
-          className: "space-y-3",
-          children: [/*#__PURE__*/_jsxs("div", {
-            className: "flex items-center justify-between px-1",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2",
-              children: [/*#__PURE__*/_jsx("h3", {
-                className: "text-xs font-semibold text-zinc-400 uppercase tracking-wider",
-                children: "Registered Fleet Hardware"
-              }), /*#__PURE__*/_jsxs("span", {
-                className: "text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20",
-                children: [devices.length, " Unique Machine", devices.length === 1 ? '' : 's']
-              })]
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2",
-              children: [/*#__PURE__*/_jsxs("button", {
-                onClick: () => setShowAddDeviceModal(true),
-                className: "px-3 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs text-white font-medium shadow-sm transition flex items-center space-x-1.5 cursor-pointer",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "plus",
-                  className: "w-3.5 h-3.5"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "Enroll Node"
-                })]
-              }), /*#__PURE__*/_jsxs("button", {
-                onClick: handlePruneDevices,
-                className: "px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs text-zinc-400 hover:text-white border border-white/[0.08] transition flex items-center space-x-1.5",
-                title: "Prune duplicate or ghost hardware records",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "refresh",
-                  className: "w-3.5 h-3.5 text-zinc-400"
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "Prune Duplicates"
-                })]
-              })]
-            })]
-          }), devices.length === 0 ? /*#__PURE__*/_jsxs("div", {
-            className: "p-10 rounded-3xl bg-zinc-950/60 border border-white/[0.06] text-center space-y-3",
-            children: [/*#__PURE__*/_jsx("div", {
-              className: "w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto",
-              children: /*#__PURE__*/_jsx(Icon, {
-                name: "server",
-                className: "w-5 h-5"
-              })
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "space-y-1",
-              children: [/*#__PURE__*/_jsx("h4", {
-                className: "text-sm font-semibold text-white",
-                children: "No Edge Devices Enrolled Yet"
-              }), /*#__PURE__*/_jsx("p", {
-                className: "text-xs text-zinc-400 max-w-sm mx-auto",
-                children: "Click \"Enroll Node\" to generate a secure enrollment command for Google Colab, Jetson, Raspberry Pi, or Linux IPCs."
-              })]
-            }), /*#__PURE__*/_jsxs("button", {
-              onClick: () => setShowAddDeviceModal(true),
-              className: "px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/30 inline-flex items-center space-x-2 transition cursor-pointer",
-              children: [/*#__PURE__*/_jsx(Icon, {
-                name: "plus",
-                className: "w-3.5 h-3.5"
-              }), /*#__PURE__*/_jsx("span", {
-                children: "Enroll First Device"
-              })]
-            })]
-          }) : /*#__PURE__*/_jsx("div", {
-            className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
-            children: devices.map(d => {
-              const isOnline = d.status === 'ONLINE';
-              const isStopped = d.status === 'STOPPED';
-              return /*#__PURE__*/_jsxs("div", {
-                className: "p-4 rounded-2xl bg-zinc-900/70 border border-white/[0.08] hover:border-white/[0.16] transition-all duration-200 shadow-md flex flex-col justify-between space-y-3.5",
-                children: [/*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center justify-between pb-3 border-b border-white/[0.06]",
-                  children: [/*#__PURE__*/_jsxs("div", {
-                    className: "flex items-center space-x-2.5 min-w-0 pr-2",
-                    children: [/*#__PURE__*/_jsx("div", {
-                      className: `w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${isOnline ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : isStopped ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-zinc-800 text-zinc-400 border border-white/[0.06]'}`,
-                      children: /*#__PURE__*/_jsx(Icon, {
-                        name: "server",
-                        className: "w-4 h-4"
-                      })
-                    }), /*#__PURE__*/_jsxs("div", {
-                      className: "min-w-0",
-                      children: [/*#__PURE__*/_jsx("h4", {
-                        className: "font-semibold text-white text-xs truncate font-mono tracking-tight",
-                        title: d.device_id,
-                        children: d.device_id
-                      }), /*#__PURE__*/_jsx("p", {
-                        className: "text-[10px] text-zinc-400 truncate mt-0.5",
-                        children: d.hostname || 'edge-device'
-                      })]
-                    })]
-                  }), /*#__PURE__*/_jsxs("div", {
-                    className: "flex items-center space-x-1.5 shrink-0",
-                    children: [d.arch && /*#__PURE__*/_jsx("span", {
-                      className: "text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/[0.05] text-zinc-300 border border-white/[0.08]",
-                      children: d.arch
-                    }), /*#__PURE__*/_jsxs("span", {
-                      className: `px-2 py-0.5 rounded-full text-[10px] font-medium flex items-center space-x-1.5 ${isOnline ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30' : isStopped ? 'bg-amber-500/10 text-amber-300 border border-amber-500/30' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`,
-                      children: [/*#__PURE__*/_jsx("span", {
-                        className: `w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400 animate-pulse' : isStopped ? 'bg-amber-400' : 'bg-zinc-500'}`
-                      }), /*#__PURE__*/_jsx("span", {
-                        children: d.status
-                      })]
-                    })]
-                  })]
-                }), /*#__PURE__*/_jsxs("div", {
-                  className: "grid grid-cols-3 gap-2",
-                  children: [/*#__PURE__*/_jsxs("div", {
-                    className: "p-2 rounded-xl bg-zinc-950/60 border border-white/[0.04] text-center",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      className: "text-[9px] text-zinc-500 uppercase tracking-wider block font-semibold",
-                      children: "CPU"
-                    }), /*#__PURE__*/_jsxs("span", {
-                      className: "font-mono text-zinc-200 font-semibold text-xs mt-0.5 block",
-                      children: [d.telemetry ? Math.round(d.telemetry.cpu_usage_pct) : 0, "%"]
-                    })]
-                  }), /*#__PURE__*/_jsxs("div", {
-                    className: "p-2 rounded-xl bg-zinc-950/60 border border-white/[0.04] text-center",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      className: "text-[9px] text-zinc-500 uppercase tracking-wider block font-semibold",
-                      children: "Temp"
-                    }), /*#__PURE__*/_jsx("span", {
-                      className: "font-mono text-zinc-200 font-semibold text-xs mt-0.5 block",
-                      children: d.telemetry ? `${d.telemetry.temperature_c}°C` : '--'
-                    })]
-                  }), /*#__PURE__*/_jsxs("div", {
-                    className: "p-2 rounded-xl bg-zinc-950/60 border border-white/[0.04] text-center",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      className: "text-[9px] text-zinc-500 uppercase tracking-wider block font-semibold",
-                      children: "RAM"
-                    }), /*#__PURE__*/_jsx("span", {
-                      className: "font-mono text-zinc-200 font-semibold text-xs mt-0.5 block",
-                      children: d.telemetry ? `${Math.round(d.telemetry.ram_used_mb)}M` : '--'
-                    })]
-                  })]
-                }), /*#__PURE__*/_jsxs("div", {
-                  className: "space-y-1.5 text-xs",
-                  children: [/*#__PURE__*/_jsxs("div", {
-                    className: "flex items-center justify-between text-zinc-400",
-                    children: [/*#__PURE__*/_jsxs("span", {
-                      className: "flex items-center space-x-1.5 text-[11px]",
-                      children: [/*#__PURE__*/_jsx(Icon, {
-                        name: "brain",
-                        className: "w-3.5 h-3.5 text-indigo-400"
-                      }), /*#__PURE__*/_jsx("span", {
-                        children: "Active Model"
-                      })]
-                    }), /*#__PURE__*/_jsx("span", {
-                      className: "text-indigo-300 font-mono font-medium text-[11px]",
-                      children: d.active_model && d.active_model !== 'None (Standby)' ? d.active_model : 'yolov8n-coco'
-                    })]
-                  }), /*#__PURE__*/_jsxs("div", {
-                    className: "flex items-center justify-between text-[10px] text-zinc-500",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      children: "Heartbeat"
-                    }), /*#__PURE__*/_jsxs("span", {
-                      className: "font-mono text-emerald-400/90 flex items-center space-x-1",
-                      children: [/*#__PURE__*/_jsx("span", {
-                        className: "w-1 h-1 rounded-full bg-emerald-400"
-                      }), /*#__PURE__*/_jsx("span", {
-                        children: d.seconds_ago ? `${d.seconds_ago}s ago` : 'live now'
-                      })]
-                    })]
-                  })]
-                }), /*#__PURE__*/_jsxs("div", {
-                  className: "pt-2 border-t border-white/[0.06] flex items-center space-x-2",
-                  children: [isOnline ? /*#__PURE__*/_jsxs("button", {
-                    onClick: () => handleStopDevice(d.device_id),
-                    className: "flex-1 py-1.5 px-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm cursor-pointer",
-                    title: "Stop microservices on this device",
-                    children: [/*#__PURE__*/_jsx(Icon, {
-                      name: "stop",
-                      className: "w-3.5 h-3.5"
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: "Stop Client"
-                    })]
-                  }) : /*#__PURE__*/_jsxs("button", {
-                    onClick: () => handleStartDevice(d.device_id),
-                    className: "flex-1 py-1.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm cursor-pointer",
-                    title: "Start edge microservices",
-                    children: [/*#__PURE__*/_jsx(Icon, {
-                      name: "play",
-                      className: "w-3.5 h-3.5"
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: "Start Client"
-                    })]
-                  }), /*#__PURE__*/_jsxs("button", {
-                    onClick: () => handlePurgeDevice(d.device_id),
-                    className: "py-1.5 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm cursor-pointer",
-                    title: "Purge device from fleet",
-                    children: [/*#__PURE__*/_jsx(Icon, {
-                      name: "trash",
-                      className: "w-3.5 h-3.5"
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: "Purge"
-                    })]
-                  })]
-                })]
-              }, d.device_id);
-            })
-          })]
-        })]
-      }), activeTab === 'catalog' && /*#__PURE__*/_jsxs("div", {
-        className: "space-y-6",
-        children: [/*#__PURE__*/_jsxs("div", {
-          className: "flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06]",
-          children: [/*#__PURE__*/_jsxs("div", {
-            children: [/*#__PURE__*/_jsx("h3", {
-              className: "text-sm font-semibold text-white",
-              children: "Model Catalog & Registry"
-            }), /*#__PURE__*/_jsx("p", {
-              className: "text-xs text-zinc-400 mt-0.5",
-              children: "Pre-curated public models and proprietary user-uploaded weights."
-            })]
-          }), /*#__PURE__*/_jsxs("button", {
-            onClick: () => setShowUploadModal(true),
-            className: "px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition shadow-sm flex items-center space-x-2",
-            children: [/*#__PURE__*/_jsx(Icon, {
-              name: "upload",
-              className: "w-3.5 h-3.5"
-            }), /*#__PURE__*/_jsx("span", {
-              children: "Upload Custom Model"
-            })]
-          })]
-        }), showUploadModal && /*#__PURE__*/_jsx("div", {
-          className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md",
-          children: /*#__PURE__*/_jsxs("div", {
-            className: "bg-zinc-900 border border-white/[0.12] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "p-4 border-b border-white/[0.08] flex items-center justify-between",
-              children: [/*#__PURE__*/_jsx("h3", {
-                className: "font-semibold text-white text-sm",
-                children: "Upload Custom Model Weights"
-              }), /*#__PURE__*/_jsx("button", {
-                onClick: () => setShowUploadModal(false),
-                className: "text-zinc-500 hover:text-white text-sm p-1",
-                children: "✕"
-              })]
-            }), /*#__PURE__*/_jsxs("form", {
-              onSubmit: handleUploadModel,
-              className: "p-5 space-y-4 text-xs",
-              children: [/*#__PURE__*/_jsxs("div", {
-                children: [/*#__PURE__*/_jsx("label", {
-                  className: "block text-zinc-300 mb-1 font-medium",
-                  children: "Model Name"
-                }), /*#__PURE__*/_jsx("input", {
-                  type: "text",
-                  required: true,
-                  placeholder: "e.g. Worker Safety PPE Detector",
-                  value: uploadName,
-                  onChange: e => setUploadName(e.target.value),
-                  className: "w-full bg-zinc-950 border border-white/[0.1] rounded-xl px-3 py-2 text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500"
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                className: "grid grid-cols-2 gap-3",
-                children: [/*#__PURE__*/_jsxs("div", {
-                  children: [/*#__PURE__*/_jsx("label", {
-                    className: "block text-zinc-300 mb-1 font-medium",
-                    children: "Modality"
-                  }), /*#__PURE__*/_jsxs("select", {
-                    value: uploadModality,
-                    onChange: e => setUploadModality(e.target.value),
-                    className: "w-full bg-zinc-950 border border-white/[0.1] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500",
-                    children: [/*#__PURE__*/_jsx("option", {
-                      value: "Vision",
-                      children: "Vision (ONNX)"
-                    }), /*#__PURE__*/_jsx("option", {
-                      value: "Vibration",
-                      children: "Vibration (1D-CNN)"
-                    }), /*#__PURE__*/_jsx("option", {
-                      value: "Audio",
-                      children: "Audio (Acoustic)"
-                    }), /*#__PURE__*/_jsx("option", {
-                      value: "Text",
-                      children: "Text (GGUF SLM)"
-                    })]
-                  })]
-                }), /*#__PURE__*/_jsxs("div", {
-                  children: [/*#__PURE__*/_jsx("label", {
-                    className: "block text-zinc-300 mb-1 font-medium",
-                    children: "Model File (.onnx / .gguf)"
-                  }), /*#__PURE__*/_jsx("input", {
-                    type: "file",
-                    required: true,
-                    onChange: e => setUploadFile(e.target.files[0]),
-                    className: "w-full text-zinc-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:bg-zinc-800 file:text-white hover:file:bg-zinc-700 cursor-pointer"
-                  })]
-                })]
-              }), uploadModality === 'Vision' && /*#__PURE__*/_jsxs("div", {
-                children: [/*#__PURE__*/_jsx("label", {
-                  className: "block text-zinc-300 mb-1 font-medium",
-                  children: "Custom Class Labels (Comma Separated)"
-                }), /*#__PURE__*/_jsx("input", {
-                  type: "text",
-                  placeholder: "e.g. hardhat, safety_vest, person, boots",
-                  value: uploadClasses,
-                  onChange: e => setUploadClasses(e.target.value),
-                  className: "w-full bg-zinc-950 border border-white/[0.1] rounded-xl px-3 py-2 text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500"
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-[10px] text-zinc-500 mt-1 block",
-                  children: "Leave empty to use automatic COCO-80 labels or generic class_0, class_1 mapping."
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                children: [/*#__PURE__*/_jsx("label", {
-                  className: "block text-zinc-300 mb-1 font-medium",
-                  children: "Description"
-                }), /*#__PURE__*/_jsx("textarea", {
-                  rows: "2",
-                  placeholder: "Purpose and deployment scenarios for this model...",
-                  value: uploadDescription,
-                  onChange: e => setUploadDescription(e.target.value),
-                  className: "w-full bg-zinc-950 border border-white/[0.1] rounded-xl px-3 py-2 text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500"
-                })]
-              }), /*#__PURE__*/_jsxs("div", {
-                className: "flex items-center justify-end space-x-2 pt-2 border-t border-white/[0.08]",
-                children: [/*#__PURE__*/_jsx("button", {
-                  type: "button",
-                  onClick: () => setShowUploadModal(false),
-                  className: "px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium",
-                  children: "Cancel"
-                }), /*#__PURE__*/_jsx("button", {
-                  type: "submit",
-                  disabled: isUploading,
-                  className: "px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium disabled:opacity-50",
-                  children: isUploading ? 'Uploading...' : 'Upload & Register'
-                })]
-              })]
-            })]
-          })
-        }), /*#__PURE__*/_jsx("div", {
-          className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
-          children: catalog.map(m => /*#__PURE__*/_jsxs("div", {
-            className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.18] transition flex flex-col justify-between space-y-4 shadow-sm group",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "space-y-2",
-              children: [/*#__PURE__*/_jsxs("div", {
-                className: "flex items-start justify-between",
-                children: [/*#__PURE__*/_jsx("div", {
-                  className: "w-9 h-9 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center group-hover:scale-105 transition",
-                  children: /*#__PURE__*/_jsx(Icon, {
-                    name: m.modality === 'Vision' ? 'video' : m.modality === 'Text' ? 'brain' : 'zap',
-                    className: "w-4 h-4"
-                  })
-                }), /*#__PURE__*/_jsxs("span", {
-                  className: "px-2.5 py-0.5 rounded-full bg-white/[0.06] text-zinc-300 text-[10px] font-mono border border-white/[0.05]",
-                  children: [m.format, " • ", m.size_mb, " MB"]
-                })]
-              }), /*#__PURE__*/_jsx("h4", {
-                className: "font-semibold text-white text-sm",
-                children: m.name
-              }), /*#__PURE__*/_jsx("p", {
-                className: "text-xs text-zinc-400 leading-relaxed line-clamp-2",
-                children: m.description
-              })]
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "pt-2 border-t border-white/[0.06] flex items-center justify-between",
-              children: [/*#__PURE__*/_jsx("span", {
-                className: "text-[10px] font-mono text-zinc-500 truncate max-w-[120px]",
-                children: m.model_id
-              }), /*#__PURE__*/_jsx("button", {
-                onClick: () => handleDeployModel(m.model_id),
-                className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white text-zinc-300 hover:text-black text-xs font-medium transition",
-                children: "Deploy to Fleet"
-              })]
-            })]
-          }, m.model_id))
-        })]
-      }), activeTab === 'security' && /*#__PURE__*/_jsxs("div", {
-        className: "space-y-6 max-w-4xl",
-        children: [/*#__PURE__*/_jsxs("div", {
-          className: "p-5 rounded-3xl bg-white/[0.02] border border-white/[0.06] space-y-1",
-          children: [/*#__PURE__*/_jsx("h3", {
-            className: "text-sm font-semibold text-white",
-            children: "Edge Fleet Cryptographic Security"
-          }), /*#__PURE__*/_jsx("p", {
-            className: "text-xs text-zinc-400",
-            children: "Zero-Trust hardware attestation, AEAD payload encryption, and tamper resistance."
-          })]
-        }), /*#__PURE__*/_jsxs("div", {
-          className: "grid grid-cols-1 md:grid-cols-2 gap-4",
-          children: [/*#__PURE__*/_jsxs("div", {
-            className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] space-y-3",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2.5",
-              children: [/*#__PURE__*/_jsx("div", {
-                className: "w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center",
-                children: /*#__PURE__*/_jsx(Icon, {
-                  name: "shield",
-                  className: "w-4 h-4"
-                })
-              }), /*#__PURE__*/_jsxs("div", {
-                children: [/*#__PURE__*/_jsx("h4", {
-                  className: "text-xs font-semibold text-white",
-                  children: "In-Flight AEAD Encryption"
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-[10px] text-emerald-400 font-mono",
-                  children: "AES-256-GCM / ChaCha20"
-                })]
-              })]
-            }), /*#__PURE__*/_jsx("p", {
-              className: "text-xs text-zinc-400 leading-relaxed",
-              children: "All telemetry packets, sensor buffers, and diagnostic outputs are sealed in an authenticated envelope prior to network transmission."
-            }), /*#__PURE__*/_jsx("div", {
-              className: "p-2 rounded-xl bg-zinc-950 font-mono text-[11px] text-zinc-300 border border-white/[0.04]",
-              children: "Status: 🔒 Active (Zero-Overhead SIMD)"
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] space-y-3",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2.5",
-              children: [/*#__PURE__*/_jsx("div", {
-                className: "w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center",
-                children: /*#__PURE__*/_jsx(Icon, {
-                  name: "zap",
-                  className: "w-4 h-4"
-                })
-              }), /*#__PURE__*/_jsxs("div", {
-                children: [/*#__PURE__*/_jsx("h4", {
-                  className: "text-xs font-semibold text-white",
-                  children: "Anti-Tamper Message Signing"
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-[10px] text-indigo-400 font-mono",
-                  children: "HMAC-SHA256 Signatures"
-                })]
-              })]
-            }), /*#__PURE__*/_jsx("p", {
-              className: "text-xs text-zinc-400 leading-relaxed",
-              children: "Every edge packet includes a cryptographic message authentication code. Any man-in-the-middle bit tampering causes immediate rejection."
-            }), /*#__PURE__*/_jsx("div", {
-              className: "p-2 rounded-xl bg-zinc-950 font-mono text-[11px] text-zinc-300 border border-white/[0.04]",
-              children: "Verification: 🔑 100% Packets Authenticated"
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] space-y-3",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2.5",
-              children: [/*#__PURE__*/_jsx("div", {
-                className: "w-8 h-8 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center",
-                children: /*#__PURE__*/_jsx(Icon, {
-                  name: "cpu",
-                  className: "w-4 h-4"
-                })
-              }), /*#__PURE__*/_jsxs("div", {
-                children: [/*#__PURE__*/_jsx("h4", {
-                  className: "text-xs font-semibold text-white",
-                  children: "WASM Memory Isolation"
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-[10px] text-violet-400 font-mono",
-                  children: "Wasmtime 64KB Sandbox"
-                })]
-              })]
-            }), /*#__PURE__*/_jsx("p", {
-              className: "text-xs text-zinc-400 leading-relaxed",
-              children: "Dynamic rules execute in private 64KB linear memory with no raw OS, filesystem, or socket access granted to untrusted guest code."
-            }), /*#__PURE__*/_jsx("div", {
-              className: "p-2 rounded-xl bg-zinc-950 font-mono text-[11px] text-zinc-300 border border-white/[0.04]",
-              children: "Sandbox: 🛡️ Hardware Enforced Memory Boundaries"
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] space-y-3",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center space-x-2.5",
-              children: [/*#__PURE__*/_jsx("div", {
-                className: "w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center",
-                children: /*#__PURE__*/_jsx(Icon, {
-                  name: "server",
-                  className: "w-4 h-4"
-                })
-              }), /*#__PURE__*/_jsxs("div", {
-                children: [/*#__PURE__*/_jsx("h4", {
-                  className: "text-xs font-semibold text-white",
-                  children: "Atomic Model Verification"
-                }), /*#__PURE__*/_jsx("span", {
-                  className: "text-[10px] text-amber-400 font-mono",
-                  children: "SHA-256 + rename(2)"
-                })]
-              })]
-            }), /*#__PURE__*/_jsx("p", {
-              className: "text-xs text-zinc-400 leading-relaxed",
-              children: "Downloaded weights are verified against the cryptographic cloud manifest before executing atomic POSIX staging to guarantee zero corruption."
-            }), /*#__PURE__*/_jsx("div", {
-              className: "p-2 rounded-xl bg-zinc-950 font-mono text-[11px] text-zinc-300 border border-white/[0.04]",
-              children: "Integrity: ✅ Verified Staging Pipeline"
-            })]
-          })]
-        })]
-      })]
-    }), showTerminalDrawer && /*#__PURE__*/_jsxs("div", {
-      className: "fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-xl border-t border-white/[0.12] shadow-2xl p-4 transition-all duration-300 max-h-[380px] flex flex-col font-mono text-xs",
-      children: [/*#__PURE__*/_jsxs("div", {
-        className: "flex items-center justify-between pb-3 border-b border-white/[0.08] mb-3",
-        children: [/*#__PURE__*/_jsxs("div", {
-          className: "flex items-center space-x-2",
-          children: [/*#__PURE__*/_jsx("div", {
-            className: "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"
-          }), /*#__PURE__*/_jsx("span", {
-            className: "font-semibold text-white tracking-wide",
-            children: "Edge Diagnostic Shell"
-          }), /*#__PURE__*/_jsx("span", {
-            className: "text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-zinc-400",
-            children: "Whitelisted Commands"
-          })]
-        }), /*#__PURE__*/_jsxs("div", {
-          className: "flex items-center space-x-2",
-          children: [['free -h', 'df -h', 'uptime', 'v4l2-ctl --list-devices', './edge-ctl status'].map(cmd => /*#__PURE__*/_jsx("button", {
-            onClick: () => handleExecuteTerminalCommand(cmd),
-            disabled: isExecutingCommand,
-            className: "px-2 py-1 rounded bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 text-[11px] border border-white/[0.06] transition",
-            children: cmd
-          }, cmd)), /*#__PURE__*/_jsx("button", {
-            onClick: () => setShowTerminalDrawer(false),
-            className: "p-1 rounded text-zinc-400 hover:text-white",
-            children: "✕"
-          })]
-        })]
-      }), /*#__PURE__*/_jsx("div", {
-        className: "flex-1 overflow-y-auto space-y-2 max-h-[200px] bg-black/60 p-3 rounded-xl border border-white/[0.06] text-zinc-300 font-mono text-[11px]",
-        children: terminalHistory.map((item, idx) => /*#__PURE__*/_jsxs("div", {
-          className: "space-y-0.5",
-          children: [/*#__PURE__*/_jsxs("div", {
-            className: "flex items-center space-x-2 text-cyan-400",
-            children: [/*#__PURE__*/_jsx("span", {
-              className: "text-zinc-500",
-              children: item.time
-            }), /*#__PURE__*/_jsx("span", {
-              children: "edge-node$"
-            }), /*#__PURE__*/_jsx("span", {
-              className: "font-semibold",
-              children: item.cmd
-            })]
-          }), /*#__PURE__*/_jsx("pre", {
-            className: "text-zinc-300 whitespace-pre-wrap pl-4 border-l border-zinc-800",
-            children: item.output
-          })]
-        }, idx))
-      }), /*#__PURE__*/_jsxs("form", {
-        onSubmit: e => {
-          e.preventDefault();
-          handleExecuteTerminalCommand();
-        },
-        className: "flex items-center space-x-2 mt-3",
-        children: [/*#__PURE__*/_jsx("span", {
-          className: "text-cyan-400 font-bold",
-          children: "$"
-        }), /*#__PURE__*/_jsx("input", {
-          type: "text",
-          value: terminalCommand,
-          onChange: e => setTerminalCommand(e.target.value),
-          placeholder: "Enter command (e.g. free -h, df -h, uptime, v4l2-ctl --list-devices)...",
-          className: "flex-1 bg-zinc-900 border border-white/[0.1] rounded-lg px-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500"
-        }), /*#__PURE__*/_jsx("button", {
-          type: "submit",
-          disabled: isExecutingCommand,
-          className: "px-3.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-black font-semibold rounded-lg text-xs transition",
-          children: isExecutingCommand ? 'Executing...' : 'Run'
-        })]
-      })]
-    }), showAddDeviceModal && /*#__PURE__*/_jsx("div", {
-      className: "fixed top-0 left-0 right-0 bottom-0 inset-0 z-[100] w-screen h-screen flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto",
-      children: /*#__PURE__*/_jsxs("div", {
-        className: "bg-zinc-900 border border-white/[0.12] rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150 my-auto",
-        children: [/*#__PURE__*/_jsxs("div", {
-          className: "p-5 border-b border-white/[0.08] flex items-center justify-between bg-zinc-950/70",
-          children: [/*#__PURE__*/_jsxs("div", {
-            className: "flex items-center space-x-3",
-            children: [/*#__PURE__*/_jsx("div", {
-              className: "w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center",
-              children: /*#__PURE__*/_jsx(Icon, {
-                name: "server",
-                className: "w-4 h-4"
-              })
-            }), /*#__PURE__*/_jsxs("div", {
-              children: [/*#__PURE__*/_jsx("h3", {
-                className: "font-semibold text-white text-sm",
-                children: "Enroll New Edge Device"
-              }), /*#__PURE__*/_jsx("p", {
-                className: "text-[11px] text-zinc-400",
-                children: "Generate a cryptographically secured one-line bootstrap command"
-              })]
-            })]
-          }), /*#__PURE__*/_jsx("button", {
-            onClick: () => setShowAddDeviceModal(false),
-            className: "text-zinc-500 hover:text-white text-sm p-1.5 rounded-lg hover:bg-white/[0.06] transition cursor-pointer",
-            children: "✕"
-          })]
-        }), /*#__PURE__*/_jsxs("div", {
-          className: "p-6 space-y-5 text-xs",
-          children: [/*#__PURE__*/_jsxs("div", {
-            className: "space-y-2",
-            children: [/*#__PURE__*/_jsx("label", {
-              className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block",
-              children: "1. Target Hardware Environment"
-            }), /*#__PURE__*/_jsx("div", {
-              className: "grid grid-cols-2 sm:grid-cols-4 gap-2",
-              children: [{
-                id: 'colab',
-                label: 'Google Colab',
-                sub: 'Kaggle / Cloud VM',
-                icon: 'zap'
-              }, {
-                id: 'jetson',
-                label: 'NVIDIA Jetson',
-                sub: 'DeepStream / NVMM',
-                icon: 'cpu'
-              }, {
-                id: 'rpi',
-                label: 'Raspberry Pi',
-                sub: 'ARM64 64-bit OS',
-                icon: 'activity'
-              }, {
-                id: 'generic',
-                label: 'Linux PC / IPC',
-                sub: 'x86_64 Debian/RHEL',
-                icon: 'server'
-              }].map(p => /*#__PURE__*/_jsxs("button", {
-                type: "button",
-                onClick: () => setEnrollPlatform(p.id),
-                className: `p-3 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer ${enrollPlatform === p.id ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-md' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white hover:border-white/[0.12]'}`,
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: p.icon,
-                  className: `w-4 h-4 mb-2 ${enrollPlatform === p.id ? 'text-indigo-400' : 'text-zinc-500'}`
-                }), /*#__PURE__*/_jsxs("div", {
-                  children: [/*#__PURE__*/_jsx("div", {
-                    className: "font-semibold text-xs truncate",
-                    children: p.label
-                  }), /*#__PURE__*/_jsx("div", {
-                    className: "text-[9px] text-zinc-500 truncate mt-0.5",
-                    children: p.sub
-                  })]
-                })]
-              }, p.id))
-            })]
-          }), enrollPlatform === 'colab' ? /*#__PURE__*/_jsxs("div", {
-            className: "space-y-3 p-3.5 rounded-2xl bg-indigo-950/20 border border-indigo-500/20",
-            children: [/*#__PURE__*/_jsx("div", {
-              className: "flex items-center justify-between",
-              children: /*#__PURE__*/_jsxs("div", {
-                children: [/*#__PURE__*/_jsx("span", {
-                  className: "text-xs font-semibold text-white block",
-                  children: "Google Colab Camera & Streaming Mode"
-                }), /*#__PURE__*/_jsx("p", {
-                  className: "text-[11px] text-zinc-400 mt-0.5",
-                  children: "Stream your laptop webcam or run headless daemon"
-                })]
-              })
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "grid grid-cols-2 gap-2",
-              children: [/*#__PURE__*/_jsxs("button", {
-                type: "button",
-                onClick: () => setColabWebcamMode(true),
-                className: `p-2.5 rounded-xl border text-left transition cursor-pointer flex items-center space-x-2 ${colabWebcamMode ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white'}`,
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "video",
-                  className: "w-4 h-4 shrink-0"
-                }), /*#__PURE__*/_jsxs("div", {
-                  children: [/*#__PURE__*/_jsx("div", {
-                    className: "font-semibold text-xs",
-                    children: "Webcam Browser Bridge"
-                  }), /*#__PURE__*/_jsx("div", {
-                    className: "text-[10px] opacity-80",
-                    children: "Streams your laptop camera"
-                  })]
-                })]
-              }), /*#__PURE__*/_jsxs("button", {
-                type: "button",
-                onClick: () => setColabWebcamMode(false),
-                className: `p-2.5 rounded-xl border text-left transition cursor-pointer flex items-center space-x-2 ${!colabWebcamMode ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white'}`,
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "server",
-                  className: "w-4 h-4 shrink-0"
-                }), /*#__PURE__*/_jsxs("div", {
-                  children: [/*#__PURE__*/_jsx("div", {
-                    className: "font-semibold text-xs",
-                    children: "Daemon Mode"
-                  }), /*#__PURE__*/_jsx("div", {
-                    className: "text-[10px] opacity-80",
-                    children: "Headless synthetic stream"
-                  })]
-                })]
-              })]
-            }), colabWebcamMode && /*#__PURE__*/_jsxs("div", {
-              className: "flex items-start space-x-2 text-[11px] text-indigo-300/90 pt-1",
-              children: [/*#__PURE__*/_jsx("span", {
-                className: "text-amber-400 font-bold",
-                children: "ℹ️ Note:"
-              }), /*#__PURE__*/_jsx("span", {
-                children: "Your browser will prompt for camera access in Colab. Once allowed, your laptop's real webcam frames stream directly through Tether-Edge YOLOv8 inference."
-              })]
-            })]
-          }) : /*#__PURE__*/_jsxs("div", {
-            className: "grid grid-cols-1 sm:grid-cols-2 gap-4",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "space-y-1.5",
-              children: [/*#__PURE__*/_jsx("label", {
-                className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block",
-                children: "2. Execution Mode"
-              }), /*#__PURE__*/_jsxs("div", {
-                className: "flex rounded-xl bg-zinc-950 p-1 border border-white/[0.08]",
-                children: [/*#__PURE__*/_jsx("button", {
-                  type: "button",
-                  onClick: () => setDaemonMode(true),
-                  className: `flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'}`,
-                  children: "Daemon (Background)"
-                }), /*#__PURE__*/_jsx("button", {
-                  type: "button",
-                  onClick: () => setDaemonMode(false),
-                  className: `flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${!daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'}`,
-                  children: "Interactive Console"
-                })]
-              })]
-            }), /*#__PURE__*/_jsxs("div", {
-              className: "space-y-1.5",
-              children: [/*#__PURE__*/_jsx("label", {
-                className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block",
-                children: "3. Device Label / Tag (Optional)"
-              }), /*#__PURE__*/_jsx("input", {
-                type: "text",
-                placeholder: "e.g. factory-camera-1",
-                value: enrollTag,
-                onChange: e => setEnrollTag(e.target.value),
-                className: "w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500 font-mono"
-              })]
-            })]
-          }), /*#__PURE__*/_jsxs("div", {
-            className: "space-y-2 pt-1",
-            children: [/*#__PURE__*/_jsxs("div", {
-              className: "flex items-center justify-between",
-              children: [/*#__PURE__*/_jsx("label", {
-                className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider",
-                children: enrollPlatform === 'colab' && colabWebcamMode ? 'Google Colab Python Cell (Copy & Run)' : 'Secure Enrollment Command'
-              }), /*#__PURE__*/_jsxs("button", {
-                type: "button",
-                onClick: handleGenerateNewToken,
-                disabled: isGeneratingToken,
-                className: "text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 cursor-pointer",
-                children: [/*#__PURE__*/_jsx(Icon, {
-                  name: "refresh",
-                  className: `w-3 h-3 ${isGeneratingToken ? 'animate-spin' : ''}`
-                }), /*#__PURE__*/_jsx("span", {
-                  children: "Regenerate Fresh Token"
-                })]
-              })]
-            }), (() => {
-              const isTunnelActive = tunnelInfo.active && tunnelInfo.url;
-              const activeBaseUrl = isTunnelActive ? tunnelInfo.url : `http://${window.location.host}`;
-              const tok = currentTokenInfo?.token || 'YOUR_TOKEN';
-              const flag = daemonMode ? ' | bash -s -- --daemon' : ' | bash';
-              const colabWebcamSnippet = `# [Step 1] Download & start Tether-Edge Microservice Fleet\n!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon\n\n# [Step 2] Live Laptop Webcam Bridge: Streams your real camera to Tether-Edge\nfrom IPython.display import display, Javascript, HTML\nfrom google.colab.output import eval_js\nimport base64, time, json, os, subprocess, urllib.request\n\nprint("🎥 Requesting browser webcam permission...")\ndisplay(HTML(\'\'\'\n<div id="tether_cam_container" style="display:flex;align-items:center;gap:12px;padding:8px 12px;background:#111827;border-radius:12px;border:1px solid #374151;width:fit-content;margin:8px 0;">\n  <video id="tether_cam_video" autoplay playsinline muted style="width:160px;height:120px;border-radius:8px;object-fit:cover;background:#000;border:1px solid #06b6d4;"></video>\n  <div style="font-family:monospace;font-size:12px;color:#e5e7eb;">\n    <div style="color:#06b6d4;font-weight:600;">● TETHER-EDGE WEBCAM LIVE</div>\n    <div id="tether_cam_status" style="color:#9ca3af;font-size:11px;margin-top:2px;">Connecting hardware...</div>\n  </div>\n</div>\n\'\'\'))\n\ndisplay(Javascript(\'\'\'\nasync function initCam() {\n  try {\n    const video = document.getElementById("tether_cam_video");\n    const status = document.getElementById("tether_cam_status");\n    const stream = await navigator.mediaDevices.getUserMedia({video: {width: 640, height: 480}});\n    window.camStream = stream;\n    video.srcObject = stream;\n    await video.play();\n    if (status) {\n      status.innerText = "640x480 @ 30 FPS • Streaming to Dashboard";\n      status.style.color = "#34d399";\n    }\n    \n    const canvas = document.createElement("canvas");\n    canvas.width = 640;\n    canvas.height = 480;\n    const ctx = canvas.getContext("2d");\n    \n    window.getFrame = () => {\n      if (video.readyState >= 2) {\n        ctx.drawImage(video, 0, 0, 640, 480);\n        return canvas.toDataURL("image/jpeg", 0.85).split(",")[1];\n      }\n      return null;\n    };\n\n    window.stopCam = () => {\n      if (window.camStream) {\n        window.camStream.getTracks().forEach(t => t.stop());\n        window.camStream = null;\n      }\n      const vid = document.getElementById("tether_cam_video");\n      if (vid) { vid.pause(); vid.srcObject = null; vid.remove(); }\n      const container = document.getElementById("tether_cam_container");\n      if (container) {\n        container.innerHTML = "<div style=\'color:#f87171;font-weight:600;font-size:12px;padding:6px 10px;background:#18181b;border-radius:8px;border:1px solid #3f3f46;\'>⏹️ Webcam Hardware Released & Offline</div>";\n      }\n      return "STOPPED";\n    };\n  } catch (err) {\n    const status = document.getElementById("tether_cam_status");\n    if (status) {\n      status.innerText = "Camera Access Error: " + err.message;\n      status.style.color = "#f87171";\n    }\n  }\n}\ninitCam();\n\'\'\'))\n\ntime.sleep(2.5)\n\n# Clear any stale stop flags from prior runs\nif os.path.exists("/tmp/edge_stop_camera"):\n  try:\n    os.remove("/tmp/edge_stop_camera")\n  except Exception:\n    pass\n\n# Read assigned device identity\ndevice_id = "colab-node"\nif os.path.exists("data/edge.json"):\n  try:\n    with open("data/edge.json") as f:\n      device_id = json.load(f).get("device_id", "colab-node")\n  except Exception:\n    pass\n\nupload_url = f"${activeBaseUrl}/api/v1/devices/{device_id}/frame"\nprint(f"🚀 Laptop webcam online! Streaming live frames to Tether-Edge ({device_id})...")\nprint("ℹ️ To stop camera, run: ./edge-ctl stop (or click Stop in dashboard, or interrupt this cell)")\n\nframe_count = 0\nlast_watchdog = time.time()\n\ntry:\n  while True:\n    if os.path.exists("/tmp/edge_stop_camera") or not os.path.exists("data/edge.json"):\n      print("\\n⏹️ [Camera Service] Stop / Purge command received from edge-ctl!")\n      break\n    frame_b64 = eval_js("window.getFrame ? window.getFrame() : null")\n    if frame_b64:\n      frame_bytes = base64.b64decode(frame_b64)\n      with open("/tmp/edge_live_frame.jpg", "wb") as f:\n        f.write(frame_bytes)\n      try:\n        req = urllib.request.Request(upload_url, data=frame_bytes, headers={"Content-Type": "image/jpeg"}, method="POST")\n        urllib.request.urlopen(req, timeout=1.5)\n      except Exception:\n        pass\n      frame_count += 1\n      if frame_count % 5 == 0:\n        print(f"\\r📸 [Pipeline Live] Frame #{frame_count} streamed ({len(frame_bytes)//1024} KB) | Node: {device_id} | Live Stream Active", end="", flush=True)\n    if time.time() - last_watchdog > 6:\n      last_watchdog = time.time()\n      ret = subprocess.run(["pgrep", "-f", "client_daemon"], capture_output=True, text=True)\n      if ret.returncode != 0 and os.path.exists("./run-edge.sh") and os.path.exists("data/edge.json"):\n        subprocess.Popen(["./run-edge.sh", "run"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n    time.sleep(0.18)\nexcept KeyboardInterrupt:\n  print("\\n⏹️ [Camera Service] Interrupted by user.")\nfinally:\n  print("🔌 Releasing laptop camera hardware in browser...")\n  try:\n    eval_js("window.stopCam ? window.stopCam() : null")\n  except Exception:\n    pass\n  if os.path.exists("/tmp/edge_stop_camera"):\n    try:\n      os.remove("/tmp/edge_stop_camera")\n    except Exception:\n      pass\n  print("✅ Camera hardware released and webcam LED turned off. Edge client offline.")`;
-              const genericCmd = enrollPlatform === 'colab' ? `!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon` : `curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok}${flag}`;
-              const contentToCopy = enrollPlatform === 'colab' && colabWebcamMode ? colabWebcamSnippet : genericCmd;
-              return /*#__PURE__*/_jsxs("div", {
-                className: "space-y-2",
-                children: [/*#__PURE__*/_jsx("div", {
-                  className: "p-3 bg-zinc-950 rounded-2xl border border-white/[0.1] font-mono text-xs text-indigo-300 select-all break-all relative group max-h-48 overflow-y-auto whitespace-pre",
-                  children: contentToCopy
-                }), /*#__PURE__*/_jsxs("div", {
-                  className: "flex items-center justify-between gap-2 pt-1",
-                  children: [/*#__PURE__*/_jsxs("div", {
-                    className: "text-[10px] text-zinc-500 font-mono flex items-center space-x-1.5",
-                    children: [/*#__PURE__*/_jsx("span", {
-                      className: "w-1.5 h-1.5 rounded-full bg-emerald-400"
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: "Valid 24h • Auto-registers hardware ID & starts edge services"
-                    })]
-                  }), /*#__PURE__*/_jsxs("button", {
-                    type: "button",
-                    onClick: () => {
-                      navigator.clipboard.writeText(contentToCopy);
-                      setCopiedQuick(true);
-                      setTimeout(() => setCopiedQuick(false), 2000);
-                      showToast('success', 'Copied to clipboard!');
-                    },
-                    className: "px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition shadow-sm flex items-center space-x-1.5 shrink-0 cursor-pointer",
-                    children: [/*#__PURE__*/_jsx(Icon, {
-                      name: copiedQuick ? "check" : "copy",
-                      className: "w-3.5 h-3.5"
-                    }), /*#__PURE__*/_jsx("span", {
-                      children: copiedQuick ? 'Copied to Clipboard!' : enrollPlatform === 'colab' && colabWebcamMode ? 'Copy Colab Cell' : 'Copy Command'
-                    })]
-                  })]
-                })]
-              });
-            })()]
-          })]
-        }), /*#__PURE__*/_jsxs("div", {
-          className: "p-4 bg-zinc-950/80 border-t border-white/[0.06] flex items-center justify-between text-xs",
-          children: [/*#__PURE__*/_jsx("span", {
-            className: "text-[11px] text-zinc-500 font-mono",
-            children: "Single binary ELF • Zero Python • Anti-Collision Identity"
-          }), /*#__PURE__*/_jsx("button", {
-            type: "button",
-            onClick: () => setShowAddDeviceModal(false),
-            className: "px-4 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 transition cursor-pointer",
-            children: "Done"
-          })]
-        })]
-      })
-    })]
-  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "min-h-screen flex flex-col bg-[#090a0f] text-zinc-100 font-sans selection:bg-indigo-500 selection:text-white"
+  }, notification && /*#__PURE__*/React.createElement("div", {
+    className: "fixed top-5 right-5 z-50 flex items-center space-x-2.5 px-4 py-2.5 rounded-full border shadow-2xl text-xs font-medium bg-zinc-900/95 border-zinc-700/80 text-zinc-200 backdrop-blur-md animate-in fade-in slide-in-from-top-3 duration-200"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `w-2 h-2 rounded-full ${notification.type === 'error' ? 'bg-rose-500 ring-4 ring-rose-500/20' : 'bg-emerald-400 ring-4 ring-emerald-400/20'}`
+  }), /*#__PURE__*/React.createElement("span", null, notification.text)), /*#__PURE__*/React.createElement("header", {
+    className: "sticky top-0 z-40 backdrop-blur-xl bg-[#090a0f]/80 border-b border-white/[0.06] px-6 py-3.5 flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-400 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-bold text-xs tracking-wider"
+  }, "TE"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "font-semibold text-sm tracking-tight text-white"
+  }, "Tether-Edge"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-zinc-400 border border-white/[0.05]"
+  }, "Control Plane")))), /*#__PURE__*/React.createElement("nav", {
+    className: "flex items-center space-x-1 p-1 rounded-full bg-white/[0.04] border border-white/[0.08] shadow-inner text-xs"
+  }, [{
+    id: 'live',
+    label: 'Live Stream',
+    icon: 'video'
+  }, {
+    id: 'pipeline',
+    label: 'Pipeline Graph',
+    icon: 'workflow'
+  }, {
+    id: 'fleet',
+    label: 'Fleet Devices',
+    icon: 'server',
+    badge: devices.length
+  }, {
+    id: 'catalog',
+    label: 'AI Models',
+    icon: 'brain',
+    badge: catalog.length
+  }, {
+    id: 'security',
+    label: 'Security',
+    icon: 'shield'
+  }].map(tab => {
+    const isActive = activeTab === tab.id;
+    return /*#__PURE__*/React.createElement("button", {
+      key: tab.id,
+      onClick: () => setActiveTab(tab.id),
+      className: `flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${isActive ? 'bg-white text-zinc-950 shadow-md shadow-white/10' : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'}`
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: tab.icon,
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, tab.label), tab.badge !== undefined && /*#__PURE__*/React.createElement("span", {
+      className: `text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-zinc-200 text-zinc-900' : 'bg-white/[0.08] text-zinc-400'}`
+    }, tab.badge));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-3 text-xs"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06]"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `w-2 h-2 rounded-full ${onlineDevicesCount > 0 ? 'bg-emerald-400 shadow-sm shadow-emerald-400 animate-pulse' : 'bg-zinc-600'}`
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "text-zinc-300 font-medium"
+  }, onlineDevicesCount > 0 ? `${onlineDevicesCount} Online` : 'Awaiting Nodes')), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowTerminalDrawer(!showTerminalDrawer),
+    title: "Open Diagnostic Edge Terminal",
+    className: `flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition ${showTerminalDrawer ? 'bg-cyan-500 text-zinc-950 font-semibold shadow-md shadow-cyan-500/20' : 'bg-white/[0.04] text-zinc-300 hover:text-white hover:bg-white/[0.08] border border-white/[0.08]'}`
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "terminal",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Terminal")), /*#__PURE__*/React.createElement("button", {
+    onClick: fetchAllData,
+    title: "Refresh state",
+    className: "p-2 rounded-full text-zinc-400 hover:text-white hover:bg-white/[0.06] transition"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "refresh",
+    className: "w-3.5 h-3.5"
+  })))), /*#__PURE__*/React.createElement("main", {
+    className: "flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col"
+  }, activeTab === 'pipeline' && /*#__PURE__*/React.createElement("div", {
+    className: "space-y-5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap items-center justify-between gap-3 p-4 rounded-3xl bg-zinc-950/70 border border-white/[0.08] shadow-lg"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "space-y-0.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-semibold text-white"
+  }, "Edge Data Pipeline Architecture"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
+  }, pipelineNodes.length, " Nodes • ", pipelineConnections.length, " Cables")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400"
+  }, "Drag nodes to organize. Click pins to connect. Customize parameters directly on each node.")), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center flex-wrap gap-2 text-xs"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: handleClearPipeline,
+    className: "px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-xl text-xs font-medium transition shadow-sm flex items-center space-x-1.5",
+    title: "Clear all nodes to build your pipeline completely from scratch"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "trash",
+    className: "w-3.5 h-3.5 text-rose-400"
+  }), /*#__PURE__*/React.createElement("span", null, "Clear (From Scratch)")), /*#__PURE__*/React.createElement("select", {
+    onChange: e => handleLoadPreset(e.target.value),
+    className: "bg-zinc-900 border border-white/10 rounded-xl px-3 py-1.5 text-zinc-300 hover:text-white text-xs focus:outline-none cursor-pointer",
+    defaultValue: "multimodal"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "multimodal"
+  }, "Preset: Industrial Sentinel (Full)"), /*#__PURE__*/React.createElement("option", {
+    value: "vision_only"
+  }, "Preset: Vision-Only Edge"), /*#__PURE__*/React.createElement("option", {
+    value: "predictive"
+  }, "Preset: Predictive Maintenance"), /*#__PURE__*/React.createElement("option", {
+    value: "blank"
+  }, "Blank Canvas (Start from Scratch)")), /*#__PURE__*/React.createElement("button", {
+    onClick: handleAutoArrange,
+    className: "px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/10 rounded-xl text-xs font-medium transition shadow-sm flex items-center space-x-1.5",
+    title: "Auto-arrange nodes neatly in sequence"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "sliders",
+    className: "w-3.5 h-3.5 text-indigo-400"
+  }), /*#__PURE__*/React.createElement("span", null, "Auto-Arrange")), /*#__PURE__*/React.createElement("button", {
+    onClick: handleResetPan,
+    className: "px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/10 rounded-xl text-xs font-medium transition shadow-sm",
+    title: "Reset Pan Center (0,0)"
+  }, "Center View"), /*#__PURE__*/React.createElement("div", {
+    className: "relative"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      setShowAddNodeMenu(!showAddNodeMenu);
+      setNodeSearchTerm('');
+      setNodeFilterCat('All');
+    },
+    className: "px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-medium transition shadow-sm flex items-center space-x-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Add Node")), showAddNodeMenu && /*#__PURE__*/React.createElement("div", {
+    className: "absolute right-0 top-11 z-50 w-80 bg-zinc-900/95 backdrop-blur-md border border-white/[0.12] rounded-2xl shadow-2xl p-3 space-y-2.5 animate-in fade-in zoom-in-95 duration-100 text-xs"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "relative"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    placeholder: "Search nodes (e.g. YOLO, Camera, SLM)...",
+    value: nodeSearchTerm,
+    onChange: e => setNodeSearchTerm(e.target.value),
+    autoFocus: true,
+    className: "w-full bg-black/50 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500"
+  }), nodeSearchTerm && /*#__PURE__*/React.createElement("button", {
+    onClick: () => setNodeSearchTerm(''),
+    className: "absolute right-2.5 top-2 text-zinc-500 hover:text-white text-[10px]"
+  }, "✕")), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-1 overflow-x-auto pb-1 text-[10px]"
+  }, ['All', 'Sensors', 'Gatekeepers', 'AI Engines', 'Storage & Sinks'].map(cat => /*#__PURE__*/React.createElement("button", {
+    key: cat,
+    onClick: () => setNodeFilterCat(cat),
+    className: `px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition ${nodeFilterCat === cat ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white/[0.04] text-zinc-400 hover:text-zinc-200'}`
+  }, cat))), /*#__PURE__*/React.createElement("div", {
+    className: "max-h-64 overflow-y-auto space-y-1 pr-1 overscroll-contain"
+  }, (() => {
+    const filtered = Object.entries(NODE_LIBRARY).filter(([key, item]) => {
+      const matchCat = nodeFilterCat === 'All' || item.category === nodeFilterCat;
+      const matchSearch = !nodeSearchTerm || item.title.toLowerCase().includes(nodeSearchTerm.toLowerCase()) || item.subtitle.toLowerCase().includes(nodeSearchTerm.toLowerCase()) || item.category.toLowerCase().includes(nodeSearchTerm.toLowerCase());
+      return matchCat && matchSearch;
+    });
+    if (filtered.length === 0) {
+      return /*#__PURE__*/React.createElement("div", {
+        className: "py-6 text-center text-zinc-500 text-xs"
+      }, "No matching nodes found.");
+    }
+    return filtered.map(([key, item]) => /*#__PURE__*/React.createElement("button", {
+      key: key,
+      onClick: () => {
+        handleAddNodeFromLibrary(key);
+        setShowAddNodeMenu(false);
+      },
+      className: "w-full text-left p-2 rounded-xl hover:bg-white/[0.08] bg-white/[0.02] border border-white/[0.04] flex items-center justify-between group transition"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-2.5 min-w-0"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "w-6 h-6 rounded-lg bg-white/[0.05] group-hover:bg-indigo-500/20 text-indigo-400 flex items-center justify-center transition"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: item.icon,
+      className: "w-3.5 h-3.5"
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "truncate"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "font-medium text-xs text-zinc-200 group-hover:text-white transition truncate"
+    }, item.title), /*#__PURE__*/React.createElement("div", {
+      className: "text-[10px] text-zinc-500 truncate"
+    }, item.subtitle))), /*#__PURE__*/React.createElement("span", {
+      className: "text-[10px] font-mono text-zinc-500 group-hover:text-indigo-400 pl-2"
+    }, "+ Add")));
+  })()))), /*#__PURE__*/React.createElement("button", {
+    onClick: handleDeployPipelineToEdge,
+    className: "px-3.5 py-1.5 bg-white text-zinc-950 hover:bg-zinc-200 rounded-xl text-xs font-medium transition shadow-sm flex items-center space-x-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "zap",
+    className: "w-3.5 h-3.5 text-zinc-950"
+  }), /*#__PURE__*/React.createElement("span", null, "Deploy to Fleet")))), connectingSource && /*#__PURE__*/React.createElement("div", {
+    className: "p-2.5 rounded-xl bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("span", null, "Wiring cable from ", /*#__PURE__*/React.createElement("strong", null, pipelineNodes.find(n => n.id === connectingSource.nodeId)?.title), ". Click any target node to connect."), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setConnectingSource(null),
+    className: "px-2 py-0.5 bg-cyan-900/50 hover:bg-cyan-800 rounded-md text-[11px]"
+  }, "Cancel")), /*#__PURE__*/React.createElement("div", {
+    ref: canvasRef,
+    onMouseDown: handleCanvasMouseDown,
+    onMouseMove: handleCanvasMouseMove,
+    onClick: () => {
+      if (showAddNodeMenu) setShowAddNodeMenu(false);
+      if (connectingSource) setConnectingSource(null);
+    },
+    style: {
+      minHeight: '560px',
+      height: '580px',
+      cursor: isPanning ? 'grabbing' : 'default'
+    },
+    className: "relative w-full rounded-3xl overflow-hidden canvas-dots border border-white/[0.08] shadow-2xl select-none"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute top-3 right-3 z-30 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] text-zinc-400 font-mono pointer-events-none flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "w-1.5 h-1.5 rounded-full bg-cyan-400"
+  }), /*#__PURE__*/React.createElement("span", null, "Canvas: (", Math.round(panOffset.x), ", ", Math.round(panOffset.y), ")"), /*#__PURE__*/React.createElement("span", {
+    className: "text-zinc-600"
+  }, "•"), /*#__PURE__*/React.createElement("span", null, "Drag background to pan")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
+      willChange: 'transform'
+    },
+    className: "absolute inset-0 pointer-events-none"
+  }, /*#__PURE__*/React.createElement("svg", {
+    className: "absolute inset-0 w-[4000px] h-[4000px] pointer-events-none overflow-visible"
+  }, /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("linearGradient", {
+    id: "cable-grad",
+    x1: "0%",
+    y1: "0%",
+    x2: "100%",
+    y2: "0%"
+  }, /*#__PURE__*/React.createElement("stop", {
+    offset: "0%",
+    stopColor: "#06b6d4"
+  }), /*#__PURE__*/React.createElement("stop", {
+    offset: "100%",
+    stopColor: "#8b5cf6"
+  }))), pipelineConnections.map(conn => {
+    const fromNode = pipelineNodes.find(n => n.id === conn.from);
+    const toNode = pipelineNodes.find(n => n.id === conn.to);
+    if (!fromNode || !toNode) return null;
+    const startX = fromNode.x + 260;
+    const startY = fromNode.y + 36;
+    const endX = toNode.x;
+    const endY = toNode.y + 36;
+    const dx = endX - startX;
+    const curvature = Math.max(35, Math.abs(dx) * 0.45);
+    const pathD = `M ${startX} ${startY} C ${startX + curvature} ${startY}, ${endX - curvature} ${endY}, ${endX} ${endY}`;
+    const midX = (startX + endX) / 2;
+    const midY = (startY + endY) / 2;
+    return /*#__PURE__*/React.createElement("g", {
+      key: conn.id,
+      className: "pointer-events-auto group cursor-pointer cable-hit"
+    }, /*#__PURE__*/React.createElement("path", {
+      d: pathD,
+      fill: "none",
+      stroke: "transparent",
+      strokeWidth: "18",
+      onClick: e => {
+        e.stopPropagation();
+        handleDeleteConnection(conn.id);
+      }
+    }), /*#__PURE__*/React.createElement("path", {
+      d: pathD,
+      fill: "none",
+      stroke: "#06b6d4",
+      strokeWidth: "5",
+      opacity: "0.18"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: pathD,
+      fill: "none",
+      stroke: "#0284c7",
+      strokeWidth: "2.5",
+      strokeLinecap: "round"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: pathD,
+      fill: "none",
+      stroke: "#67e8f9",
+      strokeWidth: "1.5",
+      strokeLinecap: "round",
+      className: "wire-animated"
+    }), /*#__PURE__*/React.createElement("g", {
+      className: "opacity-0 group-hover:opacity-100 transition duration-150 cursor-pointer",
+      onClick: e => {
+        e.stopPropagation();
+        handleDeleteConnection(conn.id);
+      }
+    }, /*#__PURE__*/React.createElement("circle", {
+      cx: midX,
+      cy: midY,
+      r: "9",
+      fill: "#ef4444"
+    }), /*#__PURE__*/React.createElement("text", {
+      x: midX,
+      y: midY + 3.5,
+      textAnchor: "middle",
+      fill: "#ffffff",
+      fontSize: "10",
+      fontWeight: "bold"
+    }, "✕")));
+  }), connectingSource && mouseCanvasPos && (() => {
+    const src = pipelineNodes.find(n => n.id === connectingSource.nodeId);
+    if (!src) return null;
+    const startX = src.x + 260;
+    const startY = src.y + 36;
+    const endX = mouseCanvasPos.x;
+    const endY = mouseCanvasPos.y;
+    const dx = endX - startX;
+    const curvature = Math.max(30, Math.abs(dx) * 0.4);
+    return /*#__PURE__*/React.createElement("path", {
+      d: `M ${startX} ${startY} C ${startX + curvature} ${startY}, ${endX - curvature} ${endY}, ${endX} ${endY}`,
+      fill: "none",
+      stroke: "#a855f7",
+      strokeWidth: "2.5",
+      strokeDasharray: "4 4",
+      opacity: "0.9"
+    });
+  })()), pipelineNodes.map(node => {
+    const isSelected = selectedNodeId === node.id;
+    const colorMap = {
+      emerald: {
+        bar: 'bg-emerald-500',
+        badge: 'bg-emerald-500/10 text-emerald-400',
+        border: 'border-emerald-500/30'
+      },
+      indigo: {
+        bar: 'bg-indigo-500',
+        badge: 'bg-indigo-500/10 text-indigo-400',
+        border: 'border-indigo-500/30'
+      },
+      cyan: {
+        bar: 'bg-cyan-500',
+        badge: 'bg-cyan-500/10 text-cyan-400',
+        border: 'border-cyan-500/30'
+      },
+      amber: {
+        bar: 'bg-amber-500',
+        badge: 'bg-amber-500/10 text-amber-400',
+        border: 'border-amber-500/30'
+      },
+      violet: {
+        bar: 'bg-violet-500',
+        badge: 'bg-violet-500/10 text-violet-400',
+        border: 'border-violet-500/30'
+      },
+      rose: {
+        bar: 'bg-rose-500',
+        badge: 'bg-rose-500/10 text-rose-400',
+        border: 'border-rose-500/30'
+      }
+    };
+    const theme = colorMap[node.color] || colorMap.cyan;
+    return /*#__PURE__*/React.createElement("div", {
+      key: node.id,
+      style: {
+        position: 'absolute',
+        left: `${node.x}px`,
+        top: `${node.y}px`,
+        width: '260px'
+      },
+      onClick: e => {
+        e.stopPropagation();
+        if (connectingSource && connectingSource.nodeId !== node.id) {
+          handleEndConnect(node.id);
+        } else {
+          setSelectedNodeId(node.id);
+        }
+      },
+      className: `rounded-2xl bg-zinc-900/95 backdrop-blur-md border shadow-2xl pointer-events-auto node-card select-none ${isSelected ? 'border-white/60 ring-2 ring-indigo-500/60 shadow-indigo-500/20 z-20' : 'border-white/[0.12] hover:border-white/30 z-10'}`
+    }, /*#__PURE__*/React.createElement("div", {
+      className: `h-1.5 w-full rounded-t-2xl ${theme.bar}`
+    }), node.inputs > 0 && /*#__PURE__*/React.createElement("div", {
+      onClick: e => {
+        e.stopPropagation();
+        handleEndConnect(node.id);
+      },
+      className: `absolute -left-2.5 top-8 w-5 h-5 rounded-full bg-zinc-950 border-2 border-indigo-400 flex items-center justify-center cursor-pointer transition hover:scale-125 z-30 port-pin ${connectingSource && connectingSource.nodeId !== node.id ? 'ring-4 ring-cyan-400 animate-pulse' : ''}`,
+      title: "Input Port: Click to link incoming cable"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "w-1.5 h-1.5 rounded-full bg-white"
+    })), node.outputs > 0 && /*#__PURE__*/React.createElement("div", {
+      onClick: e => {
+        e.stopPropagation();
+        handleStartConnect(node.id);
+      },
+      className: "absolute -right-2.5 top-8 w-5 h-5 rounded-full bg-zinc-950 border-2 border-cyan-400 flex items-center justify-center cursor-pointer transition hover:scale-125 z-30 port-pin",
+      title: "Output Port: Click to drag wire to another node"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "w-1.5 h-1.5 rounded-full bg-white"
+    })), /*#__PURE__*/React.createElement("div", {
+      onMouseDown: e => handleNodeMouseDown(e, node.id),
+      className: "p-3 pb-2 flex items-center justify-between border-b border-white/[0.06] cursor-grab active:cursor-grabbing hover:bg-white/[0.03] rounded-t-2xl"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-2 truncate"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: `w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${theme.badge}`
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: node.icon,
+      className: "w-3.5 h-3.5"
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "truncate"
+    }, /*#__PURE__*/React.createElement("h4", {
+      className: "text-xs font-semibold text-white leading-tight truncate"
+    }, node.title), /*#__PURE__*/React.createElement("span", {
+      className: "text-[10px] text-zinc-400 block truncate"
+    }, node.subtitle))), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-1 shrink-0"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] font-mono text-zinc-500 px-1 rounded bg-white/[0.04]"
+    }, node.x, ",", node.y), /*#__PURE__*/React.createElement("button", {
+      onClick: e => {
+        e.stopPropagation();
+        handleDeleteNode(node.id);
+      },
+      className: "text-zinc-500 hover:text-rose-400 p-1 rounded-md transition text-xs shrink-0",
+      title: "Delete Node"
+    }, "✕"))), /*#__PURE__*/React.createElement("div", {
+      className: "p-3 space-y-2 text-[11px]",
+      onMouseDown: e => e.stopPropagation()
+    }, node.type === 'sensor_cam' && /*#__PURE__*/React.createElement("div", {
+      className: "space-y-1"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-zinc-400"
+    }, /*#__PURE__*/React.createElement("span", null, "Capture Rate:"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-white font-medium"
+    }, node.config?.fps || 5, " FPS")), /*#__PURE__*/React.createElement("input", {
+      type: "range",
+      min: "1",
+      max: "30",
+      value: node.config?.fps || 5,
+      onMouseDown: e => e.stopPropagation(),
+      onChange: e => handleUpdateNodeConfig(node.id, 'fps', Number(e.target.value)),
+      className: "w-full accent-emerald-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
+    })), node.type === 'wasm_filter' && /*#__PURE__*/React.createElement("div", {
+      className: "space-y-1"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-zinc-400"
+    }, /*#__PURE__*/React.createElement("span", null, "ISO-10816 Limit:"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-white font-medium"
+    }, node.config?.threshold || 4.5, " mm/s")), /*#__PURE__*/React.createElement("input", {
+      type: "range",
+      min: "1.0",
+      max: "8.0",
+      step: "0.5",
+      value: node.config?.threshold || 4.5,
+      onMouseDown: e => e.stopPropagation(),
+      onChange: e => handleUpdateNodeConfig(node.id, 'threshold', Number(e.target.value)),
+      className: "w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
+    })), node.type === 'custom_rule' && /*#__PURE__*/React.createElement("div", {
+      className: "space-y-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "grid grid-cols-2 gap-1.5"
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] text-zinc-500 uppercase font-mono block"
+    }, "Condition Metric"), /*#__PURE__*/React.createElement("select", {
+      value: node.config?.metric || 'confidence',
+      onMouseDown: e => e.stopPropagation(),
+      onChange: e => {
+        const m = e.target.value;
+        const defVal = m === 'confidence' ? 70 : m === 'motion' ? 12 : m === 'latency' ? 150 : m === 'temperature' ? 80 : m === 'vibration' ? 4.5 : 75;
+        handleUpdateNodeConfig(node.id, 'metric', m);
+        handleUpdateNodeConfig(node.id, 'threshold', defVal);
+      },
+      className: "w-full bg-zinc-950 border border-white/10 rounded-lg px-1.5 py-1 text-white text-[10px] focus:outline-none cursor-pointer"
+    }, /*#__PURE__*/React.createElement("option", {
+      value: "confidence"
+    }, "Confidence (%)"), /*#__PURE__*/React.createElement("option", {
+      value: "motion"
+    }, "Motion Delta (%)"), /*#__PURE__*/React.createElement("option", {
+      value: "latency"
+    }, "Inference Latency (ms)"), /*#__PURE__*/React.createElement("option", {
+      value: "temperature"
+    }, "Core Temp (°C)"), /*#__PURE__*/React.createElement("option", {
+      value: "vibration"
+    }, "Vibration (mm/s)"), /*#__PURE__*/React.createElement("option", {
+      value: "audio"
+    }, "Acoustic (dB)"))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] text-zinc-500 uppercase font-mono block"
+    }, "Operator"), /*#__PURE__*/React.createElement("select", {
+      value: node.config?.operator || '>=',
+      onMouseDown: e => e.stopPropagation(),
+      onChange: e => handleUpdateNodeConfig(node.id, 'operator', e.target.value),
+      className: "w-full bg-zinc-950 border border-white/10 rounded-lg px-1.5 py-1 text-white text-[10px] focus:outline-none font-mono cursor-pointer"
+    }, /*#__PURE__*/React.createElement("option", {
+      value: ">="
+    }, ">= (GTE)"), /*#__PURE__*/React.createElement("option", {
+      value: "<="
+    }, "<= (LTE)"), /*#__PURE__*/React.createElement("option", {
+      value: ">"
+    }, "> (GT)"), /*#__PURE__*/React.createElement("option", {
+      value: "<"
+    }, "< (LT)")))), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-zinc-400 text-[10px]"
+    }, /*#__PURE__*/React.createElement("span", null, "Trigger Threshold:"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-white font-medium"
+    }, node.config?.threshold != null ? node.config.threshold : 70, node.config?.metric === 'confidence' || node.config?.metric === 'motion' ? '%' : node.config?.metric === 'latency' ? ' ms' : node.config?.metric === 'temperature' ? '°C' : node.config?.metric === 'vibration' ? ' mm/s' : ' dB')), /*#__PURE__*/React.createElement("input", {
+      type: "range",
+      min: node.config?.metric === 'vibration' ? 0.5 : node.config?.metric === 'temperature' ? 40 : 1,
+      max: node.config?.metric === 'vibration' ? 10 : node.config?.metric === 'latency' ? 500 : 100,
+      step: node.config?.metric === 'vibration' ? 0.1 : 1,
+      value: node.config?.threshold != null ? node.config.threshold : 70,
+      onMouseDown: e => e.stopPropagation(),
+      onChange: e => handleUpdateNodeConfig(node.id, 'threshold', Number(e.target.value)),
+      className: "w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
+    })), node.type === 'ai_yolo' && /*#__PURE__*/React.createElement("div", {
+      className: "space-y-1"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-[10px] text-zinc-400 block"
+    }, "Active ONNX Model:"), /*#__PURE__*/React.createElement("select", {
+      value: node.config?.model || 'yolov8n-coco',
+      onMouseDown: e => e.stopPropagation(),
+      onChange: e => handleUpdateNodeConfig(node.id, 'model', e.target.value),
+      className: "w-full bg-zinc-950 border border-white/10 rounded-lg px-2 py-1 text-white text-[11px] focus:outline-none"
+    }, catalog.map(m => /*#__PURE__*/React.createElement("option", {
+      key: m.model_id,
+      value: m.model_id
+    }, m.name.split(' (')[0])))), node.type === 'sensor_imu' && /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-zinc-400"
+    }, /*#__PURE__*/React.createElement("span", null, "Sample Rate:"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-emerald-300"
+    }, "2000 Hz (±16g)")), node.type === 'ai_vibration' && /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-zinc-400"
+    }, /*#__PURE__*/React.createElement("span", null, "Harmonic FFT:"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-cyan-300"
+    }, "1024-pt SIMD")), node.type === 'storage_wal' && /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-zinc-400"
+    }, /*#__PURE__*/React.createElement("span", null, "Ring Buffer:"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-amber-300"
+    }, node.config?.ring_buffer || 512, " frames")), node.type === 'cloud_sync' && /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-zinc-400"
+    }, /*#__PURE__*/React.createElement("span", null, "Security:"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-violet-300"
+    }, "ChaCha20-Poly1305"))), /*#__PURE__*/React.createElement("div", {
+      className: "px-3 py-1.5 bg-black/40 border-t border-white/[0.04] rounded-b-2xl flex items-center justify-between"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] text-zinc-500 uppercase tracking-wider"
+    }, node.type.split('_')[0]), /*#__PURE__*/React.createElement("button", {
+      onClick: e => {
+        e.stopPropagation();
+        handleStartConnect(node.id);
+      },
+      className: "text-[10px] text-indigo-400 hover:text-indigo-300 font-medium flex items-center space-x-0.5"
+    }, /*#__PURE__*/React.createElement("span", null, "Wire ➔"))));
+  })), pipelineNodes.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 flex flex-col items-center justify-center p-6 text-center select-none z-10 pointer-events-none"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-3 shadow-xl"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "sliders",
+    className: "w-7 h-7"
+  })), /*#__PURE__*/React.createElement("h4", {
+    className: "font-medium text-sm text-zinc-200"
+  }, "Blank Canvas Ready"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs max-w-sm text-zinc-400 mt-1 mb-4"
+  }, "Assemble your edge pipeline from scratch. Click any button below to drop your first block:"), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap items-center justify-center gap-2 pointer-events-auto"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => handleAddNodeFromLibrary('sensor_cam'),
+    className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "video",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Camera Stream")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => handleAddNodeFromLibrary('ai_yolo'),
+    className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-cyan-400 border border-cyan-500/30 transition flex items-center space-x-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "brain",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "YOLOv8 Vision")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => handleAddNodeFromLibrary('sensor_imu'),
+    className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "activity",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Vibration IMU")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => handleAddNodeFromLibrary('custom_rule'),
+    className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-indigo-400 border border-indigo-500/30 transition flex items-center space-x-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "shield",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Custom Rule")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => handleAddNodeFromLibrary('storage_wal'),
+    className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-amber-400 border border-amber-500/30 transition flex items-center space-x-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "cpu",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "SQLite WAL"))))), selectedNode && /*#__PURE__*/React.createElement("div", {
+    className: "p-4 rounded-3xl bg-zinc-950/70 border border-white/[0.08] shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "space-y-1"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-xs font-semibold text-white"
+  }, selectedNode.title, " Parameters"), /*#__PURE__*/React.createElement("span", {
+    className: "px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-mono border border-emerald-500/20"
+  }, "Active")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400"
+  }, selectedNode.subtitle)), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap items-center gap-3 text-xs w-full md:w-auto"
+  }, Object.entries(selectedNode.config || {}).map(([k, v]) => /*#__PURE__*/React.createElement("div", {
+    key: k,
+    className: "p-2.5 rounded-xl bg-zinc-900 border border-white/[0.04]"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] text-zinc-500 block uppercase font-bold"
+  }, k), /*#__PURE__*/React.createElement("span", {
+    className: "font-mono text-zinc-200 text-[11px] font-medium"
+  }, String(v)))), /*#__PURE__*/React.createElement("button", {
+    onClick: () => handleDeleteNode(selectedNode.id),
+    className: "p-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-medium transition"
+  }, "Delete Node"))), (() => {
+    const isDeviceOnline = devices.some(d => d.status === 'ONLINE');
+    const hasVision = pipelineNodes.some(n => n.type.startsWith('ai_yolo') || n.type.startsWith('ai_'));
+    const hasImu = pipelineNodes.some(n => n.type === 'sensor_imu' || n.type === 'ai_vibration');
+    const hasMic = pipelineNodes.some(n => n.type === 'sensor_mic' || n.type === 'ai_audio');
+    return /*#__PURE__*/React.createElement("div", {
+      className: "space-y-3 pt-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between px-1"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-2"
+    }, /*#__PURE__*/React.createElement("h4", {
+      className: "text-xs font-semibold text-zinc-300 uppercase tracking-wider"
+    }, "Pipeline Telemetry Streams"), /*#__PURE__*/React.createElement("span", {
+      className: `text-[10px] font-mono px-2 py-0.5 rounded-full ${isDeviceOnline ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-400'}`
+    }, isDeviceOnline ? '● Live Hardware Feed (1.5s)' : '○ Standby — Awaiting Edge Connection')), /*#__PURE__*/React.createElement("span", {
+      className: "text-[11px] text-zinc-500 font-mono"
+    }, "Real Edge Hardware Feedback")), /*#__PURE__*/React.createElement("div", {
+      className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+    }, /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Inference Latency",
+      subtitle: hasVision ? 'Pure Rust ONNX Runtime Engine' : 'Not configured in active pipeline',
+      data: telemetryHistory.latency,
+      unit: "ms",
+      min: 0,
+      max: 200,
+      color: "cyan",
+      threshold: 150,
+      thresholdLabel: "Budget: 150 ms",
+      isActive: isDeviceOnline && hasVision
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Vibration Velocity (ISO-10816)",
+      subtitle: hasImu ? 'Accelerometer Harmonics' : 'Not configured in active pipeline',
+      data: telemetryHistory.vibration,
+      unit: "mm/s",
+      min: 0,
+      max: 6.0,
+      color: "emerald",
+      threshold: 4.5,
+      thresholdLabel: "Limit: 4.5 mm/s",
+      isActive: isDeviceOnline && hasImu
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Acoustic Sound Pressure",
+      subtitle: hasMic ? 'MEMS Microphone Decibels' : 'Not configured in active pipeline',
+      data: telemetryHistory.audio,
+      unit: "dB",
+      min: 0,
+      max: 100,
+      color: "amber",
+      threshold: 75,
+      thresholdLabel: "Alert: 75 dB",
+      isActive: isDeviceOnline && hasMic
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "CPU Utilization",
+      subtitle: isDeviceOnline ? 'Host Kernel Load' : 'Awaiting device heartbeat',
+      data: telemetryHistory.cpu,
+      unit: "%",
+      min: 0,
+      max: 100,
+      color: "violet",
+      isActive: isDeviceOnline
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "RAM Resident Footprint",
+      subtitle: isDeviceOnline ? 'RSS Memory Alloc' : 'Awaiting device heartbeat',
+      data: telemetryHistory.memory,
+      unit: "MB",
+      min: 0,
+      max: 120,
+      color: "cyan",
+      isActive: isDeviceOnline
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Sensor Core Temperature",
+      subtitle: isDeviceOnline ? 'Hardware Thermal Zone' : 'Awaiting device heartbeat',
+      data: telemetryHistory.temp,
+      unit: "°C",
+      min: 0,
+      max: 90,
+      color: "rose",
+      threshold: 85,
+      thresholdLabel: "Thermal Cap: 85°C",
+      isActive: isDeviceOnline
+    })));
+  })()), activeTab === 'live' && /*#__PURE__*/React.createElement("div", {
+    className: "flex-1 flex flex-col space-y-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06]"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
+    className: "text-base font-semibold text-white"
+  }, "Live Vision & Neural Telemetry"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400 mt-0.5"
+  }, "Real-time optical inference stream from active edge hardware.")), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-3 text-xs"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-zinc-400"
+  }, "Active Model:"), /*#__PURE__*/React.createElement("select", {
+    value: activeModel,
+    disabled: isDeployingModel,
+    onChange: e => handleDeployModel(e.target.value),
+    className: "bg-zinc-900 border border-white/[0.12] rounded-xl px-3.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 cursor-pointer shadow-sm"
+  }, catalog.map(m => /*#__PURE__*/React.createElement("option", {
+    key: m.model_id,
+    value: m.model_id
+  }, m.name, " [", m.modality, "]"))), /*#__PURE__*/React.createElement("button", {
+    onClick: () => handleDeployCanaryModel(activeModel),
+    disabled: isDeployingModel,
+    title: "Staged Canary: deploy to 1 node, verify 10s, then promote to fleet",
+    className: "px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-medium transition flex items-center space-x-1.5 shadow-sm"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "shield",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Canary Deploy")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setActiveTab('pipeline'),
+    className: "px-3.5 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-medium transition flex items-center space-x-1.5 shadow-sm",
+    title: "Switch to visual node graph pipeline editor (TIF Sandbox)"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "workflow",
+    className: "w-3.5 h-3.5 text-indigo-400"
+  }), /*#__PURE__*/React.createElement("span", null, "Pipeline Studio (TIF Sandbox)")), isDeployingModel && /*#__PURE__*/React.createElement("span", {
+    className: "text-xs text-indigo-400 animate-pulse"
+  }, "Hot-swapping..."))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 lg:grid-cols-3 gap-6 items-start"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lg:col-span-2 relative rounded-3xl overflow-hidden bg-black border border-white/[0.08] shadow-2xl aspect-[4/3] flex items-center justify-center group"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: `/api/v1/telemetry/live/frame?t=${liveFrameTick}`,
+    alt: "Live Camera Stream",
+    className: `w-full h-full object-cover ${frameError ? 'hidden' : 'block'}`,
+    onError: () => setFrameError(true),
+    onLoad: () => setFrameError(false)
+  }), frameError && /*#__PURE__*/React.createElement("div", {
+    className: "w-full h-full flex flex-col items-center justify-center space-y-3 bg-zinc-950/90 text-zinc-500 p-6 text-center"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-12 h-12 rounded-2xl bg-white/[0.04] flex items-center justify-center text-zinc-400"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "video",
+    className: "w-6 h-6"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "text-sm font-medium text-zinc-300"
+  }, "Camera Feed Standby"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs max-w-sm text-zinc-500"
+  }, "Start the edge client on your Raspberry Pi, Jetson, or PC to stream live frames:"), /*#__PURE__*/React.createElement("code", {
+    className: "px-3 py-1 rounded-lg bg-zinc-900 border border-white/[0.08] text-xs font-mono text-zinc-300"
+  }, "./run-edge.sh")), liveDetections.map((det, idx) => {
+    const [x, y, w, h] = det.bbox || [40, 40, 100, 100];
+    const leftPct = x / 640 * 100;
+    const topPct = y / 480 * 100;
+    const widthPct = w / 640 * 100;
+    const heightPct = h / 480 * 100;
+    return /*#__PURE__*/React.createElement("div", {
+      key: idx,
+      style: {
+        position: 'absolute',
+        left: `${leftPct}%`,
+        top: `${topPct}%`,
+        width: `${widthPct}%`,
+        height: `${heightPct}%`
+      },
+      className: "border-2 border-emerald-400 bg-emerald-400/10 rounded-lg pointer-events-none transition-all duration-300 shadow-lg"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "absolute -top-6 left-0 px-2 py-0.5 rounded-md bg-emerald-500 text-black text-[10px] font-bold tracking-wide uppercase shadow"
+    }, det.label, " ", Math.round(det.confidence * 100), "%"));
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "absolute top-4 left-4 flex items-center space-x-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] font-medium text-white"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "w-2 h-2 rounded-full bg-rose-500 animate-pulse"
+  }), /*#__PURE__*/React.createElement("span", null, "LIVE /dev/video0"), /*#__PURE__*/React.createElement("span", {
+    className: "text-zinc-500"
+  }, "•"), /*#__PURE__*/React.createElement("span", {
+    className: "text-zinc-300"
+  }, "Native Rust ORT"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setLiveFrameTick(Date.now()),
+    title: "Refresh camera snapshot",
+    className: "ml-1 text-zinc-400 hover:text-cyan-400 transition"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "refresh",
+    className: "w-3 h-3"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs pointer-events-none"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap gap-1.5"
+  }, liveDetections.length === 0 ? /*#__PURE__*/React.createElement("span", {
+    className: "px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-zinc-400 border border-white/10"
+  }, "Inspecting scene (nominal)") : liveDetections.map((d, i) => /*#__PURE__*/React.createElement("span", {
+    key: i,
+    className: "px-2.5 py-1 rounded-lg bg-emerald-500/20 backdrop-blur-md text-emerald-300 border border-emerald-500/40 font-mono text-[11px]"
+  }, d.label, " ", Math.round(d.confidence * 100), "%"))))), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-3 gap-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] text-zinc-400 block mb-1"
+  }, "Inference"), /*#__PURE__*/React.createElement("span", {
+    className: "text-base font-semibold text-white font-mono"
+  }, telemetryHistory.latency[telemetryHistory.latency.length - 1] > 0 ? `${telemetryHistory.latency[telemetryHistory.latency.length - 1]} ms` : activeDevice && activeDevice.status === 'ONLINE' ? '124 ms' : '0 ms')), /*#__PURE__*/React.createElement("div", {
+    className: "p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] text-zinc-400 block mb-1"
+  }, "Core Temp"), /*#__PURE__*/React.createElement("span", {
+    className: "text-base font-semibold text-emerald-400 font-mono"
+  }, telemetryHistory.temp[telemetryHistory.temp.length - 1] > 0 ? `${telemetryHistory.temp[telemetryHistory.temp.length - 1]}°C` : activeDevice?.telemetry?.temperature_c ? `${activeDevice.telemetry.temperature_c}°C` : '0°C')), /*#__PURE__*/React.createElement("div", {
+    className: "p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] text-zinc-400 block mb-1"
+  }, "RAM Resident"), /*#__PURE__*/React.createElement("span", {
+    className: "text-base font-semibold text-white font-mono"
+  }, telemetryHistory.memory[telemetryHistory.memory.length - 1] > 0 ? `${telemetryHistory.memory[telemetryHistory.memory.length - 1]} MB` : activeDevice?.telemetry?.ram_used_mb ? `${Math.round(activeDevice.telemetry.ram_used_mb)} MB` : '0 MB'))), /*#__PURE__*/React.createElement("div", {
+    className: "p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: `w-8 h-8 rounded-xl flex items-center justify-center ${driftMetrics?.drift_detected ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}`
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "activity",
+    className: "w-4 h-4"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-xs font-semibold text-white flex items-center space-x-1.5"
+  }, /*#__PURE__*/React.createElement("span", null, "Confidence & Drift"), /*#__PURE__*/React.createElement("span", {
+    className: `text-[10px] px-1.5 py-0.2 rounded-full font-mono ${driftMetrics?.drift_detected ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'}`
+  }, driftMetrics?.drift_detected ? 'DRIFT ALERT' : 'STABLE')), /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-zinc-400 mt-0.5"
+  }, "Mean: ", /*#__PURE__*/React.createElement("span", {
+    className: "font-mono text-zinc-200"
+  }, driftMetrics ? `${(driftMetrics.mean_confidence * 100).toFixed(0)}%` : '88%'), " • Samples: ", /*#__PURE__*/React.createElement("span", {
+    className: "font-mono text-zinc-200"
+  }, driftMetrics?.sample_count || 30)))), /*#__PURE__*/React.createElement("div", {
+    className: "text-right"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] text-zinc-500 block"
+  }, "Variance"), /*#__PURE__*/React.createElement("span", {
+    className: "text-xs font-mono text-zinc-300"
+  }, driftMetrics ? Number(driftMetrics.variance).toFixed(4) : '0.0040'))), /*#__PURE__*/React.createElement("div", {
+    className: "p-4 rounded-3xl bg-white/[0.03] border border-white/[0.06] flex flex-col space-y-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "brain",
+    className: "w-3.5 h-3.5"
+  })), /*#__PURE__*/React.createElement("span", {
+    className: "text-xs font-semibold text-white"
+  }, "Edge AI Assistant (Qwen SLM)")), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] px-2 py-0.5 rounded-full bg-indigo-950/60 text-indigo-300 border border-indigo-800/60 font-mono"
+  }, "Local GGUF")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400 leading-relaxed"
+  }, "Ask on-device AI to analyze visual targets or inspect machine health."), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap gap-1.5"
+  }, ["Summarize camera scene", "Check safety compliance", "Diagnose machine health"].map((prompt, idx) => /*#__PURE__*/React.createElement("button", {
+    key: idx,
+    onClick: () => handleAskAssistant(prompt),
+    className: "text-[11px] px-2.5 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border border-white/[0.06] transition"
+  }, prompt))), (assistantReply || isAssistantThinking) && /*#__PURE__*/React.createElement("div", {
+    className: "p-3 rounded-2xl bg-zinc-950/80 border border-white/[0.08] text-xs text-zinc-200 leading-relaxed min-h-[60px] flex items-center"
+  }, isAssistantThinking ? /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2 text-zinc-400"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "w-2 h-2 rounded-full bg-indigo-400 animate-ping"
+  }), /*#__PURE__*/React.createElement("span", null, "Local SLM reasoning...")) : /*#__PURE__*/React.createElement("span", null, assistantReply)), /*#__PURE__*/React.createElement("form", {
+    onSubmit: e => {
+      e.preventDefault();
+      handleAskAssistant();
+    },
+    className: "flex items-center space-x-2 pt-1"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    placeholder: "Ask edge diagnostic assistant...",
+    value: assistantPrompt,
+    onChange: e => setAssistantPrompt(e.target.value),
+    className: "flex-1 bg-zinc-950 border border-white/[0.1] rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500"
+  }), /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    disabled: isAssistantThinking || !assistantPrompt.trim(),
+    className: "p-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white transition shadow-sm"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "send",
+    className: "w-4 h-4"
+  })))))), (() => {
+    const isDeviceOnline = devices.some(d => d.status === 'ONLINE');
+    const hasVision = pipelineNodes.some(n => n.type.startsWith('ai_yolo') || n.type.startsWith('ai_'));
+    return /*#__PURE__*/React.createElement("div", {
+      className: "grid grid-cols-1 md:grid-cols-2 gap-4"
+    }, /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Inference Latency (Native SIMD ORT)",
+      subtitle: hasVision ? 'Active Computer Vision Pipeline' : 'No vision model in pipeline',
+      data: telemetryHistory.latency,
+      unit: "ms",
+      min: 0,
+      max: 200,
+      color: "cyan",
+      threshold: 150,
+      thresholdLabel: "Budget: 150 ms",
+      isActive: isDeviceOnline && hasVision
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Host System RAM Footprint",
+      subtitle: isDeviceOnline ? 'Edge Client Resident Memory' : 'Device offline / awaiting heartbeat',
+      data: telemetryHistory.memory,
+      unit: "MB",
+      min: 0,
+      max: 120,
+      color: "emerald",
+      threshold: 90,
+      thresholdLabel: "Cap: 90 MB",
+      isActive: isDeviceOnline
+    }));
+  })()), activeTab === 'fleet' && /*#__PURE__*/React.createElement("div", {
+    className: "space-y-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "p-6 rounded-3xl bg-gradient-to-br from-indigo-950/30 via-zinc-900/40 to-zinc-950 border border-indigo-500/20 shadow-xl space-y-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-7 h-7 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "zap",
+    className: "w-4 h-4"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold text-sm text-white"
+  }, "Zero-Touch Edge Device Provisioning"), /*#__PURE__*/React.createElement("p", {
+    className: "text-[11px] text-zinc-400"
+  }, "Streamlined one-line installer — claims hardware ID, stages configs, and boots microservices automatically."))), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2 shrink-0"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAddDeviceModal(true),
+    className: "px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition flex items-center space-x-1.5 cursor-pointer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Add Device")), currentTokenInfo && /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] font-mono px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
+  }, "Token: ", currentTokenInfo.token.substring(0, 16), "... (Active 24h)"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowQuickRef(!showQuickRef),
+    className: "px-2.5 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 text-xs font-medium border border-white/[0.08] transition flex items-center space-x-1",
+    title: "Toggle Server & SLM Cheatsheet"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "terminal",
+    className: "w-3.5 h-3.5 text-indigo-400"
+  }), /*#__PURE__*/React.createElement("span", null, showQuickRef ? 'Hide Reference' : 'Server & CLI Reference')))), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between text-xs pt-1"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-zinc-400"
+  }, "Execution Mode:"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setDaemonMode(false),
+    className: `px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${!daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'bg-zinc-800 text-zinc-400 hover:text-white'}`
+  }, "Live Streaming (Foreground)"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setDaemonMode(true),
+    className: `px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'bg-zinc-800 text-zinc-400 hover:text-white'}`
+  }, "Background Daemon (--daemon)")), /*#__PURE__*/React.createElement("div", {
+    className: "hidden sm:flex items-center space-x-2 text-[11px] text-zinc-500 font-mono"
+  }, /*#__PURE__*/React.createElement("span", null, "Zero Python • Pure Rust & C++ ELF"))), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 rounded-2xl bg-zinc-950/90 border border-white/[0.08] text-xs gap-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "relative flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `w-2.5 h-2.5 rounded-full ${tunnelInfo.active ? 'bg-cyan-400 animate-pulse' : 'bg-zinc-600'}`
+  }), tunnelInfo.active && /*#__PURE__*/React.createElement("span", {
+    className: "absolute w-4 h-4 rounded-full bg-cyan-400/30 animate-ping"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "font-semibold text-white"
+  }, tunnelInfo.active ? 'Public Cloudflare Tunnel Active' : 'Local Network Mode'), tunnelInfo.active ? /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
+  }, "Colab, Kaggle & WAN Ready") : /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] text-zinc-500 font-mono"
+  }, "LAN / Localhost only")), /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] text-zinc-400 font-mono block mt-0.5"
+  }, tunnelInfo.active ? tunnelInfo.url : `http://${window.location.host}`))), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2 shrink-0 w-full sm:w-auto justify-end"
+  }, tunnelInfo.active ? /*#__PURE__*/React.createElement("button", {
+    onClick: handleStopTunnel,
+    className: "px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-medium transition flex items-center space-x-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "stop",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Stop Tunnel")) : /*#__PURE__*/React.createElement("button", {
+    onClick: handleStartTunnel,
+    disabled: isStartingTunnel,
+    className: "px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-medium transition shadow-sm flex items-center space-x-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "refresh",
+    className: `w-3.5 h-3.5 ${isStartingTunnel ? 'animate-spin' : ''}`
+  }), /*#__PURE__*/React.createElement("span", null, isStartingTunnel ? 'Connecting Cloudflare...' : '🌐 Start Cloudflare Tunnel')))), (() => {
+    const isTunnelActive = tunnelInfo.active && tunnelInfo.url;
+    const activeBaseUrl = isTunnelActive ? tunnelInfo.url : `http://${window.location.host}`;
+    const tok = currentTokenInfo?.token || 'YOUR_TOKEN';
+    const cmd = `curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok}${daemonMode ? ' | bash -s -- --daemon' : ' | bash'}`;
+    const colabCmd = `!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon`;
+    const activeDev = devices.find(d => d.status === 'ONLINE') || devices[0];
+    const isClientOnline = activeDev?.status === 'ONLINE';
+    return /*#__PURE__*/React.createElement("div", {
+      className: "space-y-3"
+    }, isTunnelActive && /*#__PURE__*/React.createElement("div", {
+      className: "p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-zinc-900/60 to-cyan-500/10 border border-amber-500/30 space-y-2 text-xs"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "font-semibold text-amber-300 flex items-center space-x-1.5"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "zap",
+      className: "w-3.5 h-3.5 text-amber-400"
+    }), /*#__PURE__*/React.createElement("span", null, "Google Colab & Kaggle 1-Click Code Cell")), /*#__PURE__*/React.createElement("span", {
+      className: "text-[10px] text-zinc-400 font-mono"
+    }, "Shift+Enter in Colab")), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-2 bg-black/60 p-2 rounded-xl border border-white/[0.06] font-mono text-xs text-amber-200"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "flex-1 select-all truncate pl-1"
+    }, colabCmd), /*#__PURE__*/React.createElement("button", {
+      onClick: () => {
+        navigator.clipboard.writeText(colabCmd);
+        setCopiedColab(true);
+        setTimeout(() => setCopiedColab(false), 2000);
+      },
+      className: "px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg text-xs font-sans font-medium transition shrink-0 border border-amber-500/30"
+    }, copiedColab ? 'Copied!' : 'Copy Colab Code'))), /*#__PURE__*/React.createElement("div", {
+      className: "flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 bg-zinc-950/80 p-2.5 rounded-2xl border border-white/[0.1] font-mono text-xs text-indigo-300"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "flex-1 select-all truncate pl-2"
+    }, cmd), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-2 shrink-0"
+    }, /*#__PURE__*/React.createElement("button", {
+      onClick: handleGenerateNewToken,
+      disabled: isGeneratingToken,
+      className: "px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-xl text-xs font-sans font-medium transition shadow-sm flex items-center space-x-1.5 border border-white/[0.08]",
+      title: "Generate a fresh enrollment token"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "refresh",
+      className: `w-3.5 h-3.5 ${isGeneratingToken ? 'animate-spin' : ''}`
+    }), /*#__PURE__*/React.createElement("span", null, "New Token")), /*#__PURE__*/React.createElement("button", {
+      onClick: () => {
+        navigator.clipboard.writeText(cmd);
+        setCopiedQuick(true);
+        setTimeout(() => setCopiedQuick(false), 2000);
+      },
+      className: "px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-sans font-medium transition shadow-sm flex items-center space-x-1.5"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: copiedQuick ? "check" : "copy",
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, copiedQuick ? 'Copied!' : 'Copy Command')))), /*#__PURE__*/React.createElement("div", {
+      className: "flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/[0.04]"
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "text-[11px] text-zinc-400"
+    }, "Run the command in your edge terminal, or launch locally right from this browser:"), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-2"
+    }, isClientOnline ? /*#__PURE__*/React.createElement("button", {
+      onClick: () => handleStopDevice(activeDev.device_id),
+      className: "px-3 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium transition flex items-center space-x-1.5"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "stop",
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, "Stop Edge Client")) : /*#__PURE__*/React.createElement("button", {
+      onClick: () => handleStartDevice(activeDev?.device_id || 'my-edge-device-6dec8a'),
+      className: "px-3 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-medium transition flex items-center space-x-1.5"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "play",
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, "▶ Start Edge Client")), activeDev && /*#__PURE__*/React.createElement("button", {
+      onClick: () => handlePurgeDevice(activeDev.device_id),
+      className: "px-3 py-1 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-medium transition flex items-center space-x-1.5",
+      title: "Stop microservices and completely wipe local data & databases"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "trash",
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, "Purge & Delete Data")))));
+  })(), showQuickRef && /*#__PURE__*/React.createElement("div", {
+    className: "p-4 rounded-2xl bg-zinc-950/70 border border-white/[0.06] space-y-3 animate-in fade-in duration-150"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-xs font-semibold text-zinc-300 uppercase tracking-wider"
+  }, "Startup Guidelines & CLI Quick Reference"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] text-zinc-500 font-mono"
+  }, "Edge Platform v1.0")), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "p-3 rounded-xl bg-zinc-900 border border-white/[0.06] space-y-1.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between text-zinc-400 font-sans font-semibold text-[11px]"
+  }, /*#__PURE__*/React.createElement("span", null, "1. Cloud Fleet Server"), /*#__PURE__*/React.createElement("span", {
+    className: "text-emerald-400"
+  }, "Port 8080")), /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-zinc-300 select-all bg-black/40 p-1.5 rounded border border-white/[0.04]"
+  }, "node cloud_server/src/server.js")), /*#__PURE__*/React.createElement("div", {
+    className: "p-3 rounded-xl bg-zinc-900 border border-white/[0.06] space-y-1.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between text-zinc-400 font-sans font-semibold text-[11px]"
+  }, /*#__PURE__*/React.createElement("span", null, "2. Local SLM (Llama.cpp)"), /*#__PURE__*/React.createElement("span", {
+    className: "text-purple-400"
+  }, "Port 9931")), /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-zinc-300 select-all bg-black/40 p-1.5 rounded border border-white/[0.04] truncate",
+    title: "llama-server --host 127.0.0.1 --port 9931 -m data/models/qwen.gguf -c 1024 -t 4 --reasoning off"
+  }, "llama-server -p 9931 --reasoning off")), /*#__PURE__*/React.createElement("div", {
+    className: "p-3 rounded-xl bg-zinc-900 border border-white/[0.06] space-y-1.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between text-zinc-400 font-sans font-semibold text-[11px]"
+  }, /*#__PURE__*/React.createElement("span", null, "3. Edge Client CLI"), /*#__PURE__*/React.createElement("span", {
+    className: "text-cyan-400"
+  }, "./edge-ctl")), /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-zinc-300 select-all bg-black/40 p-1.5 rounded border border-white/[0.04]"
+  }, "./edge-ctl [run | stop | purge]"))))), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between px-1"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "text-xs font-semibold text-zinc-400 uppercase tracking-wider"
+  }, "Registered Fleet Hardware"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
+  }, devices.length, " Unique Machine", devices.length === 1 ? '' : 's')), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAddDeviceModal(true),
+    className: "px-3 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs text-white font-medium shadow-sm transition flex items-center space-x-1.5 cursor-pointer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Enroll Node")), /*#__PURE__*/React.createElement("button", {
+    onClick: handlePruneDevices,
+    className: "px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs text-zinc-400 hover:text-white border border-white/[0.08] transition flex items-center space-x-1.5",
+    title: "Prune duplicate or ghost hardware records"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "refresh",
+    className: "w-3.5 h-3.5 text-zinc-400"
+  }), /*#__PURE__*/React.createElement("span", null, "Prune Duplicates")))), devices.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    className: "p-10 rounded-3xl bg-zinc-950/60 border border-white/[0.06] text-center space-y-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "server",
+    className: "w-5 h-5"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-1"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "text-sm font-semibold text-white"
+  }, "No Edge Devices Enrolled Yet"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400 max-w-sm mx-auto"
+  }, "Click \"Enroll Node\" to generate a secure enrollment command for Google Colab, Jetson, Raspberry Pi, or Linux IPCs.")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAddDeviceModal(true),
+    className: "px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/30 inline-flex items-center space-x-2 transition cursor-pointer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Enroll First Device"))) : /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+  }, devices.map(d => {
+    const isOnline = d.status === 'ONLINE';
+    const isStopped = d.status === 'STOPPED';
+    return /*#__PURE__*/React.createElement("div", {
+      key: d.device_id,
+      className: "p-4 rounded-2xl bg-zinc-900/70 border border-white/[0.08] hover:border-white/[0.16] transition-all duration-200 shadow-md flex flex-col justify-between space-y-3.5"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between pb-3 border-b border-white/[0.06]"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-2.5 min-w-0 pr-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: `w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${isOnline ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : isStopped ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-zinc-800 text-zinc-400 border border-white/[0.06]'}`
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "server",
+      className: "w-4 h-4"
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "min-w-0"
+    }, /*#__PURE__*/React.createElement("h4", {
+      className: "font-semibold text-white text-xs truncate font-mono tracking-tight",
+      title: d.device_id
+    }, d.device_id), /*#__PURE__*/React.createElement("p", {
+      className: "text-[10px] text-zinc-400 truncate mt-0.5"
+    }, d.hostname || 'edge-device'))), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-1.5 shrink-0"
+    }, d.arch && /*#__PURE__*/React.createElement("span", {
+      className: "text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/[0.05] text-zinc-300 border border-white/[0.08]"
+    }, d.arch), /*#__PURE__*/React.createElement("span", {
+      className: `px-2 py-0.5 rounded-full text-[10px] font-medium flex items-center space-x-1.5 ${isOnline ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30' : isStopped ? 'bg-amber-500/10 text-amber-300 border border-amber-500/30' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`
+    }, /*#__PURE__*/React.createElement("span", {
+      className: `w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400 animate-pulse' : isStopped ? 'bg-amber-400' : 'bg-zinc-500'}`
+    }), /*#__PURE__*/React.createElement("span", null, d.status)))), /*#__PURE__*/React.createElement("div", {
+      className: "grid grid-cols-3 gap-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "p-2 rounded-xl bg-zinc-950/60 border border-white/[0.04] text-center"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] text-zinc-500 uppercase tracking-wider block font-semibold"
+    }, "CPU"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-zinc-200 font-semibold text-xs mt-0.5 block"
+    }, d.telemetry ? Math.round(d.telemetry.cpu_usage_pct) : 0, "%")), /*#__PURE__*/React.createElement("div", {
+      className: "p-2 rounded-xl bg-zinc-950/60 border border-white/[0.04] text-center"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] text-zinc-500 uppercase tracking-wider block font-semibold"
+    }, "Temp"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-zinc-200 font-semibold text-xs mt-0.5 block"
+    }, d.telemetry ? `${d.telemetry.temperature_c}°C` : '--')), /*#__PURE__*/React.createElement("div", {
+      className: "p-2 rounded-xl bg-zinc-950/60 border border-white/[0.04] text-center"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] text-zinc-500 uppercase tracking-wider block font-semibold"
+    }, "RAM"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-zinc-200 font-semibold text-xs mt-0.5 block"
+    }, d.telemetry ? `${Math.round(d.telemetry.ram_used_mb)}M` : '--'))), /*#__PURE__*/React.createElement("div", {
+      className: "space-y-1.5 text-xs"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-zinc-400"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "flex items-center space-x-1.5 text-[11px]"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "brain",
+      className: "w-3.5 h-3.5 text-indigo-400"
+    }), /*#__PURE__*/React.createElement("span", null, "Active Model")), /*#__PURE__*/React.createElement("span", {
+      className: "text-indigo-300 font-mono font-medium text-[11px]"
+    }, d.active_model && d.active_model !== 'None (Standby)' ? d.active_model : 'yolov8n-coco')), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-[10px] text-zinc-500"
+    }, /*#__PURE__*/React.createElement("span", null, "Heartbeat"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-emerald-400/90 flex items-center space-x-1"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "w-1 h-1 rounded-full bg-emerald-400"
+    }), /*#__PURE__*/React.createElement("span", null, d.seconds_ago ? `${d.seconds_ago}s ago` : 'live now')))), /*#__PURE__*/React.createElement("div", {
+      className: "pt-2 border-t border-white/[0.06] flex items-center space-x-2"
+    }, isOnline ? /*#__PURE__*/React.createElement("button", {
+      onClick: () => handleStopDevice(d.device_id),
+      className: "flex-1 py-1.5 px-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm cursor-pointer",
+      title: "Stop microservices on this device"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "stop",
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, "Stop Client")) : /*#__PURE__*/React.createElement("button", {
+      onClick: () => handleStartDevice(d.device_id),
+      className: "flex-1 py-1.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm cursor-pointer",
+      title: "Start edge microservices"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "play",
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, "Start Client")), /*#__PURE__*/React.createElement("button", {
+      onClick: () => handlePurgeDevice(d.device_id),
+      className: "py-1.5 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm cursor-pointer",
+      title: "Purge device from fleet"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "trash",
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, "Purge"))));
+  })))), activeTab === 'catalog' && /*#__PURE__*/React.createElement("div", {
+    className: "space-y-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06]"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-semibold text-white"
+  }, "Model Catalog & Registry"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400 mt-0.5"
+  }, "Pre-curated public models and proprietary user-uploaded weights.")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowUploadModal(true),
+    className: "px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition shadow-sm flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "upload",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Upload Custom Model"))), showUploadModal && /*#__PURE__*/React.createElement("div", {
+    className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-zinc-900 border border-white/[0.12] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "p-4 border-b border-white/[0.08] flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold text-white text-sm"
+  }, "Upload Custom Model Weights"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowUploadModal(false),
+    className: "text-zinc-500 hover:text-white text-sm p-1"
+  }, "✕")), /*#__PURE__*/React.createElement("form", {
+    onSubmit: handleUploadModel,
+    className: "p-5 space-y-4 text-xs"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    className: "block text-zinc-300 mb-1 font-medium"
+  }, "Model Name"), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    required: true,
+    placeholder: "e.g. Worker Safety PPE Detector",
+    value: uploadName,
+    onChange: e => setUploadName(e.target.value),
+    className: "w-full bg-zinc-950 border border-white/[0.1] rounded-xl px-3 py-2 text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 gap-3"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    className: "block text-zinc-300 mb-1 font-medium"
+  }, "Modality"), /*#__PURE__*/React.createElement("select", {
+    value: uploadModality,
+    onChange: e => setUploadModality(e.target.value),
+    className: "w-full bg-zinc-950 border border-white/[0.1] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "Vision"
+  }, "Vision (ONNX)"), /*#__PURE__*/React.createElement("option", {
+    value: "Vibration"
+  }, "Vibration (1D-CNN)"), /*#__PURE__*/React.createElement("option", {
+    value: "Audio"
+  }, "Audio (Acoustic)"), /*#__PURE__*/React.createElement("option", {
+    value: "Text"
+  }, "Text (GGUF SLM)"))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    className: "block text-zinc-300 mb-1 font-medium"
+  }, "Model File (.onnx / .gguf)"), /*#__PURE__*/React.createElement("input", {
+    type: "file",
+    required: true,
+    onChange: e => setUploadFile(e.target.files[0]),
+    className: "w-full text-zinc-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:bg-zinc-800 file:text-white hover:file:bg-zinc-700 cursor-pointer"
+  }))), uploadModality === 'Vision' && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    className: "block text-zinc-300 mb-1 font-medium"
+  }, "Custom Class Labels (Comma Separated)"), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    placeholder: "e.g. hardhat, safety_vest, person, boots",
+    value: uploadClasses,
+    onChange: e => setUploadClasses(e.target.value),
+    className: "w-full bg-zinc-950 border border-white/[0.1] rounded-xl px-3 py-2 text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] text-zinc-500 mt-1 block"
+  }, "Leave empty to use automatic COCO-80 labels or generic class_0, class_1 mapping.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    className: "block text-zinc-300 mb-1 font-medium"
+  }, "Description"), /*#__PURE__*/React.createElement("textarea", {
+    rows: "2",
+    placeholder: "Purpose and deployment scenarios for this model...",
+    value: uploadDescription,
+    onChange: e => setUploadDescription(e.target.value),
+    className: "w-full bg-zinc-950 border border-white/[0.1] rounded-xl px-3 py-2 text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-end space-x-2 pt-2 border-t border-white/[0.08]"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setShowUploadModal(false),
+    className: "px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium"
+  }, "Cancel"), /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    disabled: isUploading,
+    className: "px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium disabled:opacity-50"
+  }, isUploading ? 'Uploading...' : 'Upload & Register'))))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+  }, catalog.map(m => /*#__PURE__*/React.createElement("div", {
+    key: m.model_id,
+    className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.18] transition flex flex-col justify-between space-y-4 shadow-sm group"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-start justify-between"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-9 h-9 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center group-hover:scale-105 transition"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: m.modality === 'Vision' ? 'video' : m.modality === 'Text' ? 'brain' : 'zap',
+    className: "w-4 h-4"
+  })), /*#__PURE__*/React.createElement("span", {
+    className: "px-2.5 py-0.5 rounded-full bg-white/[0.06] text-zinc-300 text-[10px] font-mono border border-white/[0.05]"
+  }, m.format, " • ", m.size_mb, " MB")), /*#__PURE__*/React.createElement("h4", {
+    className: "font-semibold text-white text-sm"
+  }, m.name), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400 leading-relaxed line-clamp-2"
+  }, m.description)), /*#__PURE__*/React.createElement("div", {
+    className: "pt-2 border-t border-white/[0.06] flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] font-mono text-zinc-500 truncate max-w-[120px]"
+  }, m.model_id), /*#__PURE__*/React.createElement("button", {
+    onClick: () => handleDeployModel(m.model_id),
+    className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white text-zinc-300 hover:text-black text-xs font-medium transition"
+  }, "Deploy to Fleet")))))), activeTab === 'security' && /*#__PURE__*/React.createElement("div", {
+    className: "space-y-6 max-w-4xl"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "p-5 rounded-3xl bg-white/[0.02] border border-white/[0.06] space-y-1"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-semibold text-white"
+  }, "Edge Fleet Cryptographic Security"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400"
+  }, "Zero-Trust hardware attestation, AEAD payload encryption, and tamper resistance.")), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 md:grid-cols-2 gap-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] space-y-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "shield",
+    className: "w-4 h-4"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
+    className: "text-xs font-semibold text-white"
+  }, "In-Flight AEAD Encryption"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] text-emerald-400 font-mono"
+  }, "AES-256-GCM / ChaCha20"))), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400 leading-relaxed"
+  }, "All telemetry packets, sensor buffers, and diagnostic outputs are sealed in an authenticated envelope prior to network transmission."), /*#__PURE__*/React.createElement("div", {
+    className: "p-2 rounded-xl bg-zinc-950 font-mono text-[11px] text-zinc-300 border border-white/[0.04]"
+  }, "Status: 🔒 Active (Zero-Overhead SIMD)")), /*#__PURE__*/React.createElement("div", {
+    className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] space-y-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "zap",
+    className: "w-4 h-4"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
+    className: "text-xs font-semibold text-white"
+  }, "Anti-Tamper Message Signing"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] text-indigo-400 font-mono"
+  }, "HMAC-SHA256 Signatures"))), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400 leading-relaxed"
+  }, "Every edge packet includes a cryptographic message authentication code. Any man-in-the-middle bit tampering causes immediate rejection."), /*#__PURE__*/React.createElement("div", {
+    className: "p-2 rounded-xl bg-zinc-950 font-mono text-[11px] text-zinc-300 border border-white/[0.04]"
+  }, "Verification: 🔑 100% Packets Authenticated")), /*#__PURE__*/React.createElement("div", {
+    className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] space-y-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-8 h-8 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "cpu",
+    className: "w-4 h-4"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
+    className: "text-xs font-semibold text-white"
+  }, "WASM Memory Isolation"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] text-violet-400 font-mono"
+  }, "Wasmtime 64KB Sandbox"))), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400 leading-relaxed"
+  }, "Dynamic rules execute in private 64KB linear memory with no raw OS, filesystem, or socket access granted to untrusted guest code."), /*#__PURE__*/React.createElement("div", {
+    className: "p-2 rounded-xl bg-zinc-950 font-mono text-[11px] text-zinc-300 border border-white/[0.04]"
+  }, "Sandbox: 🛡️ Hardware Enforced Memory Boundaries")), /*#__PURE__*/React.createElement("div", {
+    className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] space-y-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "server",
+    className: "w-4 h-4"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
+    className: "text-xs font-semibold text-white"
+  }, "Atomic Model Verification"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] text-amber-400 font-mono"
+  }, "SHA-256 + rename(2)"))), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400 leading-relaxed"
+  }, "Downloaded weights are verified against the cryptographic cloud manifest before executing atomic POSIX staging to guarantee zero corruption."), /*#__PURE__*/React.createElement("div", {
+    className: "p-2 rounded-xl bg-zinc-950 font-mono text-[11px] text-zinc-300 border border-white/[0.04]"
+  }, "Integrity: ✅ Verified Staging Pipeline"))))), showTerminalDrawer && /*#__PURE__*/React.createElement("div", {
+    className: "fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-xl border-t border-white/[0.12] shadow-2xl p-4 transition-all duration-300 max-h-[380px] flex flex-col font-mono text-xs"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between pb-3 border-b border-white/[0.08] mb-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "font-semibold text-white tracking-wide"
+  }, "Edge Diagnostic Shell"), /*#__PURE__*/React.createElement("span", {
+    className: "text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-zinc-400"
+  }, "Whitelisted Commands")), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, ['free -h', 'df -h', 'uptime', 'v4l2-ctl --list-devices', './edge-ctl status'].map(cmd => /*#__PURE__*/React.createElement("button", {
+    key: cmd,
+    onClick: () => handleExecuteTerminalCommand(cmd),
+    disabled: isExecutingCommand,
+    className: "px-2 py-1 rounded bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 text-[11px] border border-white/[0.06] transition"
+  }, cmd)), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowTerminalDrawer(false),
+    className: "p-1 rounded text-zinc-400 hover:text-white"
+  }, "✕"))), /*#__PURE__*/React.createElement("div", {
+    className: "flex-1 overflow-y-auto space-y-2 max-h-[200px] bg-black/60 p-3 rounded-xl border border-white/[0.06] text-zinc-300 font-mono text-[11px]"
+  }, terminalHistory.map((item, idx) => /*#__PURE__*/React.createElement("div", {
+    key: idx,
+    className: "space-y-0.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2 text-cyan-400"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-zinc-500"
+  }, item.time), /*#__PURE__*/React.createElement("span", null, "edge-node$"), /*#__PURE__*/React.createElement("span", {
+    className: "font-semibold"
+  }, item.cmd)), /*#__PURE__*/React.createElement("pre", {
+    className: "text-zinc-300 whitespace-pre-wrap pl-4 border-l border-zinc-800"
+  }, item.output)))), /*#__PURE__*/React.createElement("form", {
+    onSubmit: e => {
+      e.preventDefault();
+      handleExecuteTerminalCommand();
+    },
+    className: "flex items-center space-x-2 mt-3"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-cyan-400 font-bold"
+  }, "$"), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    value: terminalCommand,
+    onChange: e => setTerminalCommand(e.target.value),
+    placeholder: "Enter command (e.g. free -h, df -h, uptime, v4l2-ctl --list-devices)...",
+    className: "flex-1 bg-zinc-900 border border-white/[0.1] rounded-lg px-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500"
+  }), /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    disabled: isExecutingCommand,
+    className: "px-3.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-black font-semibold rounded-lg text-xs transition"
+  }, isExecutingCommand ? 'Executing...' : 'Run'))), showAddDeviceModal && /*#__PURE__*/React.createElement("div", {
+    className: "fixed top-0 left-0 right-0 bottom-0 inset-0 z-[100] w-screen h-screen flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-zinc-900 border border-white/[0.12] rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150 my-auto"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "p-5 border-b border-white/[0.08] flex items-center justify-between bg-zinc-950/70"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "server",
+    className: "w-4 h-4"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold text-white text-sm"
+  }, "Enroll New Edge Device"), /*#__PURE__*/React.createElement("p", {
+    className: "text-[11px] text-zinc-400"
+  }, "Generate a cryptographically secured one-line bootstrap command"))), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAddDeviceModal(false),
+    className: "text-zinc-500 hover:text-white text-sm p-1.5 rounded-lg hover:bg-white/[0.06] transition cursor-pointer"
+  }, "✕")), /*#__PURE__*/React.createElement("div", {
+    className: "p-6 space-y-5 text-xs"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
+  }, "1. Target Hardware Environment"), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 sm:grid-cols-4 gap-2"
+  }, [{
+    id: 'colab',
+    label: 'Google Colab',
+    sub: 'Kaggle / Cloud VM',
+    icon: 'zap'
+  }, {
+    id: 'jetson',
+    label: 'NVIDIA Jetson',
+    sub: 'DeepStream / NVMM',
+    icon: 'cpu'
+  }, {
+    id: 'rpi',
+    label: 'Raspberry Pi',
+    sub: 'ARM64 64-bit OS',
+    icon: 'activity'
+  }, {
+    id: 'generic',
+    label: 'Linux PC / IPC',
+    sub: 'x86_64 Debian/RHEL',
+    icon: 'server'
+  }].map(p => /*#__PURE__*/React.createElement("button", {
+    key: p.id,
+    type: "button",
+    onClick: () => setEnrollPlatform(p.id),
+    className: `p-3 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer ${enrollPlatform === p.id ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-md' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white hover:border-white/[0.12]'}`
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: p.icon,
+    className: `w-4 h-4 mb-2 ${enrollPlatform === p.id ? 'text-indigo-400' : 'text-zinc-500'}`
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "font-semibold text-xs truncate"
+  }, p.label), /*#__PURE__*/React.createElement("div", {
+    className: "text-[9px] text-zinc-500 truncate mt-0.5"
+  }, p.sub)))))), enrollPlatform === 'colab' ? /*#__PURE__*/React.createElement("div", {
+    className: "space-y-3 p-3.5 rounded-2xl bg-indigo-950/20 border border-indigo-500/20"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: "text-xs font-semibold text-white block"
+  }, "Google Colab Camera & Streaming Mode"), /*#__PURE__*/React.createElement("p", {
+    className: "text-[11px] text-zinc-400 mt-0.5"
+  }, "Stream your laptop webcam or run headless daemon"))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 gap-2"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setColabWebcamMode(true),
+    className: `p-2.5 rounded-xl border text-left transition cursor-pointer flex items-center space-x-2 ${colabWebcamMode ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white'}`
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "video",
+    className: "w-4 h-4 shrink-0"
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "font-semibold text-xs"
+  }, "Webcam Browser Bridge"), /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] opacity-80"
+  }, "Streams your laptop camera"))), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setColabWebcamMode(false),
+    className: `p-2.5 rounded-xl border text-left transition cursor-pointer flex items-center space-x-2 ${!colabWebcamMode ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white'}`
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "server",
+    className: "w-4 h-4 shrink-0"
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "font-semibold text-xs"
+  }, "Daemon Mode"), /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] opacity-80"
+  }, "Headless synthetic stream")))), colabWebcamMode && /*#__PURE__*/React.createElement("div", {
+    className: "flex items-start space-x-2 text-[11px] text-indigo-300/90 pt-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-amber-400 font-bold"
+  }, "ℹ️ Note:"), /*#__PURE__*/React.createElement("span", null, "Your browser will prompt for camera access in Colab. Once allowed, your laptop's real webcam frames stream directly through Tether-Edge YOLOv8 inference."))) : /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 sm:grid-cols-2 gap-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "space-y-1.5"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
+  }, "2. Execution Mode"), /*#__PURE__*/React.createElement("div", {
+    className: "flex rounded-xl bg-zinc-950 p-1 border border-white/[0.08]"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setDaemonMode(true),
+    className: `flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'}`
+  }, "Daemon (Background)"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setDaemonMode(false),
+    className: `flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${!daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'}`
+  }, "Interactive Console"))), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-1.5"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
+  }, "3. Device Label / Tag (Optional)"), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    placeholder: "e.g. factory-camera-1",
+    value: enrollTag,
+    onChange: e => setEnrollTag(e.target.value),
+    className: "w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500 font-mono"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2 pt-1"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider"
+  }, enrollPlatform === 'colab' && colabWebcamMode ? 'Google Colab Python Cell (Copy & Run)' : 'Secure Enrollment Command'), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: handleGenerateNewToken,
+    disabled: isGeneratingToken,
+    className: "text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 cursor-pointer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "refresh",
+    className: `w-3 h-3 ${isGeneratingToken ? 'animate-spin' : ''}`
+  }), /*#__PURE__*/React.createElement("span", null, "Regenerate Fresh Token"))), (() => {
+    const isTunnelActive = tunnelInfo.active && tunnelInfo.url;
+    const activeBaseUrl = isTunnelActive ? tunnelInfo.url : `http://${window.location.host}`;
+    const tok = currentTokenInfo?.token || 'YOUR_TOKEN';
+    const flag = daemonMode ? ' | bash -s -- --daemon' : ' | bash';
+    const colabWebcamSnippet = `# [Step 1] Download & start Tether-Edge Microservice Fleet\n!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon\n\n# [Step 2] Live Laptop Webcam Bridge: Streams your real camera to Tether-Edge\nfrom IPython.display import display, Javascript, HTML\nfrom google.colab.output import eval_js\nimport base64, time, json, os, subprocess, urllib.request\n\nprint("🎥 Requesting browser webcam permission...")\ndisplay(HTML(\'\'\'\n<div id="tether_cam_container" style="display:flex;align-items:center;gap:12px;padding:8px 12px;background:#111827;border-radius:12px;border:1px solid #374151;width:fit-content;margin:8px 0;">\n  <video id="tether_cam_video" autoplay playsinline muted style="width:160px;height:120px;border-radius:8px;object-fit:cover;background:#000;border:1px solid #06b6d4;"></video>\n  <div style="font-family:monospace;font-size:12px;color:#e5e7eb;">\n    <div style="color:#06b6d4;font-weight:600;">● TETHER-EDGE WEBCAM LIVE</div>\n    <div id="tether_cam_status" style="color:#9ca3af;font-size:11px;margin-top:2px;">Connecting hardware...</div>\n  </div>\n</div>\n\'\'\'))\n\ndisplay(Javascript(\'\'\'\nasync function initCam() {\n  try {\n    const video = document.getElementById("tether_cam_video");\n    const status = document.getElementById("tether_cam_status");\n    const stream = await navigator.mediaDevices.getUserMedia({video: {width: 640, height: 480}});\n    window.camStream = stream;\n    video.srcObject = stream;\n    await video.play();\n    if (status) {\n      status.innerText = "640x480 @ 30 FPS • Streaming to Dashboard";\n      status.style.color = "#34d399";\n    }\n    \n    const canvas = document.createElement("canvas");\n    canvas.width = 640;\n    canvas.height = 480;\n    const ctx = canvas.getContext("2d");\n    \n    window.getFrame = () => {\n      if (video.readyState >= 2) {\n        ctx.drawImage(video, 0, 0, 640, 480);\n        return canvas.toDataURL("image/jpeg", 0.85).split(",")[1];\n      }\n      return null;\n    };\n\n    window.stopCam = () => {\n      if (window.camStream) {\n        window.camStream.getTracks().forEach(t => t.stop());\n        window.camStream = null;\n      }\n      const vid = document.getElementById("tether_cam_video");\n      if (vid) { vid.pause(); vid.srcObject = null; vid.remove(); }\n      const container = document.getElementById("tether_cam_container");\n      if (container) {\n        container.innerHTML = "<div style=\'color:#f87171;font-weight:600;font-size:12px;padding:6px 10px;background:#18181b;border-radius:8px;border:1px solid #3f3f46;\'>⏹️ Webcam Hardware Released & Offline</div>";\n      }\n      return "STOPPED";\n    };\n  } catch (err) {\n    const status = document.getElementById("tether_cam_status");\n    if (status) {\n      status.innerText = "Camera Access Error: " + err.message;\n      status.style.color = "#f87171";\n    }\n  }\n}\ninitCam();\n\'\'\'))\n\ntime.sleep(2.5)\n\n# Clear any stale stop flags from prior runs\nif os.path.exists("/tmp/edge_stop_camera"):\n  try:\n    os.remove("/tmp/edge_stop_camera")\n  except Exception:\n    pass\n\n# Read assigned device identity\ndevice_id = "colab-node"\nif os.path.exists("data/edge.json"):\n  try:\n    with open("data/edge.json") as f:\n      device_id = json.load(f).get("device_id", "colab-node")\n  except Exception:\n    pass\n\nupload_url = f"${activeBaseUrl}/api/v1/devices/{device_id}/frame"\nprint(f"🚀 Laptop webcam online! Streaming live frames to Tether-Edge ({device_id})...")\nprint("ℹ️ To stop camera, run: ./edge-ctl stop (or click Stop in dashboard, or interrupt this cell)")\n\nframe_count = 0\nlast_watchdog = time.time()\n\ntry:\n  while True:\n    if os.path.exists("/tmp/edge_stop_camera") or not os.path.exists("data/edge.json"):\n      print("\\n⏹️ [Camera Service] Stop / Purge command received from edge-ctl!")\n      break\n    frame_b64 = eval_js("window.getFrame ? window.getFrame() : null")\n    if frame_b64:\n      frame_bytes = base64.b64decode(frame_b64)\n      with open("/tmp/edge_live_frame.jpg", "wb") as f:\n        f.write(frame_bytes)\n      try:\n        req = urllib.request.Request(upload_url, data=frame_bytes, headers={"Content-Type": "image/jpeg"}, method="POST")\n        urllib.request.urlopen(req, timeout=1.5)\n      except Exception:\n        pass\n      frame_count += 1\n      if frame_count % 5 == 0:\n        print(f"\\r📸 [Pipeline Live] Frame #{frame_count} streamed ({len(frame_bytes)//1024} KB) | Node: {device_id} | Live Stream Active", end="", flush=True)\n    if time.time() - last_watchdog > 6:\n      last_watchdog = time.time()\n      ret = subprocess.run(["pgrep", "-f", "client_daemon"], capture_output=True, text=True)\n      if ret.returncode != 0 and os.path.exists("./run-edge.sh") and os.path.exists("data/edge.json"):\n        subprocess.Popen(["./run-edge.sh", "run"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n    time.sleep(0.18)\nexcept KeyboardInterrupt:\n  print("\\n⏹️ [Camera Service] Interrupted by user.")\nfinally:\n  print("🔌 Releasing laptop camera hardware in browser...")\n  try:\n    eval_js("window.stopCam ? window.stopCam() : null")\n  except Exception:\n    pass\n  if os.path.exists("/tmp/edge_stop_camera"):\n    try:\n      os.remove("/tmp/edge_stop_camera")\n    except Exception:\n      pass\n  print("✅ Camera hardware released and webcam LED turned off. Edge client offline.")`;
+    const genericCmd = enrollPlatform === 'colab' ? `!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon` : `curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok}${flag}`;
+    const contentToCopy = enrollPlatform === 'colab' && colabWebcamMode ? colabWebcamSnippet : genericCmd;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "space-y-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "p-3 bg-zinc-950 rounded-2xl border border-white/[0.1] font-mono text-xs text-indigo-300 select-all break-all relative group max-h-48 overflow-y-auto whitespace-pre"
+    }, contentToCopy), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between gap-2 pt-1"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "text-[10px] text-zinc-500 font-mono flex items-center space-x-1.5"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "w-1.5 h-1.5 rounded-full bg-emerald-400"
+    }), /*#__PURE__*/React.createElement("span", null, "Valid 24h • Auto-registers hardware ID & starts edge services")), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      onClick: () => {
+        navigator.clipboard.writeText(contentToCopy);
+        setCopiedQuick(true);
+        setTimeout(() => setCopiedQuick(false), 2000);
+        showToast('success', 'Copied to clipboard!');
+      },
+      className: "px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition shadow-sm flex items-center space-x-1.5 shrink-0 cursor-pointer"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: copiedQuick ? "check" : "copy",
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, copiedQuick ? 'Copied to Clipboard!' : enrollPlatform === 'colab' && colabWebcamMode ? 'Copy Colab Cell' : 'Copy Command'))));
+  })())), /*#__PURE__*/React.createElement("div", {
+    className: "p-4 bg-zinc-950/80 border-t border-white/[0.06] flex items-center justify-between text-xs"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] text-zinc-500 font-mono"
+  }, "Single binary ELF • Zero Python • Anti-Collision Identity"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setShowAddDeviceModal(false),
+    className: "px-4 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 transition cursor-pointer"
+  }, "Done")))));
 }
 
 // Mount React Root
 const rootElement = document.getElementById('root');
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
-  root.render(/*#__PURE__*/_jsx(App, {}));
+  root.render(/*#__PURE__*/React.createElement(App, null));
 }
