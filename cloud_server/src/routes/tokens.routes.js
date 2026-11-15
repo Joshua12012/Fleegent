@@ -13,7 +13,7 @@ const store = require('../store/state');
  */
 router.post('/generate', (req, res) => {
   try {
-    const { device_tag = 'edge-node', ttl_seconds = 3600 } = req.body;
+    const { device_tag = 'edge-node', ttl_seconds = 3600 } = req.body || {};
     const tokenRecord = tokenService.generateToken(device_tag, Number(ttl_seconds));
 
     const host = req.get('host') || '127.0.0.1:8080';

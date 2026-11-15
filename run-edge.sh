@@ -82,11 +82,20 @@ run_all() {
     WASM_HOST_BIN="$ROOT_DIR/target/release/wasm_host"
     DAEMON_BIN="$ROOT_DIR/target/release/client_daemon"
 
-    # Fallback to local root binaries if target/release is not populated (e.g. bundle tarball)
-    [[ ! -f "$STORAGE_BIN" && -f "$ROOT_DIR/storage_service" ]] && STORAGE_BIN="$ROOT_DIR/storage_service"
-    [[ ! -f "$INFERENCE_BIN" && -f "$ROOT_DIR/inference_worker" ]] && INFERENCE_BIN="$ROOT_DIR/inference_worker"
-    [[ ! -f "$WASM_HOST_BIN" && -f "$ROOT_DIR/wasm_host" ]] && WASM_HOST_BIN="$ROOT_DIR/wasm_host"
-    [[ ! -f "$DAEMON_BIN" && -f "$ROOT_DIR/client_daemon" ]] && DAEMON_BIN="$ROOT_DIR/client_daemon"
+    # Fallback to bin/ or local root binaries if target/release is not populated
+    [[ ! -f "$STORAGE_BIN" && -f "$ROOT_DIR/bin/storage_service" ]] && STORAGE_BIN="$ROOT_DIR/bin/storage_service"
+    [[ ! -f "$STORAGE_BIN" && -f "$ROOT_DIR/storage_service" && ! -d "$ROOT_DIR/storage_service" ]] && STORAGE_BIN="$ROOT_DIR/storage_service"
+
+    [[ ! -f "$INFERENCE_BIN" && -f "$ROOT_DIR/bin/inference_worker" ]] && INFERENCE_BIN="$ROOT_DIR/bin/inference_worker"
+    [[ ! -f "$INFERENCE_BIN" && -f "$ROOT_DIR/inference_worker" && ! -d "$ROOT_DIR/inference_worker" ]] && INFERENCE_BIN="$ROOT_DIR/inference_worker"
+
+    [[ ! -f "$WASM_HOST_BIN" && -f "$ROOT_DIR/bin/wasm_host" ]] && WASM_HOST_BIN="$ROOT_DIR/bin/wasm_host"
+    [[ ! -f "$WASM_HOST_BIN" && -f "$ROOT_DIR/wasm_host" && ! -d "$ROOT_DIR/wasm_host" ]] && WASM_HOST_BIN="$ROOT_DIR/wasm_host"
+
+    [[ ! -f "$DAEMON_BIN" && -f "$ROOT_DIR/bin/client_daemon" ]] && DAEMON_BIN="$ROOT_DIR/bin/client_daemon"
+    [[ ! -f "$DAEMON_BIN" && -f "$ROOT_DIR/client_daemon" && ! -d "$ROOT_DIR/client_daemon" ]] && DAEMON_BIN="$ROOT_DIR/client_daemon"
+
+    [[ ! -f "$WASM_FILE" && -f "$ROOT_DIR/bin/wasm_worker.wasm" ]] && WASM_FILE="$ROOT_DIR/bin/wasm_worker.wasm"
     [[ ! -f "$WASM_FILE" && -f "$ROOT_DIR/wasm_worker.wasm" ]] && WASM_FILE="$ROOT_DIR/wasm_worker.wasm"
 
     # Auto-build if any binary is missing and Cargo workspace is present

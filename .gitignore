@@ -36,4 +36,5 @@ plan-v1.excalidraw
 cloud_server/node_modules
 
 # Screenshots
-*.png
+*.png/bin
+bin/

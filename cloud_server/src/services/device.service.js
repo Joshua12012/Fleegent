@@ -278,26 +278,50 @@ class DeviceService {
     }
 
     this.purgedDeviceIds.delete(deviceId);
+    const os = require('os');
+    const isLocalHost = device ? (device.hostname === os.hostname() || device.hostname === 'localhost' || deviceId === 'local') : false;
+
     if (device) {
       this.purgedDeviceIds.delete(device.device_id);
       device.status = 'ONLINE';
       device.pending_command = null;
       device.last_seen = Math.floor(Date.now() / 1000);
+      
+      // Ensure camera & inference are enabled on start
+      if (device.config && device.config.services) {
+        device.config.services.camera.enabled = true;
+        device.config.services.inference.enabled = true;
+        device.config.services.inference.active_model_id = 'yolov8n-coco';
+        device.config.version = (device.config.version || 1) + 1;
+        device.active_model = 'yolov8n-coco';
+      }
+
       store.devices.set(device.device_id, device);
       store.saveToDisk();
     }
 
-    // Only spawn local binaries if explicitly targeting 'local' host
-    if (deviceId === 'local') {
+    // If device is on this local machine, spawn ./run-edge.sh if client_daemon is not active
+    if (isLocalHost || deviceId === 'local') {
       try {
-        const child = spawn('./run-edge.sh', ['run'], {
-          cwd: rootDir,
-          detached: true,
-          stdio: 'ignore'
-        });
-        child.unref();
-        store.logEvent('DEVICE_STARTED', `Dispatched local start signal.`);
-        return { success: true, message: `Local edge microservices launched.` };
+        const { execSync } = require('child_process');
+        let isRunning = false;
+        try {
+          const ps = execSync('pgrep -x client_daemon || true').toString().trim();
+          isRunning = Boolean(ps);
+        } catch (_) {}
+
+        if (!isRunning) {
+          const child = spawn('./run-edge.sh', ['run'], {
+            cwd: rootDir,
+            detached: true,
+            stdio: 'ignore'
+          });
+          child.unref();
+          store.logEvent('DEVICE_STARTED', `Launched local edge microservices.`);
+          return { success: true, message: `Local edge microservices launched and camera activated.` };
+        } else {
+          return { success: true, message: `Edge client is already running and camera pipeline activated.` };
+        }
       } catch (err) {
         throw new Error(`Failed to launch edge client: ${err.message}`);
       }

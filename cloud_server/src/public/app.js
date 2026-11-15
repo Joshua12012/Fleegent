@@ -1355,10 +1355,18 @@ function App() {
   });
 
   // Add Device Modal state
-  const [showAddDeviceModal, setShowAddDeviceModal] = useState(false);
+  const [showAddDeviceModal, setShowAddDeviceModal] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('modal') === 'add-device' || window.location.hash.includes('add-device');
+    } catch (_) {
+      return false;
+    }
+  });
   const [enrollPlatform, setEnrollPlatform] = useState('colab'); // 'colab', 'jetson', 'rpi', 'generic'
   const [enrollTag, setEnrollTag] = useState('');
   const [enrollDuration, setEnrollDuration] = useState('24h');
+  const [colabWebcamMode, setColabWebcamMode] = useState(true);
 
   // ChatGPT-style SLM Assistant state
   const [assistantPrompt, setAssistantPrompt] = useState('');
@@ -2656,31 +2664,31 @@ function App() {
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "video",
     className: "w-3.5 h-3.5"
-  }), /*#__PURE__*/React.createElement("span", null, "+ Camera Stream")), /*#__PURE__*/React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Camera Stream")), /*#__PURE__*/React.createElement("button", {
     onClick: () => handleAddNodeFromLibrary('ai_yolo'),
     className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-cyan-400 border border-cyan-500/30 transition flex items-center space-x-1.5"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "brain",
     className: "w-3.5 h-3.5"
-  }), /*#__PURE__*/React.createElement("span", null, "+ YOLOv8 Vision")), /*#__PURE__*/React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "YOLOv8 Vision")), /*#__PURE__*/React.createElement("button", {
     onClick: () => handleAddNodeFromLibrary('sensor_imu'),
     className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1.5"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "activity",
     className: "w-3.5 h-3.5"
-  }), /*#__PURE__*/React.createElement("span", null, "+ Vibration IMU")), /*#__PURE__*/React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Vibration IMU")), /*#__PURE__*/React.createElement("button", {
     onClick: () => handleAddNodeFromLibrary('custom_rule'),
     className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-indigo-400 border border-indigo-500/30 transition flex items-center space-x-1.5"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "shield",
     className: "w-3.5 h-3.5"
-  }), /*#__PURE__*/React.createElement("span", null, "+ Custom Rule")), /*#__PURE__*/React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Custom Rule")), /*#__PURE__*/React.createElement("button", {
     onClick: () => handleAddNodeFromLibrary('storage_wal'),
     className: "px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-amber-400 border border-amber-500/30 transition flex items-center space-x-1.5"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "cpu",
     className: "w-3.5 h-3.5"
-  }), /*#__PURE__*/React.createElement("span", null, "+ SQLite WAL"))))), selectedNode && /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "SQLite WAL"))))), selectedNode && /*#__PURE__*/React.createElement("div", {
     className: "p-4 rounded-3xl bg-zinc-950/70 border border-white/[0.08] shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
   }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-1"
@@ -3038,7 +3046,7 @@ function App() {
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "plus",
     className: "w-3.5 h-3.5"
-  }), /*#__PURE__*/React.createElement("span", null, "+ Add Device")), currentTokenInfo && /*#__PURE__*/React.createElement("span", {
+  }), /*#__PURE__*/React.createElement("span", null, "Add Device")), currentTokenInfo && /*#__PURE__*/React.createElement("span", {
     className: "text-[10px] font-mono px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
   }, "Token: ", currentTokenInfo.token.substring(0, 16), "... (Active 24h)"), /*#__PURE__*/React.createElement("button", {
     onClick: () => setShowQuickRef(!showQuickRef),
@@ -3231,7 +3239,7 @@ function App() {
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "plus",
     className: "w-3.5 h-3.5"
-  }), /*#__PURE__*/React.createElement("span", null, "+ Enroll Node")), /*#__PURE__*/React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Enroll Node")), /*#__PURE__*/React.createElement("button", {
     onClick: handlePruneDevices,
     className: "px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs text-zinc-400 hover:text-white border border-white/[0.08] transition flex items-center space-x-1.5",
     title: "Prune duplicate or ghost hardware records"
@@ -3251,226 +3259,106 @@ function App() {
     className: "text-sm font-semibold text-white"
   }, "No Edge Devices Enrolled Yet"), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-zinc-400 max-w-sm mx-auto"
-  }, "Click \"+ Add Device\" to generate a secure enrollment command for Google Colab, Jetson, Raspberry Pi, or Linux IPCs.")), /*#__PURE__*/React.createElement("button", {
+  }, "Click \"Enroll Node\" to generate a secure enrollment command for Google Colab, Jetson, Raspberry Pi, or Linux IPCs.")), /*#__PURE__*/React.createElement("button", {
     onClick: () => setShowAddDeviceModal(true),
     className: "px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/30 inline-flex items-center space-x-2 transition cursor-pointer"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "plus",
     className: "w-3.5 h-3.5"
-  }), /*#__PURE__*/React.createElement("span", null, "+ Add Your First Device"))) : /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Enroll First Device"))) : /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
   }, devices.map(d => {
     const isOnline = d.status === 'ONLINE';
     const isStopped = d.status === 'STOPPED';
     return /*#__PURE__*/React.createElement("div", {
       key: d.device_id,
-      className: "p-5 rounded-3xl bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] transition space-y-4 shadow-sm flex flex-col justify-between"
+      className: "p-4 rounded-2xl bg-zinc-900/70 border border-white/[0.08] hover:border-white/[0.16] transition-all duration-200 shadow-md flex flex-col justify-between space-y-3.5"
     }, /*#__PURE__*/React.createElement("div", {
-      className: "space-y-3"
+      className: "flex items-center justify-between pb-3 border-b border-white/[0.06]"
     }, /*#__PURE__*/React.createElement("div", {
-      className: "flex items-start justify-between"
-    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-      className: "flex items-center space-x-2"
+      className: "flex items-center space-x-2.5 min-w-0 pr-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: `w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${isOnline ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : isStopped ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-zinc-800 text-zinc-400 border border-white/[0.06]'}`
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "server",
+      className: "w-4 h-4"
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "min-w-0"
     }, /*#__PURE__*/React.createElement("h4", {
-      className: "font-semibold text-white text-sm"
-    }, d.device_id), d.hardware_id && /*#__PURE__*/React.createElement("span", {
-      className: "text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-white/[0.06]"
-    }, "HW: ", d.hardware_id.slice(0, 8)), d.arch && /*#__PURE__*/React.createElement("span", {
-      className: "text-[9px] font-mono px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
-    }, d.arch)), /*#__PURE__*/React.createElement("div", {
-      className: "flex items-center space-x-1.5 text-xs text-zinc-500 font-mono"
-    }, /*#__PURE__*/React.createElement("span", null, d.hostname || 'edge-device'), d.board_model && /*#__PURE__*/React.createElement("span", {
-      className: "text-[10px] text-zinc-400 font-sans truncate max-w-[160px]"
-    }, "• ", d.board_model))), /*#__PURE__*/React.createElement("span", {
-      className: `px-2.5 py-0.5 rounded-full text-[11px] font-medium flex items-center space-x-1.5 ${isOnline ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30' : isStopped ? 'bg-amber-500/10 text-amber-300 border border-amber-500/30' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`
+      className: "font-semibold text-white text-xs truncate font-mono tracking-tight",
+      title: d.device_id
+    }, d.device_id), /*#__PURE__*/React.createElement("p", {
+      className: "text-[10px] text-zinc-400 truncate mt-0.5"
+    }, d.hostname || 'edge-device'))), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-1.5 shrink-0"
+    }, d.arch && /*#__PURE__*/React.createElement("span", {
+      className: "text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/[0.05] text-zinc-300 border border-white/[0.08]"
+    }, d.arch), /*#__PURE__*/React.createElement("span", {
+      className: `px-2 py-0.5 rounded-full text-[10px] font-medium flex items-center space-x-1.5 ${isOnline ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30' : isStopped ? 'bg-amber-500/10 text-amber-300 border border-amber-500/30' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`
     }, /*#__PURE__*/React.createElement("span", {
       className: `w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400 animate-pulse' : isStopped ? 'bg-amber-400' : 'bg-zinc-500'}`
-    }), /*#__PURE__*/React.createElement("span", null, d.status))), /*#__PURE__*/React.createElement("div", {
-      className: "grid grid-cols-3 gap-2 p-3 rounded-2xl bg-zinc-950/60 border border-white/[0.04] text-center text-xs"
-    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
-      className: "text-[10px] text-zinc-500 block"
-    }, "CPU"), /*#__PURE__*/React.createElement("span", {
-      className: "font-mono text-zinc-300 font-semibold"
-    }, d.telemetry ? Math.round(d.telemetry.cpu_usage_pct) : 0, "%")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
-      className: "text-[10px] text-zinc-500 block"
-    }, "Temp"), /*#__PURE__*/React.createElement("span", {
-      className: "font-mono text-zinc-300 font-semibold"
-    }, d.telemetry ? `${d.telemetry.temperature_c}°C` : '--')), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
-      className: "text-[10px] text-zinc-500 block"
-    }, "Memory"), /*#__PURE__*/React.createElement("span", {
-      className: "font-mono text-zinc-300 font-semibold"
-    }, d.telemetry ? `${Math.round(d.telemetry.ram_used_mb)}M` : '--'))), /*#__PURE__*/React.createElement("div", {
-      className: "flex items-center justify-between text-xs pt-1 border-t border-white/[0.06]"
+    }), /*#__PURE__*/React.createElement("span", null, d.status)))), /*#__PURE__*/React.createElement("div", {
+      className: "grid grid-cols-3 gap-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "p-2 rounded-xl bg-zinc-950/60 border border-white/[0.04] text-center"
     }, /*#__PURE__*/React.createElement("span", {
-      className: "text-zinc-500"
-    }, "Active Model:"), /*#__PURE__*/React.createElement("span", {
-      className: "text-indigo-300 font-medium"
-    }, d.active_model || 'yolov8n-coco')), /*#__PURE__*/React.createElement("div", {
+      className: "text-[9px] text-zinc-500 uppercase tracking-wider block font-semibold"
+    }, "CPU"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-zinc-200 font-semibold text-xs mt-0.5 block"
+    }, d.telemetry ? Math.round(d.telemetry.cpu_usage_pct) : 0, "%")), /*#__PURE__*/React.createElement("div", {
+      className: "p-2 rounded-xl bg-zinc-950/60 border border-white/[0.04] text-center"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] text-zinc-500 uppercase tracking-wider block font-semibold"
+    }, "Temp"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-zinc-200 font-semibold text-xs mt-0.5 block"
+    }, d.telemetry ? `${d.telemetry.temperature_c}°C` : '--')), /*#__PURE__*/React.createElement("div", {
+      className: "p-2 rounded-xl bg-zinc-950/60 border border-white/[0.04] text-center"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] text-zinc-500 uppercase tracking-wider block font-semibold"
+    }, "RAM"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-zinc-200 font-semibold text-xs mt-0.5 block"
+    }, d.telemetry ? `${Math.round(d.telemetry.ram_used_mb)}M` : '--'))), /*#__PURE__*/React.createElement("div", {
+      className: "space-y-1.5 text-xs"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-zinc-400"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "flex items-center space-x-1.5 text-[11px]"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "brain",
+      className: "w-3.5 h-3.5 text-indigo-400"
+    }), /*#__PURE__*/React.createElement("span", null, "Active Model")), /*#__PURE__*/React.createElement("span", {
+      className: "text-indigo-300 font-mono font-medium text-[11px]"
+    }, d.active_model && d.active_model !== 'None (Standby)' ? d.active_model : 'yolov8n-coco')), /*#__PURE__*/React.createElement("div", {
       className: "flex items-center justify-between text-[10px] text-zinc-500"
-    }, /*#__PURE__*/React.createElement("span", null, "Heartbeat:"), /*#__PURE__*/React.createElement("span", {
-      className: "font-mono text-zinc-400"
-    }, d.seconds_ago ? `${d.seconds_ago}s ago` : 'live now'))), /*#__PURE__*/React.createElement("div", {
-      className: "pt-3 border-t border-white/[0.06] flex items-center space-x-2"
+    }, /*#__PURE__*/React.createElement("span", null, "Heartbeat"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-emerald-400/90 flex items-center space-x-1"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "w-1 h-1 rounded-full bg-emerald-400"
+    }), /*#__PURE__*/React.createElement("span", null, d.seconds_ago ? `${d.seconds_ago}s ago` : 'live now')))), /*#__PURE__*/React.createElement("div", {
+      className: "pt-2 border-t border-white/[0.06] flex items-center space-x-2"
     }, isOnline ? /*#__PURE__*/React.createElement("button", {
       onClick: () => handleStopDevice(d.device_id),
-      className: "flex-1 py-1.5 px-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm",
+      className: "flex-1 py-1.5 px-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm cursor-pointer",
       title: "Stop microservices on this device"
     }, /*#__PURE__*/React.createElement(Icon, {
       name: "stop",
       className: "w-3.5 h-3.5"
     }), /*#__PURE__*/React.createElement("span", null, "Stop Client")) : /*#__PURE__*/React.createElement("button", {
       onClick: () => handleStartDevice(d.device_id),
-      className: "flex-1 py-1.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm",
+      className: "flex-1 py-1.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm cursor-pointer",
       title: "Start edge microservices"
     }, /*#__PURE__*/React.createElement(Icon, {
       name: "play",
       className: "w-3.5 h-3.5"
     }), /*#__PURE__*/React.createElement("span", null, "Start Client")), /*#__PURE__*/React.createElement("button", {
       onClick: () => handlePurgeDevice(d.device_id),
-      className: "py-1.5 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm",
-      title: "Stop microservices, wipe SQLite database, and purge from fleet"
+      className: "py-1.5 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-medium flex items-center justify-center space-x-1.5 transition shadow-sm cursor-pointer",
+      title: "Purge device from fleet"
     }, /*#__PURE__*/React.createElement(Icon, {
       name: "trash",
       className: "w-3.5 h-3.5"
-    }), /*#__PURE__*/React.createElement("span", null, "Purge & Delete"))));
-  }))), showAddDeviceModal && /*#__PURE__*/React.createElement("div", {
-    className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "bg-zinc-900 border border-white/[0.12] rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "p-5 border-b border-white/[0.08] flex items-center justify-between bg-zinc-950/60"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center space-x-3"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "server",
-    className: "w-4 h-4"
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
-    className: "font-semibold text-white text-sm"
-  }, "Enroll New Edge Device"), /*#__PURE__*/React.createElement("p", {
-    className: "text-[11px] text-zinc-400"
-  }, "Generate a cryptographically secured one-line bootstrap command"))), /*#__PURE__*/React.createElement("button", {
-    onClick: () => setShowAddDeviceModal(false),
-    className: "text-zinc-500 hover:text-white text-sm p-1.5 rounded-lg hover:bg-white/[0.06] transition"
-  }, "✕")), /*#__PURE__*/React.createElement("div", {
-    className: "p-6 space-y-5 text-xs"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "space-y-2"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
-  }, "1. Target Hardware Environment"), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-2 sm:grid-cols-4 gap-2"
-  }, [{
-    id: 'colab',
-    label: 'Google Colab',
-    sub: 'Kaggle / Cloud VM',
-    icon: 'zap'
-  }, {
-    id: 'jetson',
-    label: 'NVIDIA Jetson',
-    sub: 'DeepStream / NVMM',
-    icon: 'cpu'
-  }, {
-    id: 'rpi',
-    label: 'Raspberry Pi',
-    sub: 'ARM64 64-bit OS',
-    icon: 'activity'
-  }, {
-    id: 'generic',
-    label: 'Linux PC / IPC',
-    sub: 'x86_64 Debian/RHEL',
-    icon: 'server'
-  }].map(p => /*#__PURE__*/React.createElement("button", {
-    key: p.id,
-    type: "button",
-    onClick: () => setEnrollPlatform(p.id),
-    className: `p-3 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer ${enrollPlatform === p.id ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-md' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white hover:border-white/[0.12]'}`
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: p.icon,
-    className: `w-4 h-4 mb-2 ${enrollPlatform === p.id ? 'text-indigo-400' : 'text-zinc-500'}`
-  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "font-semibold text-xs truncate"
-  }, p.label), /*#__PURE__*/React.createElement("div", {
-    className: "text-[9px] text-zinc-500 truncate mt-0.5"
-  }, p.sub)))))), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-1 sm:grid-cols-2 gap-4"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "space-y-1.5"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
-  }, "2. Execution Mode"), /*#__PURE__*/React.createElement("div", {
-    className: "flex rounded-xl bg-zinc-950 p-1 border border-white/[0.08]"
-  }, /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    onClick: () => setDaemonMode(true),
-    className: `flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'}`
-  }, "Daemon (Background)"), /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    onClick: () => setDaemonMode(false),
-    className: `flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${!daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'}`
-  }, "Interactive Console"))), /*#__PURE__*/React.createElement("div", {
-    className: "space-y-1.5"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
-  }, "3. Device Label / Tag (Optional)"), /*#__PURE__*/React.createElement("input", {
-    type: "text",
-    placeholder: "e.g. factory-camera-1",
-    value: enrollTag,
-    onChange: e => setEnrollTag(e.target.value),
-    className: "w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500 font-mono"
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "space-y-2 pt-1"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center justify-between"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider"
-  }, "Secure Enrollment Command"), /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    onClick: handleGenerateNewToken,
-    disabled: isGeneratingToken,
-    className: "text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 cursor-pointer"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "refresh",
-    className: `w-3 h-3 ${isGeneratingToken ? 'animate-spin' : ''}`
-  }), /*#__PURE__*/React.createElement("span", null, "Regenerate Fresh Token"))), (() => {
-    const isTunnelActive = tunnelInfo.active && tunnelInfo.url;
-    const activeBaseUrl = isTunnelActive ? tunnelInfo.url : `http://${window.location.host}`;
-    const tok = currentTokenInfo?.token || 'YOUR_TOKEN';
-    const flag = daemonMode ? ' | bash -s -- --daemon' : ' | bash';
-    const fullCmd = enrollPlatform === 'colab' ? `!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon` : `curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok}${flag}`;
-    return /*#__PURE__*/React.createElement("div", {
-      className: "space-y-2"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "p-3 bg-zinc-950 rounded-2xl border border-white/[0.1] font-mono text-xs text-indigo-300 select-all break-all relative group"
-    }, fullCmd), /*#__PURE__*/React.createElement("div", {
-      className: "flex items-center justify-between gap-2 pt-1"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "text-[10px] text-zinc-500 font-mono flex items-center space-x-1.5"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "w-1.5 h-1.5 rounded-full bg-emerald-400"
-    }), /*#__PURE__*/React.createElement("span", null, "Valid 24h • Auto-registers hardware ID & starts edge daemon")), /*#__PURE__*/React.createElement("button", {
-      type: "button",
-      onClick: () => {
-        navigator.clipboard.writeText(fullCmd);
-        setCopiedQuick(true);
-        setTimeout(() => setCopiedQuick(false), 2000);
-        showToast('success', 'Enrollment command copied to clipboard!');
-      },
-      className: "px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition shadow-sm flex items-center space-x-1.5 shrink-0 cursor-pointer"
-    }, /*#__PURE__*/React.createElement(Icon, {
-      name: copiedQuick ? "check" : "copy",
-      className: "w-3.5 h-3.5"
-    }), /*#__PURE__*/React.createElement("span", null, copiedQuick ? 'Copied to Clipboard!' : 'Copy Command'))));
-  })())), /*#__PURE__*/React.createElement("div", {
-    className: "p-4 bg-zinc-950/80 border-t border-white/[0.06] flex items-center justify-between text-xs"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "text-[11px] text-zinc-500 font-mono"
-  }, "Single binary ELF • Zero Python • Anti-Collision Identity"), /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    onClick: () => setShowAddDeviceModal(false),
-    className: "px-4 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 transition cursor-pointer"
-  }, "Done"))))), activeTab === 'catalog' && /*#__PURE__*/React.createElement("div", {
+    }), /*#__PURE__*/React.createElement("span", null, "Purge"))));
+  })))), activeTab === 'catalog' && /*#__PURE__*/React.createElement("div", {
     className: "space-y-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06]"
@@ -3484,7 +3372,7 @@ function App() {
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "upload",
     className: "w-3.5 h-3.5"
-  }), /*#__PURE__*/React.createElement("span", null, "+ Upload Custom Model"))), showUploadModal && /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Upload Custom Model"))), showUploadModal && /*#__PURE__*/React.createElement("div", {
     className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bg-zinc-900 border border-white/[0.12] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150"
@@ -3716,7 +3604,182 @@ function App() {
     type: "submit",
     disabled: isExecutingCommand,
     className: "px-3.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-black font-semibold rounded-lg text-xs transition"
-  }, isExecutingCommand ? 'Executing...' : 'Run'))));
+  }, isExecutingCommand ? 'Executing...' : 'Run'))), showAddDeviceModal && /*#__PURE__*/React.createElement("div", {
+    className: "fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-zinc-900 border border-white/[0.12] rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150 my-auto"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "p-5 border-b border-white/[0.08] flex items-center justify-between bg-zinc-950/70"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "server",
+    className: "w-4 h-4"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold text-white text-sm"
+  }, "Enroll New Edge Device"), /*#__PURE__*/React.createElement("p", {
+    className: "text-[11px] text-zinc-400"
+  }, "Generate a cryptographically secured one-line bootstrap command"))), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAddDeviceModal(false),
+    className: "text-zinc-500 hover:text-white text-sm p-1.5 rounded-lg hover:bg-white/[0.06] transition cursor-pointer"
+  }, "✕")), /*#__PURE__*/React.createElement("div", {
+    className: "p-6 space-y-5 text-xs"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
+  }, "1. Target Hardware Environment"), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 sm:grid-cols-4 gap-2"
+  }, [{
+    id: 'colab',
+    label: 'Google Colab',
+    sub: 'Kaggle / Cloud VM',
+    icon: 'zap'
+  }, {
+    id: 'jetson',
+    label: 'NVIDIA Jetson',
+    sub: 'DeepStream / NVMM',
+    icon: 'cpu'
+  }, {
+    id: 'rpi',
+    label: 'Raspberry Pi',
+    sub: 'ARM64 64-bit OS',
+    icon: 'activity'
+  }, {
+    id: 'generic',
+    label: 'Linux PC / IPC',
+    sub: 'x86_64 Debian/RHEL',
+    icon: 'server'
+  }].map(p => /*#__PURE__*/React.createElement("button", {
+    key: p.id,
+    type: "button",
+    onClick: () => setEnrollPlatform(p.id),
+    className: `p-3 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer ${enrollPlatform === p.id ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-md' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white hover:border-white/[0.12]'}`
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: p.icon,
+    className: `w-4 h-4 mb-2 ${enrollPlatform === p.id ? 'text-indigo-400' : 'text-zinc-500'}`
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "font-semibold text-xs truncate"
+  }, p.label), /*#__PURE__*/React.createElement("div", {
+    className: "text-[9px] text-zinc-500 truncate mt-0.5"
+  }, p.sub)))))), enrollPlatform === 'colab' ? /*#__PURE__*/React.createElement("div", {
+    className: "space-y-3 p-3.5 rounded-2xl bg-indigo-950/20 border border-indigo-500/20"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: "text-xs font-semibold text-white block"
+  }, "Google Colab Camera & Streaming Mode"), /*#__PURE__*/React.createElement("p", {
+    className: "text-[11px] text-zinc-400 mt-0.5"
+  }, "Stream your laptop webcam or run headless daemon"))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 gap-2"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setColabWebcamMode(true),
+    className: `p-2.5 rounded-xl border text-left transition cursor-pointer flex items-center space-x-2 ${colabWebcamMode ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white'}`
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "video",
+    className: "w-4 h-4 shrink-0"
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "font-semibold text-xs"
+  }, "Webcam Browser Bridge"), /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] opacity-80"
+  }, "Streams your laptop camera"))), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setColabWebcamMode(false),
+    className: `p-2.5 rounded-xl border text-left transition cursor-pointer flex items-center space-x-2 ${!colabWebcamMode ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white'}`
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "server",
+    className: "w-4 h-4 shrink-0"
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "font-semibold text-xs"
+  }, "Daemon Mode"), /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] opacity-80"
+  }, "Headless synthetic stream")))), colabWebcamMode && /*#__PURE__*/React.createElement("div", {
+    className: "flex items-start space-x-2 text-[11px] text-indigo-300/90 pt-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-amber-400 font-bold"
+  }, "ℹ️ Note:"), /*#__PURE__*/React.createElement("span", null, "Your browser will prompt for camera access in Colab. Once allowed, your laptop's real webcam frames stream directly through Tether-Edge YOLOv8 inference."))) : /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 sm:grid-cols-2 gap-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "space-y-1.5"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
+  }, "2. Execution Mode"), /*#__PURE__*/React.createElement("div", {
+    className: "flex rounded-xl bg-zinc-950 p-1 border border-white/[0.08]"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setDaemonMode(true),
+    className: `flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'}`
+  }, "Daemon (Background)"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setDaemonMode(false),
+    className: `flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${!daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'}`
+  }, "Interactive Console"))), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-1.5"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
+  }, "3. Device Label / Tag (Optional)"), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    placeholder: "e.g. factory-camera-1",
+    value: enrollTag,
+    onChange: e => setEnrollTag(e.target.value),
+    className: "w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500 font-mono"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2 pt-1"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider"
+  }, enrollPlatform === 'colab' && colabWebcamMode ? 'Google Colab Python Cell (Copy & Run)' : 'Secure Enrollment Command'), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: handleGenerateNewToken,
+    disabled: isGeneratingToken,
+    className: "text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 cursor-pointer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "refresh",
+    className: `w-3 h-3 ${isGeneratingToken ? 'animate-spin' : ''}`
+  }), /*#__PURE__*/React.createElement("span", null, "Regenerate Fresh Token"))), (() => {
+    const isTunnelActive = tunnelInfo.active && tunnelInfo.url;
+    const activeBaseUrl = isTunnelActive ? tunnelInfo.url : `http://${window.location.host}`;
+    const tok = currentTokenInfo?.token || 'YOUR_TOKEN';
+    const flag = daemonMode ? ' | bash -s -- --daemon' : ' | bash';
+    const colabWebcamSnippet = `# [Step 1] Download & start Tether-Edge Microservice Fleet\n!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon\n\n# [Step 2] Live Laptop Webcam Bridge: Streams your real camera to Tether-Edge\nfrom IPython.display import display, Javascript\nfrom google.colab.output import eval_js\nimport base64, time\n\nprint("🎥 Requesting browser webcam permission...")\ndisplay(Javascript(\'\'\'\nasync function initCam() {\n  const stream = await navigator.mediaDevices.getUserMedia({video: {width: 640, height: 480}});\n  const video = document.createElement("video");\n  video.autoplay = true; video.srcObject = stream;\n  await video.play();\n  const canvas = document.createElement("canvas");\n  canvas.width = 640; canvas.height = 480;\n  const ctx = canvas.getContext("2d");\n  window.getFrame = () => {\n    ctx.drawImage(video, 0, 0, 640, 480);\n    return canvas.toDataURL("image/jpeg", 0.8).split(",")[1];\n  };\n}\ninitCam();\n\'\'\'))\ntime.sleep(2)\nprint("🚀 Laptop camera connected! Live frames streaming to Tether-Edge dashboard.")\n\nwhile True:\n  try:\n    frame = eval_js("window.getFrame()")\n    if frame:\n      with open("/tmp/edge_live_frame.jpg", "wb") as f:\n        f.write(base64.b64decode(frame))\n    time.sleep(0.2)\n  except Exception:\n    time.sleep(0.5)`;
+    const genericCmd = enrollPlatform === 'colab' ? `!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon` : `curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok}${flag}`;
+    const contentToCopy = enrollPlatform === 'colab' && colabWebcamMode ? colabWebcamSnippet : genericCmd;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "space-y-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "p-3 bg-zinc-950 rounded-2xl border border-white/[0.1] font-mono text-xs text-indigo-300 select-all break-all relative group max-h-48 overflow-y-auto whitespace-pre"
+    }, contentToCopy), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between gap-2 pt-1"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "text-[10px] text-zinc-500 font-mono flex items-center space-x-1.5"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "w-1.5 h-1.5 rounded-full bg-emerald-400"
+    }), /*#__PURE__*/React.createElement("span", null, "Valid 24h • Auto-registers hardware ID & starts edge services")), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      onClick: () => {
+        navigator.clipboard.writeText(contentToCopy);
+        setCopiedQuick(true);
+        setTimeout(() => setCopiedQuick(false), 2000);
+        showToast('success', 'Copied to clipboard!');
+      },
+      className: "px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition shadow-sm flex items-center space-x-1.5 shrink-0 cursor-pointer"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: copiedQuick ? "check" : "copy",
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, copiedQuick ? 'Copied to Clipboard!' : enrollPlatform === 'colab' && colabWebcamMode ? 'Copy Colab Cell' : 'Copy Command'))));
+  })())), /*#__PURE__*/React.createElement("div", {
+    className: "p-4 bg-zinc-950/80 border-t border-white/[0.06] flex items-center justify-between text-xs"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] text-zinc-500 font-mono"
+  }, "Single binary ELF • Zero Python • Anti-Collision Identity"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setShowAddDeviceModal(false),
+    className: "px-4 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 transition cursor-pointer"
+  }, "Done")))));
 }
 
 // Mount React Root

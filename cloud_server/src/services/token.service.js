@@ -102,16 +102,16 @@ class TokenService {
       };
     }
 
-    // Create initial modular device configuration document (Azure IoT Edge style - Standby mode)
+    // Create initial modular device configuration document (Default: Active Camera & Vision Pipeline)
     const initialConfig = {
       device_id: deviceId,
       hostname: hostname || 'edge-device',
       cloud_server_url: process.env.CLOUD_URL || 'http://127.0.0.1:8080',
       nats_url: '127.0.0.1:4222',
-      version: 0,
+      version: 1,
       services: {
         camera: {
-          enabled: false,
+          enabled: true,
           device_path: '/dev/video0',
           resolution: [640, 480],
           fps: 5,
@@ -120,17 +120,17 @@ class TokenService {
           publish_topic: 'sensor.camera'
         },
         inference: {
-          enabled: false,
-          active_model_id: 'yolov8n-defect',
+          enabled: true,
+          active_model_id: 'yolov8n-coco',
           modality: 'Vision',
-          model_path: 'data/models/yolov8n-defect.bin',
+          model_path: 'data/models/yolov8n-coco.onnx',
           confidence_threshold: 0.70,
           memory_cap_mb: 15,
           listen_topic: 'inference.vision',
           publish_topic: 'inference.response'
         },
         monitoring: {
-          enabled: false,
+          enabled: true,
           wasm_module_path: 'wasm_worker/target/wasm32-wasip1/release/wasm_worker.wasm',
           thermal_zone_path: '/sys/class/thermal/thermal_zone0/temp',
           thermal_alert_celsius: 85.0,
@@ -145,7 +145,7 @@ class TokenService {
           alert_topic: 'telemetry.alert'
         },
         storage: {
-          enabled: false,
+          enabled: true,
           db_path: 'data/edge_storage.db',
           wal_mode: true,
           ring_buffer_capacity: 512,
@@ -157,7 +157,7 @@ class TokenService {
       updated_at: now
     };
 
-    // Store device record in Standby mode
+    // Store device record with active vision pipeline
     const deviceRecord = {
       device_id: deviceId,
       hostname: hostname || 'edge-device',
@@ -177,7 +177,7 @@ class TokenService {
         temperature_c: 40.0,
         timestamp: now
       },
-      active_model: 'None (Standby)'
+      active_model: 'yolov8n-coco'
     };
 
     store.devices.set(deviceId, deviceRecord);

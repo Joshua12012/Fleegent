@@ -125,9 +125,20 @@ cat <<EOF > data/edge.json
 EOF
 echo -e "\${GREEN}\${BOLD}[OK]\${NC} Staged identity config: data/edge.json"
 
-echo -e "  - Downloading latest Edge Client binaries from: \${CLOUD_URL}/edge-client-bundle.tar.gz"
-curl -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz
-chmod +x edge-ctl run-edge.sh client_daemon inference_worker wasm_host storage_service nats-server target/release/* 2>/dev/null || true
+if [[ -f "./target/release/client_daemon" && -f "./run-edge.sh" ]]; then
+    echo -e "  - \${GREEN}[OK]\${NC} Found local release binaries in target/release, skipping bundle download."
+else
+    echo -e "  - Downloading latest Edge Client binaries from: \${CLOUD_URL}/edge-client-bundle.tar.gz"
+    mkdir -p bin target/release data data/models data/samples
+    curl -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz --skip-old-files 2>/dev/null || curl -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz 2>/dev/null || true
+fi
+
+chmod +x edge-ctl run-edge.sh nats-server target/release/* bin/* 2>/dev/null || true
+if [[ -f "./client_daemon" && ! -d "./client_daemon" ]]; then chmod +x ./client_daemon; fi
+if [[ -f "./inference_worker" && ! -d "./inference_worker" ]]; then chmod +x ./inference_worker; fi
+if [[ -f "./wasm_host" && ! -d "./wasm_host" ]]; then chmod +x ./wasm_host; fi
+if [[ -f "./storage_service" && ! -d "./storage_service" ]]; then chmod +x ./storage_service; fi
+
 echo -e "\${GREEN}\${BOLD}[OK]\${NC} Edge runtime package ready."
 
 MODE="\${1:-foreground}"
@@ -153,9 +164,9 @@ else
     echo -e "  - Hit \${BOLD}Ctrl+C\${NC} anytime to stop cleanly without orphaned PIDs."
     echo -e "  - Background daemon mode: \${BOLD}curl -sSL \${CLOUD_URL}/bootstrap.sh?token=\${TOKEN} | bash -s -- --daemon\${NC}\n"
     if [[ -f "./run-edge.sh" ]]; then
-        exec ./run-edge.sh run </dev/tty 2>/dev/null || exec ./run-edge.sh run </dev/null
+        exec ./run-edge.sh run
     elif [[ -f "./edge-ctl" ]]; then
-        exec ./edge-ctl run </dev/tty 2>/dev/null || exec ./edge-ctl run </dev/null
+        exec ./edge-ctl run
     else
         echo -e "\${RED}[ERROR]\${NC} Missing run-edge.sh binary."
         exit 1
