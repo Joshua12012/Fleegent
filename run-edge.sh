@@ -189,16 +189,20 @@ run_all() {
 # ------------------------------------------------------------------------------
 stop_all() {
     log_info "Stopping all running edge client microservices..."
+    # 1. Signal Python / Colab camera bridge to release browser camera track and turn off LED
+    touch /tmp/edge_stop_camera 2>/dev/null || true
+
     killall -9 inference_worker wasm_host storage_service gst-launch-1.0 ffmpeg 2>/dev/null || true
+    pkill -9 -f gst-launch-1.0 2>/dev/null || true
+    pkill -9 -f ffmpeg 2>/dev/null || true
     pkill -x inference_worker 2>/dev/null || true
     pkill -x wasm_host 2>/dev/null || true
     pkill -x storage_service 2>/dev/null || true
     pkill -f "nats-server -p 4222" 2>/dev/null || true
-    pkill -f "gst-launch-1.0|ffmpeg -f v4l2" 2>/dev/null || true
     pkill -x client_daemon 2>/dev/null || true
     killall -9 client_daemon 2>/dev/null || true
     rm -f /tmp/edge_live_frame.jpg 2>/dev/null || true
-    log_ok "All edge client microservices stopped cleanly. Local data & configs preserved."
+    log_ok "All edge client microservices stopped cleanly. Camera released. Local data & configs preserved."
 }
 
 # ------------------------------------------------------------------------------
@@ -225,13 +229,19 @@ case "$COMMAND" in
         ;;
     purge|uninstall|clean-all)
         log_info "Stopping worker microservices..."
+        # 1. Signal Python / Colab camera bridge to release browser camera track immediately
+        touch /tmp/edge_stop_camera 2>/dev/null || true
+
         killall -9 inference_worker wasm_host storage_service gst-launch-1.0 ffmpeg 2>/dev/null || true
+        pkill -9 -f gst-launch-1.0 2>/dev/null || true
+        pkill -9 -f ffmpeg 2>/dev/null || true
         pkill -x inference_worker 2>/dev/null || true
         pkill -x wasm_host 2>/dev/null || true
         pkill -x storage_service 2>/dev/null || true
         pkill -f "nats-server -p 4222" 2>/dev/null || true
-        pkill -f "gst-launch-1.0|ffmpeg -f v4l2" 2>/dev/null || true
-        rm -f /tmp/edge_live_frame.jpg 2>/dev/null || true
+        pkill -x client_daemon 2>/dev/null || true
+        killall -9 client_daemon 2>/dev/null || true
+        rm -f /tmp/edge_live_frame.jpg /tmp/edge_supervisor.sock 2>/dev/null || true
         if [[ -f "data/edge.json" ]]; then
             DEVICE_ID=$(grep -o '"device_id":"[^"]*' data/edge.json | head -n1 | cut -d'"' -f4 || true)
             CLOUD_URL=$(grep -o '"cloud_server_url":"[^"]*' data/edge.json | head -n1 | cut -d'"' -f4 || true)
@@ -240,21 +250,27 @@ case "$COMMAND" in
                 curl -sSL -X POST "$CLOUD_URL/api/v1/devices/$DEVICE_ID/purge" >/dev/null 2>&1 || true
             fi
         fi
-        rm -rf data /tmp/edge_supervisor.sock client_test.log trace.log
+        rm -rf data client_test.log trace.log /tmp/edge_* 2>/dev/null || true
         if [[ ! -d "$ROOT_DIR/.git" ]]; then
-            log_info "Standalone client installation detected — removing microservice binaries & scripts..."
-            rm -f "$ROOT_DIR/client_daemon" \
+            log_info "Standalone client installation detected — removing all binaries, scripts, and benchmark files..."
+            rm -rf "$ROOT_DIR/bin" \
+                   "$ROOT_DIR/target" \
+                   "$ROOT_DIR/sample_data" \
+                   "$ROOT_DIR/scripts" \
+                   "$ROOT_DIR/benchmark_results" 2>/dev/null || true
+            rm -f "$ROOT_DIR/benchmark.sh" \
+                  "$ROOT_DIR/client_daemon" \
                   "$ROOT_DIR/inference_worker" \
                   "$ROOT_DIR/storage_service" \
                   "$ROOT_DIR/wasm_host" \
                   "$ROOT_DIR/nats-server" \
                   "$ROOT_DIR/wasm_worker.wasm" \
                   "$ROOT_DIR/edge-ctl" \
-                  "$ROOT_DIR/run-edge.sh"
+                  "$ROOT_DIR/run-edge.sh" 2>/dev/null || true
+        else
+            rm -rf "$ROOT_DIR/benchmark_results" 2>/dev/null || true
         fi
         log_ok "All edge client data, databases, and microservice files completely purged!"
-        pkill -x client_daemon 2>/dev/null || true
-        killall -9 client_daemon 2>/dev/null || true
         ;;
     test|verify|smoke-test)
         run_all --once
