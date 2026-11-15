@@ -507,93 +507,110 @@ const Icon = ({
 };
 
 // ------------------------------------------------------------------------------
-// HIGH-PERFORMANCE REACT SVG METRIC GRAPH (Zero external charting dependencies)
+// HIGH-PERFORMANCE INDUSTRIAL TELEMETRY GRAPH (Clean, Precision SVG)
 // ------------------------------------------------------------------------------
 function MetricGraph({
-  data,
-  min,
+  data = [],
+  min = 0,
   max,
   unit = '',
   color = 'cyan',
   threshold,
   thresholdLabel,
-  height = 75,
-  title
+  height = 85,
+  title,
+  isActive = true,
+  subtitle = ''
 }) {
-  if (!data || data.length < 2) return null;
-  const paddingX = 10;
-  const paddingY = 8;
-  const width = 300;
-  const effectiveHeight = height - paddingY * 2;
-  const dMin = min !== undefined ? min : Math.min(...data);
-  const dMax = max !== undefined ? max : Math.max(...data);
+  const width = 340;
+  const paddingLeft = 38;
+  const paddingRight = 12;
+  const paddingTop = 10;
+  const paddingBottom = 20;
+  const plotWidth = width - paddingLeft - paddingRight;
+  const plotHeight = height - paddingTop - paddingBottom;
+
+  // If no data or not active, create a flat zero baseline
+  const effectiveData = !isActive || !data || data.length === 0 ? [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] : data.length === 1 ? [data[0], data[0]] : data;
+  const currentVal = isActive && data && data.length > 0 ? data[data.length - 1] : 0;
+  const dMin = min !== undefined ? min : Math.min(...effectiveData);
+  const dMax = max !== undefined ? Math.max(max, Math.max(...effectiveData)) : Math.max(1, Math.max(...effectiveData));
   const range = dMax - dMin || 1;
-  const points = data.map((val, idx) => {
-    const x = paddingX + idx / (data.length - 1) * (width - paddingX * 2);
-    const normalized = Math.max(0, Math.min(1, (val - dMin) / range));
-    const y = height - paddingY - normalized * effectiveHeight;
+  const points = effectiveData.map((val, idx) => {
+    const x = paddingLeft + idx / (effectiveData.length - 1) * plotWidth;
+    const norm = Math.max(0, Math.min(1, (val - dMin) / range));
+    const y = paddingTop + (1 - norm) * plotHeight;
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
-  const firstX = paddingX;
-  const lastX = width - paddingX;
-  const baseY = height - paddingY;
-  const areaPath = `M ${firstX},${baseY} L ${points.split(' ').join(' L ')} L ${lastX},${baseY} Z`;
+  const baseY = paddingTop + plotHeight;
+  const areaPath = `M ${paddingLeft},${baseY} L ${points.split(' ').join(' L ')} L ${paddingLeft + plotWidth},${baseY} Z`;
   let thresholdY = null;
-  if (threshold !== undefined && threshold >= dMin && threshold <= dMax) {
+  if (isActive && threshold !== undefined && threshold >= dMin && threshold <= dMax) {
     const normThresh = (threshold - dMin) / range;
-    thresholdY = height - paddingY - normThresh * effectiveHeight;
+    thresholdY = paddingTop + (1 - normThresh) * plotHeight;
   }
-  const latestVal = data[data.length - 1];
   const colorMap = {
     cyan: {
       stroke: '#06b6d4',
-      fill: 'rgba(6, 182, 212, 0.15)',
+      fill: 'rgba(6, 182, 212, 0.12)',
       text: 'text-cyan-400',
-      badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30'
+      badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20'
     },
     emerald: {
       stroke: '#10b981',
-      fill: 'rgba(16, 185, 129, 0.15)',
+      fill: 'rgba(16, 185, 129, 0.12)',
       text: 'text-emerald-400',
-      badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+      badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20'
     },
     amber: {
       stroke: '#f59e0b',
-      fill: 'rgba(245, 158, 11, 0.15)',
+      fill: 'rgba(245, 158, 11, 0.12)',
       text: 'text-amber-400',
-      badge: 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+      badge: 'bg-amber-500/10 text-amber-300 border-amber-500/20'
     },
     violet: {
       stroke: '#a855f7',
-      fill: 'rgba(168, 85, 247, 0.15)',
+      fill: 'rgba(168, 85, 247, 0.12)',
       text: 'text-violet-400',
-      badge: 'bg-violet-500/10 text-violet-300 border-violet-500/30'
+      badge: 'bg-violet-500/10 text-violet-300 border-violet-500/20'
     },
     rose: {
       stroke: '#f43f5e',
-      fill: 'rgba(244, 63, 94, 0.15)',
+      fill: 'rgba(244, 63, 94, 0.12)',
       text: 'text-rose-400',
-      badge: 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+      badge: 'bg-rose-500/10 text-rose-300 border-rose-500/20'
     }
   };
   const theme = colorMap[color] || colorMap.cyan;
   const ptsArr = points.split(' ');
   const lastPoint = ptsArr[ptsArr.length - 1].split(',');
   return /*#__PURE__*/React.createElement("div", {
-    className: "p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] transition space-y-2"
+    className: `p-3.5 rounded-2xl bg-zinc-950/80 border transition space-y-2 ${isActive ? 'border-white/[0.08] hover:border-white/[0.14]' : 'border-white/[0.04] opacity-70'}`
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "text-[11px] font-medium text-zinc-400 uppercase tracking-wider"
-  }, title), /*#__PURE__*/React.createElement("span", {
-    className: `px-2 py-0.5 rounded-full text-[11px] font-mono font-semibold border ${theme.badge}`
-  }, latestVal, " ", unit)), /*#__PURE__*/React.createElement("div", {
-    className: "w-full"
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider"
+  }, title), isActive ? /*#__PURE__*/React.createElement("span", {
+    className: "flex items-center space-x-1 text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded-full border border-emerald-500/20"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"
+  }), /*#__PURE__*/React.createElement("span", null, "STREAMING")) : /*#__PURE__*/React.createElement("span", {
+    className: "text-[9px] font-mono text-zinc-500 bg-zinc-800/80 px-1.5 py-0.2 rounded-full border border-white/[0.06]"
+  }, "NO ACTIVE SIGNAL")), subtitle && /*#__PURE__*/React.createElement("p", {
+    className: "text-[10px] text-zinc-500 mt-0.5"
+  }, subtitle)), /*#__PURE__*/React.createElement("div", {
+    className: "text-right"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold border ${isActive ? theme.badge : 'bg-zinc-900 text-zinc-500 border-white/[0.06]'}`
+  }, isActive ? `${currentVal} ${unit}` : `-- ${unit}`))), /*#__PURE__*/React.createElement("div", {
+    className: "w-full relative"
   }, /*#__PURE__*/React.createElement("svg", {
     viewBox: `0 0 ${width} ${height}`,
-    className: "w-full h-auto overflow-visible"
+    className: "w-full h-auto overflow-visible select-none"
   }, /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("linearGradient", {
-    id: `grad-${color}-${title.replace(/\s+/g, '')}`,
+    id: `grad-${color}-${title.replace(/[^a-zA-Z0-9]/g, '')}`,
     x1: "0%",
     y1: "0%",
     x2: "0%",
@@ -601,42 +618,76 @@ function MetricGraph({
   }, /*#__PURE__*/React.createElement("stop", {
     offset: "0%",
     stopColor: theme.stroke,
-    stopOpacity: "0.25"
+    stopOpacity: isActive ? 0.22 : 0.03
   }), /*#__PURE__*/React.createElement("stop", {
     offset: "100%",
     stopColor: theme.stroke,
     stopOpacity: "0.0"
-  }))), /*#__PURE__*/React.createElement("line", {
-    x1: paddingX,
-    y1: paddingY,
-    x2: width - paddingX,
-    y2: paddingY,
+  })), /*#__PURE__*/React.createElement("pattern", {
+    id: "tech-grid",
+    width: "16",
+    height: "16",
+    patternUnits: "userSpaceOnUse"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M 16 0 L 0 0 0 16",
+    fill: "none",
+    stroke: "rgba(255,255,255,0.025)",
+    strokeWidth: "1"
+  }))), /*#__PURE__*/React.createElement("rect", {
+    x: paddingLeft,
+    y: paddingTop,
+    width: plotWidth,
+    height: plotHeight,
+    fill: "url(#tech-grid)",
+    rx: "4"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: paddingLeft,
+    y: paddingTop,
+    width: plotWidth,
+    height: plotHeight,
+    fill: "none",
+    stroke: "rgba(255,255,255,0.06)",
+    strokeWidth: "1",
+    rx: "4"
+  }), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft - 6,
+    y: paddingTop + 6,
+    fill: "#71717a",
+    fontSize: "8",
+    textAnchor: "end",
+    fontFamily: "monospace"
+  }, Number(dMax).toFixed(0)), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft - 6,
+    y: paddingTop + plotHeight / 2 + 3,
+    fill: "#52525b",
+    fontSize: "8",
+    textAnchor: "end",
+    fontFamily: "monospace"
+  }, Number((dMax + dMin) / 2).toFixed(0)), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft - 6,
+    y: paddingTop + plotHeight,
+    fill: "#71717a",
+    fontSize: "8",
+    textAnchor: "end",
+    fontFamily: "monospace"
+  }, Number(dMin).toFixed(0)), /*#__PURE__*/React.createElement("line", {
+    x1: paddingLeft,
+    y1: paddingTop + plotHeight / 2,
+    x2: paddingLeft + plotWidth,
+    y2: paddingTop + plotHeight / 2,
     stroke: "rgba(255,255,255,0.04)",
-    strokeDasharray: "3 3"
-  }), /*#__PURE__*/React.createElement("line", {
-    x1: paddingX,
-    y1: height / 2,
-    x2: width - paddingX,
-    y2: height / 2,
-    stroke: "rgba(255,255,255,0.04)",
-    strokeDasharray: "3 3"
-  }), /*#__PURE__*/React.createElement("line", {
-    x1: paddingX,
-    y1: baseY,
-    x2: width - paddingX,
-    y2: baseY,
-    stroke: "rgba(255,255,255,0.08)"
+    strokeDasharray: "2 2"
   }), thresholdY !== null && /*#__PURE__*/React.createElement("g", null, /*#__PURE__*/React.createElement("line", {
-    x1: paddingX,
+    x1: paddingLeft,
     y1: thresholdY,
-    x2: width - paddingX,
+    x2: paddingLeft + plotWidth,
     y2: thresholdY,
     stroke: "#ef4444",
     strokeWidth: "1",
-    strokeDasharray: "4 4",
+    strokeDasharray: "3 3",
     opacity: "0.8"
   }), /*#__PURE__*/React.createElement("text", {
-    x: width - paddingX,
+    x: paddingLeft + plotWidth - 4,
     y: thresholdY - 3,
     fill: "#ef4444",
     fontSize: "8",
@@ -644,15 +695,15 @@ function MetricGraph({
     fontFamily: "monospace"
   }, thresholdLabel || `Limit ${threshold} ${unit}`)), /*#__PURE__*/React.createElement("path", {
     d: areaPath,
-    fill: `url(#grad-${color}-${title.replace(/\s+/g, '')})`
+    fill: `url(#grad-${color}-${title.replace(/[^a-zA-Z0-9]/g, '')})`
   }), /*#__PURE__*/React.createElement("polyline", {
     fill: "none",
-    stroke: theme.stroke,
-    strokeWidth: "2",
+    stroke: isActive ? theme.stroke : '#3f3f46',
+    strokeWidth: "1.75",
     strokeLinecap: "round",
     strokeLinejoin: "round",
     points: points
-  }), /*#__PURE__*/React.createElement("circle", {
+  }), isActive && /*#__PURE__*/React.createElement("g", null, /*#__PURE__*/React.createElement("circle", {
     cx: lastPoint[0],
     cy: lastPoint[1],
     r: "4",
@@ -669,9 +720,30 @@ function MetricGraph({
     cy: lastPoint[1],
     r: "1.5",
     fill: "#ffffff"
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center justify-between text-[10px] text-zinc-500 font-mono"
-  }, /*#__PURE__*/React.createElement("span", null, "min: ", Math.min(...data), " ", unit), /*#__PURE__*/React.createElement("span", null, "avg: ", (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1), " ", unit), /*#__PURE__*/React.createElement("span", null, "max: ", Math.max(...data), " ", unit)));
+  })), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft,
+    y: height - 4,
+    fill: "#52525b",
+    fontSize: "7.5",
+    textAnchor: "start",
+    fontFamily: "monospace"
+  }, "-30s"), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft + plotWidth / 2,
+    y: height - 4,
+    fill: "#52525b",
+    fontSize: "7.5",
+    textAnchor: "middle",
+    fontFamily: "monospace"
+  }, "-15s"), /*#__PURE__*/React.createElement("text", {
+    x: paddingLeft + plotWidth,
+    y: height - 4,
+    fill: "#52525b",
+    fontSize: "7.5",
+    textAnchor: "end",
+    fontFamily: "monospace"
+  }, "Now (0s)"))), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between text-[10px] text-zinc-500 font-mono px-1"
+  }, /*#__PURE__*/React.createElement("span", null, "Min: ", isActive ? Math.min(...effectiveData) : 0, " ", unit), /*#__PURE__*/React.createElement("span", null, "Avg: ", isActive ? (effectiveData.reduce((a, b) => a + b, 0) / effectiveData.length).toFixed(1) : 0, " ", unit), /*#__PURE__*/React.createElement("span", null, "Max: ", isActive ? Math.max(...effectiveData) : 0, " ", unit)));
 }
 
 // ------------------------------------------------------------------------------
@@ -753,16 +825,16 @@ const NODE_LIBRARY = {
     type: 'custom_rule',
     category: 'Gatekeepers',
     title: 'Custom Logic Rule',
-    subtitle: 'Configurable Conditions',
+    subtitle: 'Multi-Metric Condition Engine',
     icon: 'shield',
     color: 'indigo',
     inputs: 1,
     outputs: 1,
     defaultConfig: {
-      max_temp_c: 80,
-      max_vibration_mms: 4.5,
-      motion_delta: 0.12,
-      operator: 'AND'
+      metric: 'confidence',
+      operator: '>=',
+      threshold: 70,
+      action: 'alert'
     }
   },
   // --- AI Inference Engines ---
@@ -1272,15 +1344,21 @@ function App() {
   const panStartRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // Real-time rolling Telemetry History (for graphs)
+  // Real-time rolling Telemetry History (for graphs - clean flatline until real device connects)
   const [telemetryHistory, setTelemetryHistory] = useState({
-    latency: [122, 125, 120, 124, 126, 121, 128, 124, 123, 125, 124, 122, 126],
-    vibration: [1.20, 1.40, 1.35, 1.50, 1.45, 1.40, 1.62, 1.42, 1.45, 1.48, 1.45, 1.41],
-    audio: [58.2, 61.4, 59.1, 63.5, 60.0, 62.1, 59.4, 64.0, 61.2, 62.5, 60.8, 61.3],
-    cpu: [12.4, 14.1, 15.0, 13.2, 16.4, 14.0, 15.2, 17.1, 14.3, 15.0, 14.2, 15.8],
-    memory: [48.5, 49.2, 50.1, 49.8, 51.2, 50.4, 52.0, 51.1, 50.8, 51.5, 51.0, 51.9],
-    temp: [44.2, 45.0, 44.8, 46.1, 45.5, 46.0, 45.8, 46.2, 45.9, 46.0, 46.1, 46.0]
+    latency: [0, 0, 0, 0, 0, 0],
+    vibration: [0, 0, 0, 0, 0, 0],
+    audio: [0, 0, 0, 0, 0, 0],
+    cpu: [0, 0, 0, 0, 0, 0],
+    memory: [0, 0, 0, 0, 0, 0],
+    temp: [0, 0, 0, 0, 0, 0]
   });
+
+  // Add Device Modal state
+  const [showAddDeviceModal, setShowAddDeviceModal] = useState(false);
+  const [enrollPlatform, setEnrollPlatform] = useState('colab'); // 'colab', 'jetson', 'rpi', 'generic'
+  const [enrollTag, setEnrollTag] = useState('');
+  const [enrollDuration, setEnrollDuration] = useState('24h');
 
   // ChatGPT-style SLM Assistant state
   const [assistantPrompt, setAssistantPrompt] = useState('');
@@ -1343,16 +1421,32 @@ function App() {
         setCurrentTokenInfo(tokRes.token);
       }
 
-      // Read real metrics from active device or live telemetry
-      const activeDev = devRes.devices?.find(d => d.status === 'ONLINE') || devRes.devices?.[0];
-      const cpuVal = activeDev?.telemetry?.cpu_usage_pct ? Number(activeDev.telemetry.cpu_usage_pct.toFixed(1)) : 14.0 + (Math.random() * 3 - 1.5);
-      const memVal = activeDev?.telemetry?.ram_used_mb ? Number(activeDev.telemetry.ram_used_mb.toFixed(1)) : 51.2 + (Math.random() * 1.5 - 0.75);
-      const tempVal = activeDev?.telemetry?.temperature_c ? Number(activeDev.telemetry.temperature_c.toFixed(1)) : 46.0 + (Math.random() * 1.0 - 0.5);
-      const latVal = liveRes?.modalities?.Vision?.latency_ms ? Number(liveRes.modalities.Vision.latency_ms) : 124 + Math.round(Math.random() * 6 - 3);
-      const vibVal = liveRes?.modalities?.Vibration?.rms_velocity_mms ? Number(liveRes.modalities.Vibration.rms_velocity_mms) : 1.45 + (Math.random() * 0.14 - 0.07);
-      const audVal = liveRes?.modalities?.Audio?.sound_pressure_db ? Number(liveRes.modalities.Audio.sound_pressure_db) : 61.5 + (Math.random() * 3 - 1.5);
-      if (liveRes && liveRes.drift_metrics) {
+      // Check for an actively reporting online device
+      const activeDev = devRes.devices?.find(d => d.status === 'ONLINE');
+      const isDeviceOnline = Boolean(activeDev);
+
+      // Determine active sensor modalities in the visual pipeline
+      const hasVision = pipelineNodes.some(n => n.type.startsWith('ai_yolo') || n.type.startsWith('ai_'));
+      const hasImu = pipelineNodes.some(n => n.type === 'sensor_imu' || n.type === 'ai_vibration');
+      const hasMic = pipelineNodes.some(n => n.type === 'sensor_mic' || n.type === 'ai_audio');
+
+      // 1. Host OS Metrics (Strictly 0.0 if device is not online)
+      const cpuVal = isDeviceOnline && activeDev?.telemetry?.cpu_usage_pct != null ? Number(activeDev.telemetry.cpu_usage_pct.toFixed(1)) : 0;
+      const memVal = isDeviceOnline && activeDev?.telemetry?.ram_used_mb != null ? Number(activeDev.telemetry.ram_used_mb.toFixed(1)) : 0;
+      const tempVal = isDeviceOnline && activeDev?.telemetry?.temperature_c != null ? Number(activeDev.telemetry.temperature_c.toFixed(1)) : 0;
+
+      // 2. Vision Inference Latency (Strictly 0 if no device or vision node not in pipeline)
+      const latVal = isDeviceOnline && hasVision && liveRes?.modalities?.Vision?.latency_ms != null ? Number(liveRes.modalities.Vision.latency_ms) : isDeviceOnline && hasVision && activeDev?.telemetry?.fps ? Math.round(1000 / Math.max(1, activeDev.telemetry.fps)) : isDeviceOnline && hasVision ? 122 : 0;
+
+      // 3. Vibration Velocity (Strictly 0 if no IMU in pipeline or no device)
+      const vibVal = isDeviceOnline && hasImu && liveRes?.modalities?.Vibration?.rms_velocity_mms != null ? Number(Number(liveRes.modalities.Vibration.rms_velocity_mms).toFixed(2)) : 0;
+
+      // 4. Acoustic Sound Level (Strictly 0 if no mic in pipeline or no device)
+      const audVal = isDeviceOnline && hasMic && liveRes?.modalities?.Audio?.sound_pressure_db != null ? Number(Number(liveRes.modalities.Audio.sound_pressure_db).toFixed(1)) : 0;
+      if (liveRes && liveRes.drift_metrics && isDeviceOnline) {
         setDriftMetrics(liveRes.drift_metrics);
+      } else if (!isDeviceOnline) {
+        setDriftMetrics(null);
       }
       setTelemetryHistory(prev => ({
         latency: [...prev.latency.slice(-20), latVal],
@@ -2449,31 +2543,60 @@ function App() {
       onChange: e => handleUpdateNodeConfig(node.id, 'threshold', Number(e.target.value)),
       className: "w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
     })), node.type === 'custom_rule' && /*#__PURE__*/React.createElement("div", {
-      className: "space-y-1.5"
+      className: "space-y-2"
     }, /*#__PURE__*/React.createElement("div", {
-      className: "flex items-center justify-between text-zinc-400 text-[10px]"
-    }, /*#__PURE__*/React.createElement("span", null, "Temp Cutoff:"), /*#__PURE__*/React.createElement("span", {
-      className: "font-mono text-white font-medium"
-    }, node.config?.max_temp_c || 80, "°C")), /*#__PURE__*/React.createElement("input", {
-      type: "range",
-      min: "50",
-      max: "95",
-      value: node.config?.max_temp_c || 80,
+      className: "grid grid-cols-2 gap-1.5"
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] text-zinc-500 uppercase font-mono block"
+    }, "Condition Metric"), /*#__PURE__*/React.createElement("select", {
+      value: node.config?.metric || 'confidence',
       onMouseDown: e => e.stopPropagation(),
-      onChange: e => handleUpdateNodeConfig(node.id, 'max_temp_c', Number(e.target.value)),
-      className: "w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
-    }), /*#__PURE__*/React.createElement("div", {
-      className: "flex items-center justify-between text-zinc-400 text-[10px]"
-    }, /*#__PURE__*/React.createElement("span", null, "Vib Limit:"), /*#__PURE__*/React.createElement("span", {
-      className: "font-mono text-white font-medium"
-    }, node.config?.max_vibration_mms || 4.5, " mm/s")), /*#__PURE__*/React.createElement("input", {
-      type: "range",
-      min: "1.0",
-      max: "8.0",
-      step: "0.5",
-      value: node.config?.max_vibration_mms || 4.5,
+      onChange: e => {
+        const m = e.target.value;
+        const defVal = m === 'confidence' ? 70 : m === 'motion' ? 12 : m === 'latency' ? 150 : m === 'temperature' ? 80 : m === 'vibration' ? 4.5 : 75;
+        handleUpdateNodeConfig(node.id, 'metric', m);
+        handleUpdateNodeConfig(node.id, 'threshold', defVal);
+      },
+      className: "w-full bg-zinc-950 border border-white/10 rounded-lg px-1.5 py-1 text-white text-[10px] focus:outline-none cursor-pointer"
+    }, /*#__PURE__*/React.createElement("option", {
+      value: "confidence"
+    }, "Confidence (%)"), /*#__PURE__*/React.createElement("option", {
+      value: "motion"
+    }, "Motion Delta (%)"), /*#__PURE__*/React.createElement("option", {
+      value: "latency"
+    }, "Inference Latency (ms)"), /*#__PURE__*/React.createElement("option", {
+      value: "temperature"
+    }, "Core Temp (°C)"), /*#__PURE__*/React.createElement("option", {
+      value: "vibration"
+    }, "Vibration (mm/s)"), /*#__PURE__*/React.createElement("option", {
+      value: "audio"
+    }, "Acoustic (dB)"))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-[9px] text-zinc-500 uppercase font-mono block"
+    }, "Operator"), /*#__PURE__*/React.createElement("select", {
+      value: node.config?.operator || '>=',
       onMouseDown: e => e.stopPropagation(),
-      onChange: e => handleUpdateNodeConfig(node.id, 'max_vibration_mms', Number(e.target.value)),
+      onChange: e => handleUpdateNodeConfig(node.id, 'operator', e.target.value),
+      className: "w-full bg-zinc-950 border border-white/10 rounded-lg px-1.5 py-1 text-white text-[10px] focus:outline-none font-mono cursor-pointer"
+    }, /*#__PURE__*/React.createElement("option", {
+      value: ">="
+    }, ">= (GTE)"), /*#__PURE__*/React.createElement("option", {
+      value: "<="
+    }, "<= (LTE)"), /*#__PURE__*/React.createElement("option", {
+      value: ">"
+    }, "> (GT)"), /*#__PURE__*/React.createElement("option", {
+      value: "<"
+    }, "< (LT)")))), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between text-zinc-400 text-[10px]"
+    }, /*#__PURE__*/React.createElement("span", null, "Trigger Threshold:"), /*#__PURE__*/React.createElement("span", {
+      className: "font-mono text-white font-medium"
+    }, node.config?.threshold != null ? node.config.threshold : 70, node.config?.metric === 'confidence' || node.config?.metric === 'motion' ? '%' : node.config?.metric === 'latency' ? ' ms' : node.config?.metric === 'temperature' ? '°C' : node.config?.metric === 'vibration' ? ' mm/s' : ' dB')), /*#__PURE__*/React.createElement("input", {
+      type: "range",
+      min: node.config?.metric === 'vibration' ? 0.5 : node.config?.metric === 'temperature' ? 40 : 1,
+      max: node.config?.metric === 'vibration' ? 10 : node.config?.metric === 'latency' ? 500 : 100,
+      step: node.config?.metric === 'vibration' ? 0.1 : 1,
+      value: node.config?.threshold != null ? node.config.threshold : 70,
+      onMouseDown: e => e.stopPropagation(),
+      onChange: e => handleUpdateNodeConfig(node.id, 'threshold', Number(e.target.value)),
       className: "w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
     })), node.type === 'ai_yolo' && /*#__PURE__*/React.createElement("div", {
       className: "space-y-1"
@@ -2581,67 +2704,89 @@ function App() {
   }, String(v)))), /*#__PURE__*/React.createElement("button", {
     onClick: () => handleDeleteNode(selectedNode.id),
     className: "p-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-medium transition"
-  }, "Delete Node"))), /*#__PURE__*/React.createElement("div", {
-    className: "space-y-3 pt-2"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center justify-between px-1"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "text-xs font-semibold text-zinc-400 uppercase tracking-wider"
-  }, "Multi-Modal Telemetry Streams"), /*#__PURE__*/React.createElement("span", {
-    className: "text-[11px] text-zinc-500 font-mono"
-  }, "Live SVG Buffers (30 samples)")), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-  }, /*#__PURE__*/React.createElement(MetricGraph, {
-    title: "Inference Latency",
-    data: telemetryHistory.latency,
-    unit: "ms",
-    min: 100,
-    max: 160,
-    color: "cyan",
-    threshold: 150,
-    thresholdLabel: "Budget: 150 ms"
-  }), /*#__PURE__*/React.createElement(MetricGraph, {
-    title: "Vibration Velocity (ISO-10816)",
-    data: telemetryHistory.vibration,
-    unit: "mm/s",
-    min: 0.5,
-    max: 5.5,
-    color: "emerald",
-    threshold: 4.5,
-    thresholdLabel: "Limit: 4.5 mm/s"
-  }), /*#__PURE__*/React.createElement(MetricGraph, {
-    title: "Acoustic Sound Pressure",
-    data: telemetryHistory.audio,
-    unit: "dB",
-    min: 40,
-    max: 90,
-    color: "amber",
-    threshold: 75,
-    thresholdLabel: "Alert: 75 dB"
-  }), /*#__PURE__*/React.createElement(MetricGraph, {
-    title: "CPU Utilization",
-    data: telemetryHistory.cpu,
-    unit: "%",
-    min: 0,
-    max: 100,
-    color: "violet"
-  }), /*#__PURE__*/React.createElement(MetricGraph, {
-    title: "RAM Resident Footprint",
-    data: telemetryHistory.memory,
-    unit: "MB",
-    min: 30,
-    max: 120,
-    color: "cyan"
-  }), /*#__PURE__*/React.createElement(MetricGraph, {
-    title: "Sensor Core Temperature",
-    data: telemetryHistory.temp,
-    unit: "°C",
-    min: 30,
-    max: 90,
-    color: "rose",
-    threshold: 85,
-    thresholdLabel: "Thermal Cap: 85°C"
-  })))), activeTab === 'live' && /*#__PURE__*/React.createElement("div", {
+  }, "Delete Node"))), (() => {
+    const isDeviceOnline = devices.some(d => d.status === 'ONLINE');
+    const hasVision = pipelineNodes.some(n => n.type.startsWith('ai_yolo') || n.type.startsWith('ai_'));
+    const hasImu = pipelineNodes.some(n => n.type === 'sensor_imu' || n.type === 'ai_vibration');
+    const hasMic = pipelineNodes.some(n => n.type === 'sensor_mic' || n.type === 'ai_audio');
+    return /*#__PURE__*/React.createElement("div", {
+      className: "space-y-3 pt-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between px-1"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center space-x-2"
+    }, /*#__PURE__*/React.createElement("h4", {
+      className: "text-xs font-semibold text-zinc-300 uppercase tracking-wider"
+    }, "Pipeline Telemetry Streams"), /*#__PURE__*/React.createElement("span", {
+      className: `text-[10px] font-mono px-2 py-0.5 rounded-full ${isDeviceOnline ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-400'}`
+    }, isDeviceOnline ? '● Live Hardware Feed (1.5s)' : '○ Standby — Awaiting Edge Connection')), /*#__PURE__*/React.createElement("span", {
+      className: "text-[11px] text-zinc-500 font-mono"
+    }, "Real Edge Hardware Feedback")), /*#__PURE__*/React.createElement("div", {
+      className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+    }, /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Inference Latency",
+      subtitle: hasVision ? 'Pure Rust ONNX Runtime Engine' : 'Not configured in active pipeline',
+      data: telemetryHistory.latency,
+      unit: "ms",
+      min: 0,
+      max: 200,
+      color: "cyan",
+      threshold: 150,
+      thresholdLabel: "Budget: 150 ms",
+      isActive: isDeviceOnline && hasVision
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Vibration Velocity (ISO-10816)",
+      subtitle: hasImu ? 'Accelerometer Harmonics' : 'Not configured in active pipeline',
+      data: telemetryHistory.vibration,
+      unit: "mm/s",
+      min: 0,
+      max: 6.0,
+      color: "emerald",
+      threshold: 4.5,
+      thresholdLabel: "Limit: 4.5 mm/s",
+      isActive: isDeviceOnline && hasImu
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Acoustic Sound Pressure",
+      subtitle: hasMic ? 'MEMS Microphone Decibels' : 'Not configured in active pipeline',
+      data: telemetryHistory.audio,
+      unit: "dB",
+      min: 0,
+      max: 100,
+      color: "amber",
+      threshold: 75,
+      thresholdLabel: "Alert: 75 dB",
+      isActive: isDeviceOnline && hasMic
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "CPU Utilization",
+      subtitle: isDeviceOnline ? 'Host Kernel Load' : 'Awaiting device heartbeat',
+      data: telemetryHistory.cpu,
+      unit: "%",
+      min: 0,
+      max: 100,
+      color: "violet",
+      isActive: isDeviceOnline
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "RAM Resident Footprint",
+      subtitle: isDeviceOnline ? 'RSS Memory Alloc' : 'Awaiting device heartbeat',
+      data: telemetryHistory.memory,
+      unit: "MB",
+      min: 0,
+      max: 120,
+      color: "cyan",
+      isActive: isDeviceOnline
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Sensor Core Temperature",
+      subtitle: isDeviceOnline ? 'Hardware Thermal Zone' : 'Awaiting device heartbeat',
+      data: telemetryHistory.temp,
+      unit: "°C",
+      min: 0,
+      max: 90,
+      color: "rose",
+      threshold: 85,
+      thresholdLabel: "Thermal Cap: 85°C",
+      isActive: isDeviceOnline
+    })));
+  })()), activeTab === 'live' && /*#__PURE__*/React.createElement("div", {
     className: "flex-1 flex flex-col space-y-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06]"
@@ -2840,27 +2985,35 @@ function App() {
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "send",
     className: "w-4 h-4"
-  })))))), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-1 md:grid-cols-2 gap-4"
-  }, /*#__PURE__*/React.createElement(MetricGraph, {
-    title: "Inference Latency (Native SIMD ORT)",
-    data: telemetryHistory.latency,
-    unit: "ms",
-    min: 100,
-    max: 160,
-    color: "cyan",
-    threshold: 150,
-    thresholdLabel: "Budget: 150 ms"
-  }), /*#__PURE__*/React.createElement(MetricGraph, {
-    title: "Vibration Velocity (ISO-10816 Harmonics)",
-    data: telemetryHistory.vibration,
-    unit: "mm/s",
-    min: 0.5,
-    max: 5.5,
-    color: "emerald",
-    threshold: 4.5,
-    thresholdLabel: "Danger: 4.5 mm/s"
-  }))), activeTab === 'fleet' && /*#__PURE__*/React.createElement("div", {
+  })))))), (() => {
+    const isDeviceOnline = devices.some(d => d.status === 'ONLINE');
+    const hasVision = pipelineNodes.some(n => n.type.startsWith('ai_yolo') || n.type.startsWith('ai_'));
+    return /*#__PURE__*/React.createElement("div", {
+      className: "grid grid-cols-1 md:grid-cols-2 gap-4"
+    }, /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Inference Latency (Native SIMD ORT)",
+      subtitle: hasVision ? 'Active Computer Vision Pipeline' : 'No vision model in pipeline',
+      data: telemetryHistory.latency,
+      unit: "ms",
+      min: 0,
+      max: 200,
+      color: "cyan",
+      threshold: 150,
+      thresholdLabel: "Budget: 150 ms",
+      isActive: isDeviceOnline && hasVision
+    }), /*#__PURE__*/React.createElement(MetricGraph, {
+      title: "Host System RAM Footprint",
+      subtitle: isDeviceOnline ? 'Edge Client Resident Memory' : 'Device offline / awaiting heartbeat',
+      data: telemetryHistory.memory,
+      unit: "MB",
+      min: 0,
+      max: 120,
+      color: "emerald",
+      threshold: 90,
+      thresholdLabel: "Cap: 90 MB",
+      isActive: isDeviceOnline
+    }));
+  })()), activeTab === 'fleet' && /*#__PURE__*/React.createElement("div", {
     className: "space-y-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "p-6 rounded-3xl bg-gradient-to-br from-indigo-950/30 via-zinc-900/40 to-zinc-950 border border-indigo-500/20 shadow-xl space-y-4"
@@ -2879,7 +3032,13 @@ function App() {
     className: "text-[11px] text-zinc-400"
   }, "Streamlined one-line installer — claims hardware ID, stages configs, and boots microservices automatically."))), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center space-x-2 shrink-0"
-  }, currentTokenInfo && /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAddDeviceModal(true),
+    className: "px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition flex items-center space-x-1.5 cursor-pointer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "+ Add Device")), currentTokenInfo && /*#__PURE__*/React.createElement("span", {
     className: "text-[10px] font-mono px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
   }, "Token: ", currentTokenInfo.token.substring(0, 16), "... (Active 24h)"), /*#__PURE__*/React.createElement("button", {
     onClick: () => setShowQuickRef(!showQuickRef),
@@ -3064,16 +3223,41 @@ function App() {
     className: "text-xs font-semibold text-zinc-400 uppercase tracking-wider"
   }, "Registered Fleet Hardware"), /*#__PURE__*/React.createElement("span", {
     className: "text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
-  }, devices.length, " Unique Machine", devices.length === 1 ? '' : 's')), /*#__PURE__*/React.createElement("button", {
+  }, devices.length, " Unique Machine", devices.length === 1 ? '' : 's')), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAddDeviceModal(true),
+    className: "px-3 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs text-white font-medium shadow-sm transition flex items-center space-x-1.5 cursor-pointer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "+ Enroll Node")), /*#__PURE__*/React.createElement("button", {
     onClick: handlePruneDevices,
     className: "px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs text-zinc-400 hover:text-white border border-white/[0.08] transition flex items-center space-x-1.5",
     title: "Prune duplicate or ghost hardware records"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "refresh",
     className: "w-3.5 h-3.5 text-zinc-400"
-  }), /*#__PURE__*/React.createElement("span", null, "Prune Duplicates"))), devices.length === 0 ? /*#__PURE__*/React.createElement("div", {
-    className: "p-10 rounded-3xl bg-white/[0.02] border border-white/[0.06] text-center text-zinc-500 text-xs"
-  }, "No edge devices connected yet. Run the curl command above to enroll your first node.") : /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Prune Duplicates")))), devices.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    className: "p-10 rounded-3xl bg-zinc-950/60 border border-white/[0.06] text-center space-y-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "server",
+    className: "w-5 h-5"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-1"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "text-sm font-semibold text-white"
+  }, "No Edge Devices Enrolled Yet"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-zinc-400 max-w-sm mx-auto"
+  }, "Click \"+ Add Device\" to generate a secure enrollment command for Google Colab, Jetson, Raspberry Pi, or Linux IPCs.")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAddDeviceModal(true),
+    className: "px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/30 inline-flex items-center space-x-2 transition cursor-pointer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus",
+    className: "w-3.5 h-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "+ Add Your First Device"))) : /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
   }, devices.map(d => {
     const isOnline = d.status === 'ONLINE';
@@ -3149,7 +3333,144 @@ function App() {
       name: "trash",
       className: "w-3.5 h-3.5"
     }), /*#__PURE__*/React.createElement("span", null, "Purge & Delete"))));
-  })))), activeTab === 'catalog' && /*#__PURE__*/React.createElement("div", {
+  }))), showAddDeviceModal && /*#__PURE__*/React.createElement("div", {
+    className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-zinc-900 border border-white/[0.12] rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "p-5 border-b border-white/[0.08] flex items-center justify-between bg-zinc-950/60"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "server",
+    className: "w-4 h-4"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold text-white text-sm"
+  }, "Enroll New Edge Device"), /*#__PURE__*/React.createElement("p", {
+    className: "text-[11px] text-zinc-400"
+  }, "Generate a cryptographically secured one-line bootstrap command"))), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAddDeviceModal(false),
+    className: "text-zinc-500 hover:text-white text-sm p-1.5 rounded-lg hover:bg-white/[0.06] transition"
+  }, "✕")), /*#__PURE__*/React.createElement("div", {
+    className: "p-6 space-y-5 text-xs"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
+  }, "1. Target Hardware Environment"), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 sm:grid-cols-4 gap-2"
+  }, [{
+    id: 'colab',
+    label: 'Google Colab',
+    sub: 'Kaggle / Cloud VM',
+    icon: 'zap'
+  }, {
+    id: 'jetson',
+    label: 'NVIDIA Jetson',
+    sub: 'DeepStream / NVMM',
+    icon: 'cpu'
+  }, {
+    id: 'rpi',
+    label: 'Raspberry Pi',
+    sub: 'ARM64 64-bit OS',
+    icon: 'activity'
+  }, {
+    id: 'generic',
+    label: 'Linux PC / IPC',
+    sub: 'x86_64 Debian/RHEL',
+    icon: 'server'
+  }].map(p => /*#__PURE__*/React.createElement("button", {
+    key: p.id,
+    type: "button",
+    onClick: () => setEnrollPlatform(p.id),
+    className: `p-3 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer ${enrollPlatform === p.id ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-md' : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white hover:border-white/[0.12]'}`
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: p.icon,
+    className: `w-4 h-4 mb-2 ${enrollPlatform === p.id ? 'text-indigo-400' : 'text-zinc-500'}`
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "font-semibold text-xs truncate"
+  }, p.label), /*#__PURE__*/React.createElement("div", {
+    className: "text-[9px] text-zinc-500 truncate mt-0.5"
+  }, p.sub)))))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 sm:grid-cols-2 gap-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "space-y-1.5"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
+  }, "2. Execution Mode"), /*#__PURE__*/React.createElement("div", {
+    className: "flex rounded-xl bg-zinc-950 p-1 border border-white/[0.08]"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setDaemonMode(true),
+    className: `flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'}`
+  }, "Daemon (Background)"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setDaemonMode(false),
+    className: `flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${!daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'}`
+  }, "Interactive Console"))), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-1.5"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block"
+  }, "3. Device Label / Tag (Optional)"), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    placeholder: "e.g. factory-camera-1",
+    value: enrollTag,
+    onChange: e => setEnrollTag(e.target.value),
+    className: "w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500 font-mono"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2 pt-1"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-[11px] font-semibold text-zinc-300 uppercase tracking-wider"
+  }, "Secure Enrollment Command"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: handleGenerateNewToken,
+    disabled: isGeneratingToken,
+    className: "text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 cursor-pointer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "refresh",
+    className: `w-3 h-3 ${isGeneratingToken ? 'animate-spin' : ''}`
+  }), /*#__PURE__*/React.createElement("span", null, "Regenerate Fresh Token"))), (() => {
+    const isTunnelActive = tunnelInfo.active && tunnelInfo.url;
+    const activeBaseUrl = isTunnelActive ? tunnelInfo.url : `http://${window.location.host}`;
+    const tok = currentTokenInfo?.token || 'YOUR_TOKEN';
+    const flag = daemonMode ? ' | bash -s -- --daemon' : ' | bash';
+    const fullCmd = enrollPlatform === 'colab' ? `!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon` : `curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok}${flag}`;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "space-y-2"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "p-3 bg-zinc-950 rounded-2xl border border-white/[0.1] font-mono text-xs text-indigo-300 select-all break-all relative group"
+    }, fullCmd), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between gap-2 pt-1"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "text-[10px] text-zinc-500 font-mono flex items-center space-x-1.5"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "w-1.5 h-1.5 rounded-full bg-emerald-400"
+    }), /*#__PURE__*/React.createElement("span", null, "Valid 24h • Auto-registers hardware ID & starts edge daemon")), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      onClick: () => {
+        navigator.clipboard.writeText(fullCmd);
+        setCopiedQuick(true);
+        setTimeout(() => setCopiedQuick(false), 2000);
+        showToast('success', 'Enrollment command copied to clipboard!');
+      },
+      className: "px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition shadow-sm flex items-center space-x-1.5 shrink-0 cursor-pointer"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: copiedQuick ? "check" : "copy",
+      className: "w-3.5 h-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, copiedQuick ? 'Copied to Clipboard!' : 'Copy Command'))));
+  })())), /*#__PURE__*/React.createElement("div", {
+    className: "p-4 bg-zinc-950/80 border-t border-white/[0.06] flex items-center justify-between text-xs"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] text-zinc-500 font-mono"
+  }, "Single binary ELF • Zero Python • Anti-Collision Identity"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setShowAddDeviceModal(false),
+    className: "px-4 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 transition cursor-pointer"
+  }, "Done"))))), activeTab === 'catalog' && /*#__PURE__*/React.createElement("div", {
     className: "space-y-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06]"

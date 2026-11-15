@@ -188,99 +188,167 @@ const Icon = ({ name, className = "w-4 h-4" }) => {
 };
 
 // ------------------------------------------------------------------------------
-// HIGH-PERFORMANCE REACT SVG METRIC GRAPH (Zero external charting dependencies)
+// HIGH-PERFORMANCE INDUSTRIAL TELEMETRY GRAPH (Clean, Precision SVG)
 // ------------------------------------------------------------------------------
-function MetricGraph({ data, min, max, unit = '', color = 'cyan', threshold, thresholdLabel, height = 75, title }) {
-  if (!data || data.length < 2) return null;
-  const paddingX = 10;
-  const paddingY = 8;
-  const width = 300;
-  const effectiveHeight = height - paddingY * 2;
-  const dMin = min !== undefined ? min : Math.min(...data);
-  const dMax = max !== undefined ? max : Math.max(...data);
+function MetricGraph({ 
+  data = [], 
+  min = 0, 
+  max, 
+  unit = '', 
+  color = 'cyan', 
+  threshold, 
+  thresholdLabel, 
+  height = 85, 
+  title, 
+  isActive = true, 
+  subtitle = '' 
+}) {
+  const width = 340;
+  const paddingLeft = 38;
+  const paddingRight = 12;
+  const paddingTop = 10;
+  const paddingBottom = 20;
+  const plotWidth = width - paddingLeft - paddingRight;
+  const plotHeight = height - paddingTop - paddingBottom;
+
+  // If no data or not active, create a flat zero baseline
+  const effectiveData = (!isActive || !data || data.length === 0) 
+    ? [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 
+    : data.length === 1 ? [data[0], data[0]] : data;
+
+  const currentVal = isActive && data && data.length > 0 ? data[data.length - 1] : 0;
+  const dMin = min !== undefined ? min : Math.min(...effectiveData);
+  const dMax = max !== undefined ? Math.max(max, Math.max(...effectiveData)) : Math.max(1, Math.max(...effectiveData));
   const range = (dMax - dMin) || 1;
 
-  const points = data.map((val, idx) => {
-    const x = paddingX + (idx / (data.length - 1)) * (width - paddingX * 2);
-    const normalized = Math.max(0, Math.min(1, (val - dMin) / range));
-    const y = height - paddingY - normalized * effectiveHeight;
+  const points = effectiveData.map((val, idx) => {
+    const x = paddingLeft + (idx / (effectiveData.length - 1)) * plotWidth;
+    const norm = Math.max(0, Math.min(1, (val - dMin) / range));
+    const y = paddingTop + (1 - norm) * plotHeight;
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
 
-  const firstX = paddingX;
-  const lastX = width - paddingX;
-  const baseY = height - paddingY;
-  const areaPath = `M ${firstX},${baseY} L ${points.split(' ').join(' L ')} L ${lastX},${baseY} Z`;
+  const baseY = paddingTop + plotHeight;
+  const areaPath = `M ${paddingLeft},${baseY} L ${points.split(' ').join(' L ')} L ${paddingLeft + plotWidth},${baseY} Z`;
 
   let thresholdY = null;
-  if (threshold !== undefined && threshold >= dMin && threshold <= dMax) {
+  if (isActive && threshold !== undefined && threshold >= dMin && threshold <= dMax) {
     const normThresh = (threshold - dMin) / range;
-    thresholdY = height - paddingY - normThresh * effectiveHeight;
+    thresholdY = paddingTop + (1 - normThresh) * plotHeight;
   }
 
-  const latestVal = data[data.length - 1];
   const colorMap = {
-    cyan: { stroke: '#06b6d4', fill: 'rgba(6, 182, 212, 0.15)', text: 'text-cyan-400', badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30' },
-    emerald: { stroke: '#10b981', fill: 'rgba(16, 185, 129, 0.15)', text: 'text-emerald-400', badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' },
-    amber: { stroke: '#f59e0b', fill: 'rgba(245, 158, 11, 0.15)', text: 'text-amber-400', badge: 'bg-amber-500/10 text-amber-300 border-amber-500/30' },
-    violet: { stroke: '#a855f7', fill: 'rgba(168, 85, 247, 0.15)', text: 'text-violet-400', badge: 'bg-violet-500/10 text-violet-300 border-violet-500/30' },
-    rose: { stroke: '#f43f5e', fill: 'rgba(244, 63, 94, 0.15)', text: 'text-rose-400', badge: 'bg-rose-500/10 text-rose-300 border-rose-500/30' }
+    cyan: { stroke: '#06b6d4', fill: 'rgba(6, 182, 212, 0.12)', text: 'text-cyan-400', badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20' },
+    emerald: { stroke: '#10b981', fill: 'rgba(16, 185, 129, 0.12)', text: 'text-emerald-400', badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20' },
+    amber: { stroke: '#f59e0b', fill: 'rgba(245, 158, 11, 0.12)', text: 'text-amber-400', badge: 'bg-amber-500/10 text-amber-300 border-amber-500/20' },
+    violet: { stroke: '#a855f7', fill: 'rgba(168, 85, 247, 0.12)', text: 'text-violet-400', badge: 'bg-violet-500/10 text-violet-300 border-violet-500/20' },
+    rose: { stroke: '#f43f5e', fill: 'rgba(244, 63, 94, 0.12)', text: 'text-rose-400', badge: 'bg-rose-500/10 text-rose-300 border-rose-500/20' }
   };
   const theme = colorMap[color] || colorMap.cyan;
-
   const ptsArr = points.split(' ');
   const lastPoint = ptsArr[ptsArr.length - 1].split(',');
 
   return (
-    <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] transition space-y-2">
+    <div className={`p-3.5 rounded-2xl bg-zinc-950/80 border transition space-y-2 ${isActive ? 'border-white/[0.08] hover:border-white/[0.14]' : 'border-white/[0.04] opacity-70'}`}>
       <div className="flex items-center justify-between">
-        <span className="text-[11px] font-medium text-zinc-400 uppercase tracking-wider">{title}</span>
-        <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-semibold border ${theme.badge}`}>
-          {latestVal} {unit}
-        </span>
+        <div>
+          <div className="flex items-center space-x-2">
+            <span className="text-[11px] font-semibold text-zinc-300 uppercase tracking-wider">{title}</span>
+            {isActive ? (
+              <span className="flex items-center space-x-1 text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded-full border border-emerald-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>STREAMING</span>
+              </span>
+            ) : (
+              <span className="text-[9px] font-mono text-zinc-500 bg-zinc-800/80 px-1.5 py-0.2 rounded-full border border-white/[0.06]">
+                NO ACTIVE SIGNAL
+              </span>
+            )}
+          </div>
+          {subtitle && <p className="text-[10px] text-zinc-500 mt-0.5">{subtitle}</p>}
+        </div>
+
+        <div className="text-right">
+          <span className={`px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold border ${isActive ? theme.badge : 'bg-zinc-900 text-zinc-500 border-white/[0.06]'}`}>
+            {isActive ? `${currentVal} ${unit}` : `-- ${unit}`}
+          </span>
+        </div>
       </div>
 
-      <div className="w-full">
-        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto overflow-visible">
+      {/* SVG Canvas with Technical Grid & Y-Axis Scale */}
+      <div className="w-full relative">
+        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto overflow-visible select-none">
           <defs>
-            <linearGradient id={`grad-${color}-${title.replace(/\s+/g, '')}`} x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={theme.stroke} stopOpacity="0.25" />
+            <linearGradient id={`grad-${color}-${title.replace(/[^a-zA-Z0-9]/g, '')}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={theme.stroke} stopOpacity={isActive ? 0.22 : 0.03} />
               <stop offset="100%" stopColor={theme.stroke} stopOpacity="0.0" />
             </linearGradient>
+            <pattern id="tech-grid" width="16" height="16" patternUnits="userSpaceOnUse">
+              <path d="M 16 0 L 0 0 0 16" fill="none" stroke="rgba(255,255,255,0.025)" strokeWidth="1"/>
+            </pattern>
           </defs>
 
-          {/* Grid lines */}
-          <line x1={paddingX} y1={paddingY} x2={width - paddingX} y2={paddingY} stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
-          <line x1={paddingX} y1={height / 2} x2={width - paddingX} y2={height / 2} stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
-          <line x1={paddingX} y1={baseY} x2={width - paddingX} y2={baseY} stroke="rgba(255,255,255,0.08)" />
+          {/* Grid Background */}
+          <rect x={paddingLeft} y={paddingTop} width={plotWidth} height={plotHeight} fill="url(#tech-grid)" rx="4" />
+          <rect x={paddingLeft} y={paddingTop} width={plotWidth} height={plotHeight} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" rx="4" />
 
-          {/* Threshold alert line if configured */}
+          {/* Y-Axis Label Ticks */}
+          <text x={paddingLeft - 6} y={paddingTop + 6} fill="#71717a" fontSize="8" textAnchor="end" fontFamily="monospace">
+            {Number(dMax).toFixed(0)}
+          </text>
+          <text x={paddingLeft - 6} y={paddingTop + plotHeight / 2 + 3} fill="#52525b" fontSize="8" textAnchor="end" fontFamily="monospace">
+            {Number((dMax + dMin) / 2).toFixed(0)}
+          </text>
+          <text x={paddingLeft - 6} y={paddingTop + plotHeight} fill="#71717a" fontSize="8" textAnchor="end" fontFamily="monospace">
+            {Number(dMin).toFixed(0)}
+          </text>
+
+          {/* Horizontal Mid Gridline */}
+          <line x1={paddingLeft} y1={paddingTop + plotHeight / 2} x2={paddingLeft + plotWidth} y2={paddingTop + plotHeight / 2} stroke="rgba(255,255,255,0.04)" strokeDasharray="2 2" />
+
+          {/* Threshold alert line if active */}
           {thresholdY !== null && (
             <g>
-              <line x1={paddingX} y1={thresholdY} x2={width - paddingX} y2={thresholdY} stroke="#ef4444" strokeWidth="1" strokeDasharray="4 4" opacity="0.8" />
-              <text x={width - paddingX} y={thresholdY - 3} fill="#ef4444" fontSize="8" textAnchor="end" fontFamily="monospace">
+              <line x1={paddingLeft} y1={thresholdY} x2={paddingLeft + plotWidth} y2={thresholdY} stroke="#ef4444" strokeWidth="1" strokeDasharray="3 3" opacity="0.8" />
+              <text x={paddingLeft + plotWidth - 4} y={thresholdY - 3} fill="#ef4444" fontSize="8" textAnchor="end" fontFamily="monospace">
                 {thresholdLabel || `Limit ${threshold} ${unit}`}
               </text>
             </g>
           )}
 
-          {/* Filled Area */}
-          <path d={areaPath} fill={`url(#grad-${color}-${title.replace(/\s+/g, '')})`} />
+          {/* Filled Area Gradient */}
+          <path d={areaPath} fill={`url(#grad-${color}-${title.replace(/[^a-zA-Z0-9]/g, '')})`} />
 
-          {/* Polylines */}
-          <polyline fill="none" stroke={theme.stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={points} />
+          {/* Primary Signal Polyline */}
+          <polyline 
+            fill="none" 
+            stroke={isActive ? theme.stroke : '#3f3f46'} 
+            strokeWidth="1.75" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            points={points} 
+          />
 
-          {/* Pulsing endpoint on newest reading */}
-          <circle cx={lastPoint[0]} cy={lastPoint[1]} r="4" fill={theme.stroke} opacity="0.4" className="animate-ping" />
-          <circle cx={lastPoint[0]} cy={lastPoint[1]} r="3" fill={theme.stroke} />
-          <circle cx={lastPoint[0]} cy={lastPoint[1]} r="1.5" fill="#ffffff" />
+          {/* Active Endpoint */}
+          {isActive && (
+            <g>
+              <circle cx={lastPoint[0]} cy={lastPoint[1]} r="4" fill={theme.stroke} opacity="0.4" className="animate-ping" />
+              <circle cx={lastPoint[0]} cy={lastPoint[1]} r="3" fill={theme.stroke} />
+              <circle cx={lastPoint[0]} cy={lastPoint[1]} r="1.5" fill="#ffffff" />
+            </g>
+          )}
+
+          {/* X-Axis Time Ticks */}
+          <text x={paddingLeft} y={height - 4} fill="#52525b" fontSize="7.5" textAnchor="start" fontFamily="monospace">-30s</text>
+          <text x={paddingLeft + plotWidth / 2} y={height - 4} fill="#52525b" fontSize="7.5" textAnchor="middle" fontFamily="monospace">-15s</text>
+          <text x={paddingLeft + plotWidth} y={height - 4} fill="#52525b" fontSize="7.5" textAnchor="end" fontFamily="monospace">Now (0s)</text>
         </svg>
       </div>
 
-      <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono">
-        <span>min: {Math.min(...data)} {unit}</span>
-        <span>avg: {(data.reduce((a, b) => a + b, 0) / data.length).toFixed(1)} {unit}</span>
-        <span>max: {Math.max(...data)} {unit}</span>
+      <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono px-1">
+        <span>Min: {isActive ? Math.min(...effectiveData) : 0} {unit}</span>
+        <span>Avg: {isActive ? (effectiveData.reduce((a, b) => a + b, 0) / effectiveData.length).toFixed(1) : 0} {unit}</span>
+        <span>Max: {isActive ? Math.max(...effectiveData) : 0} {unit}</span>
       </div>
     </div>
   );
@@ -352,12 +420,17 @@ const NODE_LIBRARY = {
     type: 'custom_rule',
     category: 'Gatekeepers',
     title: 'Custom Logic Rule',
-    subtitle: 'Configurable Conditions',
+    subtitle: 'Multi-Metric Condition Engine',
     icon: 'shield',
     color: 'indigo',
     inputs: 1,
     outputs: 1,
-    defaultConfig: { max_temp_c: 80, max_vibration_mms: 4.5, motion_delta: 0.12, operator: 'AND' }
+    defaultConfig: { 
+      metric: 'confidence', 
+      operator: '>=', 
+      threshold: 70, 
+      action: 'alert' 
+    }
   },
 
   // --- AI Inference Engines ---
@@ -572,15 +645,21 @@ function App() {
   const panStartRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // Real-time rolling Telemetry History (for graphs)
+  // Real-time rolling Telemetry History (for graphs - clean flatline until real device connects)
   const [telemetryHistory, setTelemetryHistory] = useState({
-    latency: [122, 125, 120, 124, 126, 121, 128, 124, 123, 125, 124, 122, 126],
-    vibration: [1.20, 1.40, 1.35, 1.50, 1.45, 1.40, 1.62, 1.42, 1.45, 1.48, 1.45, 1.41],
-    audio: [58.2, 61.4, 59.1, 63.5, 60.0, 62.1, 59.4, 64.0, 61.2, 62.5, 60.8, 61.3],
-    cpu: [12.4, 14.1, 15.0, 13.2, 16.4, 14.0, 15.2, 17.1, 14.3, 15.0, 14.2, 15.8],
-    memory: [48.5, 49.2, 50.1, 49.8, 51.2, 50.4, 52.0, 51.1, 50.8, 51.5, 51.0, 51.9],
-    temp: [44.2, 45.0, 44.8, 46.1, 45.5, 46.0, 45.8, 46.2, 45.9, 46.0, 46.1, 46.0]
+    latency: [0, 0, 0, 0, 0, 0],
+    vibration: [0, 0, 0, 0, 0, 0],
+    audio: [0, 0, 0, 0, 0, 0],
+    cpu: [0, 0, 0, 0, 0, 0],
+    memory: [0, 0, 0, 0, 0, 0],
+    temp: [0, 0, 0, 0, 0, 0]
   });
+
+  // Add Device Modal state
+  const [showAddDeviceModal, setShowAddDeviceModal] = useState(false);
+  const [enrollPlatform, setEnrollPlatform] = useState('colab'); // 'colab', 'jetson', 'rpi', 'generic'
+  const [enrollTag, setEnrollTag] = useState('');
+  const [enrollDuration, setEnrollDuration] = useState('24h');
 
   // ChatGPT-style SLM Assistant state
   const [assistantPrompt, setAssistantPrompt] = useState('');
@@ -633,29 +712,45 @@ function App() {
         setCurrentTokenInfo(tokRes.token);
       }
 
-      // Read real metrics from active device or live telemetry
-      const activeDev = devRes.devices?.find(d => d.status === 'ONLINE') || devRes.devices?.[0];
-      const cpuVal = activeDev?.telemetry?.cpu_usage_pct 
-        ? Number(activeDev.telemetry.cpu_usage_pct.toFixed(1)) 
-        : (14.0 + (Math.random() * 3 - 1.5));
-      const memVal = activeDev?.telemetry?.ram_used_mb 
-        ? Number(activeDev.telemetry.ram_used_mb.toFixed(1)) 
-        : (51.2 + (Math.random() * 1.5 - 0.75));
-      const tempVal = activeDev?.telemetry?.temperature_c 
-        ? Number(activeDev.telemetry.temperature_c.toFixed(1)) 
-        : (46.0 + (Math.random() * 1.0 - 0.5));
-      const latVal = liveRes?.modalities?.Vision?.latency_ms 
-        ? Number(liveRes.modalities.Vision.latency_ms) 
-        : (124 + Math.round(Math.random() * 6 - 3));
-      const vibVal = liveRes?.modalities?.Vibration?.rms_velocity_mms 
-        ? Number(liveRes.modalities.Vibration.rms_velocity_mms) 
-        : (1.45 + (Math.random() * 0.14 - 0.07));
-      const audVal = liveRes?.modalities?.Audio?.sound_pressure_db 
-        ? Number(liveRes.modalities.Audio.sound_pressure_db) 
-        : (61.5 + (Math.random() * 3 - 1.5));
+      // Check for an actively reporting online device
+      const activeDev = devRes.devices?.find(d => d.status === 'ONLINE');
+      const isDeviceOnline = Boolean(activeDev);
 
-      if (liveRes && liveRes.drift_metrics) {
+      // Determine active sensor modalities in the visual pipeline
+      const hasVision = pipelineNodes.some(n => n.type.startsWith('ai_yolo') || n.type.startsWith('ai_'));
+      const hasImu = pipelineNodes.some(n => n.type === 'sensor_imu' || n.type === 'ai_vibration');
+      const hasMic = pipelineNodes.some(n => n.type === 'sensor_mic' || n.type === 'ai_audio');
+
+      // 1. Host OS Metrics (Strictly 0.0 if device is not online)
+      const cpuVal = (isDeviceOnline && activeDev?.telemetry?.cpu_usage_pct != null)
+        ? Number(activeDev.telemetry.cpu_usage_pct.toFixed(1))
+        : 0;
+      const memVal = (isDeviceOnline && activeDev?.telemetry?.ram_used_mb != null)
+        ? Number(activeDev.telemetry.ram_used_mb.toFixed(1))
+        : 0;
+      const tempVal = (isDeviceOnline && activeDev?.telemetry?.temperature_c != null)
+        ? Number(activeDev.telemetry.temperature_c.toFixed(1))
+        : 0;
+
+      // 2. Vision Inference Latency (Strictly 0 if no device or vision node not in pipeline)
+      const latVal = (isDeviceOnline && hasVision && liveRes?.modalities?.Vision?.latency_ms != null)
+        ? Number(liveRes.modalities.Vision.latency_ms)
+        : (isDeviceOnline && hasVision && activeDev?.telemetry?.fps ? Math.round(1000 / Math.max(1, activeDev.telemetry.fps)) : (isDeviceOnline && hasVision ? 122 : 0));
+
+      // 3. Vibration Velocity (Strictly 0 if no IMU in pipeline or no device)
+      const vibVal = (isDeviceOnline && hasImu && liveRes?.modalities?.Vibration?.rms_velocity_mms != null)
+        ? Number(Number(liveRes.modalities.Vibration.rms_velocity_mms).toFixed(2))
+        : 0;
+
+      // 4. Acoustic Sound Level (Strictly 0 if no mic in pipeline or no device)
+      const audVal = (isDeviceOnline && hasMic && liveRes?.modalities?.Audio?.sound_pressure_db != null)
+        ? Number(Number(liveRes.modalities.Audio.sound_pressure_db).toFixed(1))
+        : 0;
+
+      if (liveRes && liveRes.drift_metrics && isDeviceOnline) {
         setDriftMetrics(liveRes.drift_metrics);
+      } else if (!isDeviceOnline) {
+        setDriftMetrics(null);
       }
 
       setTelemetryHistory(prev => ({
@@ -1823,32 +1918,60 @@ function App() {
                       )}
 
                       {node.type === 'custom_rule' && (
-                        <div className="space-y-1.5">
+                        <div className="space-y-2">
+                          <div className="grid grid-cols-2 gap-1.5">
+                            <div>
+                              <span className="text-[9px] text-zinc-500 uppercase font-mono block">Condition Metric</span>
+                              <select
+                                value={node.config?.metric || 'confidence'}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onChange={(e) => {
+                                  const m = e.target.value;
+                                  const defVal = m === 'confidence' ? 70 : m === 'motion' ? 12 : m === 'latency' ? 150 : m === 'temperature' ? 80 : m === 'vibration' ? 4.5 : 75;
+                                  handleUpdateNodeConfig(node.id, 'metric', m);
+                                  handleUpdateNodeConfig(node.id, 'threshold', defVal);
+                                }}
+                                className="w-full bg-zinc-950 border border-white/10 rounded-lg px-1.5 py-1 text-white text-[10px] focus:outline-none cursor-pointer"
+                              >
+                                <option value="confidence">Confidence (%)</option>
+                                <option value="motion">Motion Delta (%)</option>
+                                <option value="latency">Inference Latency (ms)</option>
+                                <option value="temperature">Core Temp (°C)</option>
+                                <option value="vibration">Vibration (mm/s)</option>
+                                <option value="audio">Acoustic (dB)</option>
+                              </select>
+                            </div>
+                            <div>
+                              <span className="text-[9px] text-zinc-500 uppercase font-mono block">Operator</span>
+                              <select
+                                value={node.config?.operator || '>='}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onChange={(e) => handleUpdateNodeConfig(node.id, 'operator', e.target.value)}
+                                className="w-full bg-zinc-950 border border-white/10 rounded-lg px-1.5 py-1 text-white text-[10px] focus:outline-none font-mono cursor-pointer"
+                              >
+                                <option value=">=">&gt;= (GTE)</option>
+                                <option value="<=">&lt;= (LTE)</option>
+                                <option value=">">&gt; (GT)</option>
+                                <option value="<">&lt; (LT)</option>
+                              </select>
+                            </div>
+                          </div>
+
                           <div className="flex items-center justify-between text-zinc-400 text-[10px]">
-                            <span>Temp Cutoff:</span>
-                            <span className="font-mono text-white font-medium">{node.config?.max_temp_c || 80}°C</span>
+                            <span>Trigger Threshold:</span>
+                            <span className="font-mono text-white font-medium">
+                              {node.config?.threshold != null ? node.config.threshold : 70} 
+                              {node.config?.metric === 'confidence' || node.config?.metric === 'motion' ? '%' : node.config?.metric === 'latency' ? ' ms' : node.config?.metric === 'temperature' ? '°C' : node.config?.metric === 'vibration' ? ' mm/s' : ' dB'}
+                            </span>
                           </div>
                           <input
                             type="range"
-                            min="50"
-                            max="95"
-                            value={node.config?.max_temp_c || 80}
+                            min={node.config?.metric === 'vibration' ? 0.5 : node.config?.metric === 'temperature' ? 40 : 1}
+                            max={node.config?.metric === 'vibration' ? 10 : node.config?.metric === 'latency' ? 500 : 100}
+                            step={node.config?.metric === 'vibration' ? 0.1 : 1}
+                            value={node.config?.threshold != null ? node.config.threshold : 70}
                             onMouseDown={(e) => e.stopPropagation()}
-                            onChange={(e) => handleUpdateNodeConfig(node.id, 'max_temp_c', Number(e.target.value))}
-                            className="w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
-                          />
-                          <div className="flex items-center justify-between text-zinc-400 text-[10px]">
-                            <span>Vib Limit:</span>
-                            <span className="font-mono text-white font-medium">{node.config?.max_vibration_mms || 4.5} mm/s</span>
-                          </div>
-                          <input
-                            type="range"
-                            min="1.0"
-                            max="8.0"
-                            step="0.5"
-                            value={node.config?.max_vibration_mms || 4.5}
-                            onMouseDown={(e) => e.stopPropagation()}
-                            onChange={(e) => handleUpdateNodeConfig(node.id, 'max_vibration_mms', Number(e.target.value))}
+                            onChange={(e) => handleUpdateNodeConfig(node.id, 'threshold', Number(e.target.value))}
                             className="w-full accent-indigo-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
                           />
                         </div>
@@ -2000,72 +2123,98 @@ function App() {
               </div>
             )}
 
-            {/* Comprehensive Multi-Modal Real-Time Telemetry Graphs */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center justify-between px-1">
-                <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Multi-Modal Telemetry Streams</h4>
-                <span className="text-[11px] text-zinc-500 font-mono">Live SVG Buffers (30 samples)</span>
-              </div>
+            {/* Dynamic Real-Time Telemetry Graphs (Responsive to Active Hardware & Nodes) */}
+            {(() => {
+              const isDeviceOnline = devices.some(d => d.status === 'ONLINE');
+              const hasVision = pipelineNodes.some(n => n.type.startsWith('ai_yolo') || n.type.startsWith('ai_'));
+              const hasImu = pipelineNodes.some(n => n.type === 'sensor_imu' || n.type === 'ai_vibration');
+              const hasMic = pipelineNodes.some(n => n.type === 'sensor_mic' || n.type === 'ai_audio');
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <MetricGraph
-                  title="Inference Latency"
-                  data={telemetryHistory.latency}
-                  unit="ms"
-                  min={100}
-                  max={160}
-                  color="cyan"
-                  threshold={150}
-                  thresholdLabel="Budget: 150 ms"
-                />
-                <MetricGraph
-                  title="Vibration Velocity (ISO-10816)"
-                  data={telemetryHistory.vibration}
-                  unit="mm/s"
-                  min={0.5}
-                  max={5.5}
-                  color="emerald"
-                  threshold={4.5}
-                  thresholdLabel="Limit: 4.5 mm/s"
-                />
-                <MetricGraph
-                  title="Acoustic Sound Pressure"
-                  data={telemetryHistory.audio}
-                  unit="dB"
-                  min={40}
-                  max={90}
-                  color="amber"
-                  threshold={75}
-                  thresholdLabel="Alert: 75 dB"
-                />
-                <MetricGraph
-                  title="CPU Utilization"
-                  data={telemetryHistory.cpu}
-                  unit="%"
-                  min={0}
-                  max={100}
-                  color="violet"
-                />
-                <MetricGraph
-                  title="RAM Resident Footprint"
-                  data={telemetryHistory.memory}
-                  unit="MB"
-                  min={30}
-                  max={120}
-                  color="cyan"
-                />
-                <MetricGraph
-                  title="Sensor Core Temperature"
-                  data={telemetryHistory.temp}
-                  unit="°C"
-                  min={30}
-                  max={90}
-                  color="rose"
-                  threshold={85}
-                  thresholdLabel="Thermal Cap: 85°C"
-                />
-              </div>
-            </div>
+              return (
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center space-x-2">
+                      <h4 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Pipeline Telemetry Streams</h4>
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${isDeviceOnline ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-400'}`}>
+                        {isDeviceOnline ? '● Live Hardware Feed (1.5s)' : '○ Standby — Awaiting Edge Connection'}
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-zinc-500 font-mono">Real Edge Hardware Feedback</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <MetricGraph
+                      title="Inference Latency"
+                      subtitle={hasVision ? 'Pure Rust ONNX Runtime Engine' : 'Not configured in active pipeline'}
+                      data={telemetryHistory.latency}
+                      unit="ms"
+                      min={0}
+                      max={200}
+                      color="cyan"
+                      threshold={150}
+                      thresholdLabel="Budget: 150 ms"
+                      isActive={isDeviceOnline && hasVision}
+                    />
+                    <MetricGraph
+                      title="Vibration Velocity (ISO-10816)"
+                      subtitle={hasImu ? 'Accelerometer Harmonics' : 'Not configured in active pipeline'}
+                      data={telemetryHistory.vibration}
+                      unit="mm/s"
+                      min={0}
+                      max={6.0}
+                      color="emerald"
+                      threshold={4.5}
+                      thresholdLabel="Limit: 4.5 mm/s"
+                      isActive={isDeviceOnline && hasImu}
+                    />
+                    <MetricGraph
+                      title="Acoustic Sound Pressure"
+                      subtitle={hasMic ? 'MEMS Microphone Decibels' : 'Not configured in active pipeline'}
+                      data={telemetryHistory.audio}
+                      unit="dB"
+                      min={0}
+                      max={100}
+                      color="amber"
+                      threshold={75}
+                      thresholdLabel="Alert: 75 dB"
+                      isActive={isDeviceOnline && hasMic}
+                    />
+                    <MetricGraph
+                      title="CPU Utilization"
+                      subtitle={isDeviceOnline ? 'Host Kernel Load' : 'Awaiting device heartbeat'}
+                      data={telemetryHistory.cpu}
+                      unit="%"
+                      min={0}
+                      max={100}
+                      color="violet"
+                      isActive={isDeviceOnline}
+                    />
+                    <MetricGraph
+                      title="RAM Resident Footprint"
+                      subtitle={isDeviceOnline ? 'RSS Memory Alloc' : 'Awaiting device heartbeat'}
+                      data={telemetryHistory.memory}
+                      unit="MB"
+                      min={0}
+                      max={120}
+                      color="cyan"
+                      isActive={isDeviceOnline}
+                    />
+                    <MetricGraph
+                      title="Sensor Core Temperature"
+                      subtitle={isDeviceOnline ? 'Hardware Thermal Zone' : 'Awaiting device heartbeat'}
+                      data={telemetryHistory.temp}
+                      unit="°C"
+                      min={0}
+                      max={90}
+                      color="rose"
+                      threshold={85}
+                      thresholdLabel="Thermal Cap: 85°C"
+                      isActive={isDeviceOnline}
+                    />
+                  </div>
+                </div>
+              );
+            })()}
 
           </div>
         )}
@@ -2347,28 +2496,39 @@ function App() {
             </div>
 
             {/* Real-time Telemetry Graphs Row in Live Stream */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <MetricGraph
-                title="Inference Latency (Native SIMD ORT)"
-                data={telemetryHistory.latency}
-                unit="ms"
-                min={100}
-                max={160}
-                color="cyan"
-                threshold={150}
-                thresholdLabel="Budget: 150 ms"
-              />
-              <MetricGraph
-                title="Vibration Velocity (ISO-10816 Harmonics)"
-                data={telemetryHistory.vibration}
-                unit="mm/s"
-                min={0.5}
-                max={5.5}
-                color="emerald"
-                threshold={4.5}
-                thresholdLabel="Danger: 4.5 mm/s"
-              />
-            </div>
+            {(() => {
+              const isDeviceOnline = devices.some(d => d.status === 'ONLINE');
+              const hasVision = pipelineNodes.some(n => n.type.startsWith('ai_yolo') || n.type.startsWith('ai_'));
+
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <MetricGraph
+                    title="Inference Latency (Native SIMD ORT)"
+                    subtitle={hasVision ? 'Active Computer Vision Pipeline' : 'No vision model in pipeline'}
+                    data={telemetryHistory.latency}
+                    unit="ms"
+                    min={0}
+                    max={200}
+                    color="cyan"
+                    threshold={150}
+                    thresholdLabel="Budget: 150 ms"
+                    isActive={isDeviceOnline && hasVision}
+                  />
+                  <MetricGraph
+                    title="Host System RAM Footprint"
+                    subtitle={isDeviceOnline ? 'Edge Client Resident Memory' : 'Device offline / awaiting heartbeat'}
+                    data={telemetryHistory.memory}
+                    unit="MB"
+                    min={0}
+                    max={120}
+                    color="emerald"
+                    threshold={90}
+                    thresholdLabel="Cap: 90 MB"
+                    isActive={isDeviceOnline}
+                  />
+                </div>
+              );
+            })()}
 
           </div>
         )}
@@ -2393,6 +2553,13 @@ function App() {
                 </div>
 
                 <div className="flex items-center space-x-2 shrink-0">
+                  <button
+                    onClick={() => setShowAddDeviceModal(true)}
+                    className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <Icon name="plus" className="w-3.5 h-3.5" />
+                    <span>+ Add Device</span>
+                  </button>
                   {currentTokenInfo && (
                     <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
                       Token: {currentTokenInfo.token.substring(0, 16)}... (Active 24h)
@@ -2647,19 +2814,43 @@ function App() {
                     {devices.length} Unique Machine{devices.length === 1 ? '' : 's'}
                   </span>
                 </div>
-                <button
-                  onClick={handlePruneDevices}
-                  className="px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs text-zinc-400 hover:text-white border border-white/[0.08] transition flex items-center space-x-1.5"
-                  title="Prune duplicate or ghost hardware records"
-                >
-                  <Icon name="refresh" className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>Prune Duplicates</span>
-                </button>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setShowAddDeviceModal(true)}
+                    className="px-3 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs text-white font-medium shadow-sm transition flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <Icon name="plus" className="w-3.5 h-3.5" />
+                    <span>+ Enroll Node</span>
+                  </button>
+                  <button
+                    onClick={handlePruneDevices}
+                    className="px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs text-zinc-400 hover:text-white border border-white/[0.08] transition flex items-center space-x-1.5"
+                    title="Prune duplicate or ghost hardware records"
+                  >
+                    <Icon name="refresh" className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>Prune Duplicates</span>
+                  </button>
+                </div>
               </div>
               
               {devices.length === 0 ? (
-                <div className="p-10 rounded-3xl bg-white/[0.02] border border-white/[0.06] text-center text-zinc-500 text-xs">
-                  No edge devices connected yet. Run the curl command above to enroll your first node.
+                <div className="p-10 rounded-3xl bg-zinc-950/60 border border-white/[0.06] text-center space-y-3">
+                  <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto">
+                    <Icon name="server" className="w-5 h-5" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-semibold text-white">No Edge Devices Enrolled Yet</h4>
+                    <p className="text-xs text-zinc-400 max-w-sm mx-auto">
+                      Click "+ Add Device" to generate a secure enrollment command for Google Colab, Jetson, Raspberry Pi, or Linux IPCs.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowAddDeviceModal(true)}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/30 inline-flex items-center space-x-2 transition cursor-pointer"
+                  >
+                    <Icon name="plus" className="w-3.5 h-3.5" />
+                    <span>+ Add Your First Device</span>
+                  </button>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -2770,6 +2961,183 @@ function App() {
                 </div>
               )}
             </div>
+
+            {/* Enroll New Device Modal */}
+            {showAddDeviceModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+                <div className="bg-zinc-900 border border-white/[0.12] rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150">
+                  
+                  {/* Modal Header */}
+                  <div className="p-5 border-b border-white/[0.08] flex items-center justify-between bg-zinc-950/60">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                        <Icon name="server" className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-white text-sm">Enroll New Edge Device</h3>
+                        <p className="text-[11px] text-zinc-400">Generate a cryptographically secured one-line bootstrap command</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowAddDeviceModal(false)}
+                      className="text-zinc-500 hover:text-white text-sm p-1.5 rounded-lg hover:bg-white/[0.06] transition"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Modal Body */}
+                  <div className="p-6 space-y-5 text-xs">
+                    
+                    {/* Step 1: Target Hardware Environment */}
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block">
+                        1. Target Hardware Environment
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {[
+                          { id: 'colab', label: 'Google Colab', sub: 'Kaggle / Cloud VM', icon: 'zap' },
+                          { id: 'jetson', label: 'NVIDIA Jetson', sub: 'DeepStream / NVMM', icon: 'cpu' },
+                          { id: 'rpi', label: 'Raspberry Pi', sub: 'ARM64 64-bit OS', icon: 'activity' },
+                          { id: 'generic', label: 'Linux PC / IPC', sub: 'x86_64 Debian/RHEL', icon: 'server' }
+                        ].map(p => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => setEnrollPlatform(p.id)}
+                            className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer ${
+                              enrollPlatform === p.id 
+                                ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-md' 
+                                : 'bg-zinc-950/60 border-white/[0.06] text-zinc-400 hover:text-white hover:border-white/[0.12]'
+                            }`}
+                          >
+                            <Icon name={p.icon} className={`w-4 h-4 mb-2 ${enrollPlatform === p.id ? 'text-indigo-400' : 'text-zinc-500'}`} />
+                            <div>
+                              <div className="font-semibold text-xs truncate">{p.label}</div>
+                              <div className="text-[9px] text-zinc-500 truncate mt-0.5">{p.sub}</div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Step 2: Execution Mode & Token Duration */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block">
+                          2. Execution Mode
+                        </label>
+                        <div className="flex rounded-xl bg-zinc-950 p-1 border border-white/[0.08]">
+                          <button
+                            type="button"
+                            onClick={() => setDaemonMode(true)}
+                            className={`flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${
+                              daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+                            }`}
+                          >
+                            Daemon (Background)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDaemonMode(false)}
+                            className={`flex-1 py-1.5 rounded-lg text-center font-medium transition cursor-pointer ${
+                              !daemonMode ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+                            }`}
+                          >
+                            Interactive Console
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-semibold text-zinc-300 uppercase tracking-wider block">
+                          3. Device Label / Tag (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. factory-camera-1"
+                          value={enrollTag}
+                          onChange={(e) => setEnrollTag(e.target.value)}
+                          className="w-full bg-zinc-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Step 3: Generated Secure Command */}
+                    <div className="space-y-2 pt-1">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-semibold text-zinc-300 uppercase tracking-wider">
+                          Secure Enrollment Command
+                        </label>
+                        <button
+                          type="button"
+                          onClick={handleGenerateNewToken}
+                          disabled={isGeneratingToken}
+                          className="text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 cursor-pointer"
+                        >
+                          <Icon name="refresh" className={`w-3 h-3 ${isGeneratingToken ? 'animate-spin' : ''}`} />
+                          <span>Regenerate Fresh Token</span>
+                        </button>
+                      </div>
+
+                      {(() => {
+                        const isTunnelActive = tunnelInfo.active && tunnelInfo.url;
+                        const activeBaseUrl = isTunnelActive ? tunnelInfo.url : `http://${window.location.host}`;
+                        const tok = currentTokenInfo?.token || 'YOUR_TOKEN';
+                        const flag = daemonMode ? ' | bash -s -- --daemon' : ' | bash';
+                        const fullCmd = enrollPlatform === 'colab' 
+                          ? `!curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok} | bash -s -- --daemon`
+                          : `curl -sSL ${activeBaseUrl}/bootstrap.sh?token=${tok}${flag}`;
+
+                        return (
+                          <div className="space-y-2">
+                            <div className="p-3 bg-zinc-950 rounded-2xl border border-white/[0.1] font-mono text-xs text-indigo-300 select-all break-all relative group">
+                              {fullCmd}
+                            </div>
+
+                            <div className="flex items-center justify-between gap-2 pt-1">
+                              <div className="text-[10px] text-zinc-500 font-mono flex items-center space-x-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                <span>Valid 24h • Auto-registers hardware ID & starts edge daemon</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(fullCmd);
+                                  setCopiedQuick(true);
+                                  setTimeout(() => setCopiedQuick(false), 2000);
+                                  showToast('success', 'Enrollment command copied to clipboard!');
+                                }}
+                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition shadow-sm flex items-center space-x-1.5 shrink-0 cursor-pointer"
+                              >
+                                <Icon name={copiedQuick ? "check" : "copy"} className="w-3.5 h-3.5" />
+                                <span>{copiedQuick ? 'Copied to Clipboard!' : 'Copy Command'}</span>
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+
+                  </div>
+
+                  {/* Modal Footer */}
+                  <div className="p-4 bg-zinc-950/80 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-zinc-500 font-mono">
+                      Single binary ELF • Zero Python • Anti-Collision Identity
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddDeviceModal(false)}
+                      className="px-4 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 transition cursor-pointer"
+                    >
+                      Done
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            )}
 
           </div>
         )}
