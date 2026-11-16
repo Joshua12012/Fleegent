@@ -34,10 +34,10 @@ echo -e "Target Output Directory: ${CYAN}${RESULTS_DIR}/${NC}\n"
 
 # Track spawned PIDs for teardown
 SPAWNED_PIDS=()
-PRE_EXISTING_DAEMON=$(pgrep -x client_daemon || true)
-PRE_EXISTING_INFERENCE=$(pgrep -x inference_worker || true)
-PRE_EXISTING_WASM=$(pgrep -x wasm_host || true)
-PRE_EXISTING_STORAGE=$(pgrep -x storage_service || true)
+PRE_EXISTING_DAEMON=$(pgrep -f "client_daemon" || true)
+PRE_EXISTING_INFERENCE=$(pgrep -f "inference_worker" || true)
+PRE_EXISTING_WASM=$(pgrep -f "wasm_host" || true)
+PRE_EXISTING_STORAGE=$(pgrep -f "storage_service" || true)
 PRE_EXISTING_NATS=$(pgrep -f "nats-server -p 4222" || true)
 
 cleanup_on_exit() {
@@ -49,16 +49,16 @@ cleanup_on_exit() {
     done
     # Only kill services if they were NOT already running before the benchmark started
     if [[ -z "$PRE_EXISTING_DAEMON" ]]; then
-        pkill -x client_daemon 2>/dev/null || true
+        pkill -f "client_daemon" 2>/dev/null || true
     fi
     if [[ -z "$PRE_EXISTING_INFERENCE" ]]; then
-        pkill -x inference_worker 2>/dev/null || true
+        pkill -f "inference_worker" 2>/dev/null || true
     fi
     if [[ -z "$PRE_EXISTING_WASM" ]]; then
-        pkill -x wasm_host 2>/dev/null || true
+        pkill -f "wasm_host" 2>/dev/null || true
     fi
     if [[ -z "$PRE_EXISTING_STORAGE" ]]; then
-        pkill -x storage_service 2>/dev/null || true
+        pkill -f "storage_service" 2>/dev/null || true
     fi
     if [[ -z "$PRE_EXISTING_NATS" ]]; then
         pkill -f "nats-server -p 4222" 2>/dev/null || true
@@ -151,7 +151,7 @@ if ! pgrep -x wasm_host >/dev/null && [[ -f "$WASM_BIN" ]]; then
 fi
 
 # Boot Inference Worker (if not already running at full throttle)
-if ! pgrep -x inference_worker >/dev/null && [[ -f "$INFERENCE_BIN" ]]; then
+if ! pgrep -f "inference_worker" >/dev/null && [[ -f "$INFERENCE_BIN" ]]; then
     "$INFERENCE_BIN" >/dev/null 2>&1 &
     SPAWNED_PIDS+=($!)
 fi
