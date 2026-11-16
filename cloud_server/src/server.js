@@ -177,6 +177,15 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`  Bootstrap endpoint:   http://localhost:${PORT}/bootstrap.sh`);
   console.log(`  Model binaries:       http://localhost:${PORT}/models/`);
   console.log(`================================================================`);
+
+  // Automatically start Cloudflare tunnel in background if cloudflared is installed
+  const { launchTunnel } = require('./routes/tunnel.routes');
+  launchTunnel(PORT).then(tunnelUrl => {
+    if (tunnelUrl) {
+      console.log(`  Cloudflare Public Tunnel Online: ${tunnelUrl}`);
+      console.log(`================================================================`);
+    }
+  }).catch(() => {});
 });
 
 server.on('error', (err) => {

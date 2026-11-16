@@ -8,6 +8,49 @@ const { spawn } = require('child_process');
 const store = require('../store/state');
 
 /**
+ * Programmatic helper to launch cloudflared tunnel
+ */
+function launchTunnel(port = 8080) {
+  if (store.tunnel_proc && store.tunnel_url) {
+    return Promise.resolve(store.tunnel_url);
+  }
+
+  return new Promise((resolve) => {
+    try {
+      const proc = spawn('cloudflared', ['tunnel', '--url', `http://127.0.0.1:${port}`]);
+      store.tunnel_proc = proc;
+      let urlResolved = false;
+
+      const onData = (data) => {
+        const text = data.toString();
+        const match = text.match(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/);
+        if (match && !urlResolved) {
+          urlResolved = true;
+          store.tunnel_url = match[0];
+          store.logEvent('TUNNEL_STARTED', `Cloudflare Public Tunnel online at ${store.tunnel_url}`);
+          resolve(store.tunnel_url);
+        }
+      };
+
+      proc.stdout.on('data', onData);
+      proc.stderr.on('data', onData);
+
+      proc.on('close', (code) => {
+        store.tunnel_proc = null;
+        store.tunnel_url = null;
+        store.logEvent('TUNNEL_CLOSED', `Cloudflare Tunnel process exited with code ${code}`);
+      });
+
+      setTimeout(() => {
+        if (!urlResolved) resolve(null);
+      }, 15000);
+    } catch (_) {
+      resolve(null);
+    }
+  });
+}
+
+/**
  * GET /api/v1/tunnel
  * Retrieves current public tunnel status and URL.
  */
@@ -24,7 +67,7 @@ router.get('/', (req, res) => {
  * POST /api/v1/tunnel/start
  * Launches cloudflared tunnel --url http://127.0.0.1:8080 and captures the public HTTPS URL.
  */
-router.post('/start', (req, res) => {
+router.post('/start', async (req, res) => {
   if (store.tunnel_proc && store.tunnel_url) {
     return res.json({
       success: true,
@@ -33,48 +76,18 @@ router.post('/start', (req, res) => {
     });
   }
 
-  try {
-    const proc = spawn('cloudflared', ['tunnel', '--url', 'http://127.0.0.1:8080']);
-    store.tunnel_proc = proc;
-    let urlResolved = false;
-
-    const onData = (data) => {
-      const text = data.toString();
-      const match = text.match(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/);
-      if (match && !urlResolved) {
-        urlResolved = true;
-        store.tunnel_url = match[0];
-        store.logEvent('TUNNEL_STARTED', `Cloudflare Public Tunnel online at ${store.tunnel_url}`);
-        return res.json({
-          success: true,
-          message: 'Public Cloudflare Tunnel established successfully.',
-          url: store.tunnel_url
-        });
-      }
-    };
-
-    proc.stdout.on('data', onData);
-    proc.stderr.on('data', onData);
-
-    proc.on('close', (code) => {
-      store.tunnel_proc = null;
-      store.tunnel_url = null;
-      store.logEvent('TUNNEL_CLOSED', `Cloudflare Tunnel process exited with code ${code}`);
+  const url = await launchTunnel(8080);
+  if (url) {
+    return res.json({
+      success: true,
+      message: 'Public Cloudflare Tunnel established successfully.',
+      url
     });
-
-    // Fallback timeout after 12 seconds
-    setTimeout(() => {
-      if (!urlResolved) {
-        if (!res.headersSent) {
-          res.status(504).json({
-            success: false,
-            error: 'Timed out waiting for Cloudflare Tunnel URL generation.'
-          });
-        }
-      }
-    }, 12000);
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } else {
+    return res.status(504).json({
+      success: false,
+      error: 'Timed out waiting for Cloudflare Tunnel URL generation.'
+    });
   }
 });
 
@@ -118,3 +131,4 @@ router.delete('/', (req, res) => {
 });
 
 module.exports = router;
+module.exports.launchTunnel = launchTunnel;
