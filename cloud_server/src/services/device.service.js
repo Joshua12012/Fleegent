@@ -182,10 +182,10 @@ class DeviceService {
           nats_url: '127.0.0.1:4222',
           version: 0,
           services: {
-            camera: { enabled: false, device_path: '/dev/video0', resolution: [640, 480], fps: 5, pixel_format: 'RGB24', motion_threshold: 0.12, publish_topic: 'sensor.camera' },
-            inference: { enabled: false, active_model_id: 'yolov8n-defect', modality: 'Vision', model_path: 'data/models/yolov8n-defect.bin', confidence_threshold: 0.70, memory_cap_mb: 15, listen_topic: 'inference.vision', publish_topic: 'inference.response' },
-            monitoring: { enabled: false, wasm_module_path: 'wasm_worker/target/wasm32-wasip1/release/wasm_worker.wasm', thermal_zone_path: '/sys/class/thermal/thermal_zone0/temp', thermal_alert_celsius: 85.0, vibration_iso_threshold_mms: 4.5, audio_alert_db: 75.0, listen_topics: ['sensor.environment', 'sensor.camera', 'sensor.vibration', 'sensor.audio'], alert_topic: 'telemetry.alert' },
-            storage: { enabled: false, db_path: 'data/edge_storage.db', wal_mode: true, ring_buffer_capacity: 512, flush_interval_secs: 5, listen_topic: 'storage.log' }
+            camera: { enabled: true, device_path: '/dev/video0', resolution: [640, 480], fps: 5, pixel_format: 'RGB24', motion_threshold: 0.12, publish_topic: 'sensor.camera' },
+            inference: { enabled: true, active_model_id: 'yolov8n-coco', modality: 'Vision', model_path: 'data/models/yolov8n-coco.onnx', confidence_threshold: 0.70, memory_cap_mb: 15, listen_topic: 'inference.vision', publish_topic: 'inference.response' },
+            monitoring: { enabled: true, wasm_module_path: 'wasm_worker/target/wasm32-wasip1/release/wasm_worker.wasm', thermal_zone_path: '/sys/class/thermal/thermal_zone0/temp', thermal_alert_celsius: 85.0, vibration_iso_threshold_mms: 4.5, audio_alert_db: 75.0, listen_topics: ['sensor.environment', 'sensor.camera', 'sensor.vibration', 'sensor.audio'], alert_topic: 'telemetry.alert' },
+            storage: { enabled: true, db_path: 'data/edge_storage.db', wal_mode: true, ring_buffer_capacity: 512, flush_interval_secs: 5, listen_topic: 'storage.log' }
           }
         },
         telemetry,

@@ -27,124 +27,49 @@ pub struct CameraDriver {
 }
 
 impl CameraDriver {
-    pub fn new(device_path: &str, width: u32, height: u32, motion_threshold: f32) -> Self {
-        let (resolved_path, hardware_ok) = Self::detect_camera_device(device_path);
+    /// Launches the underlying GStreamer or FFmpeg camera pipeline
+    fn spawn_streamer(resolved_path: &str, device_path: &str) -> (Option<Child>, String) {
         let is_jetson = Self::detect_jetson();
         let has_nvvidconv = Self::has_nv_plugin("nvvidconv");
         let has_nvargus = Self::has_nv_plugin("nvarguscamerasrc");
 
-        // If physical camera or CSI is accessible, launch background frame streamer to /tmp/edge_live_frame.jpg
-        let (stream_proc, backend_name) = if hardware_ok {
-            if is_jetson && (has_nvvidconv || has_nvargus) {
-                println!("[HAL:Camera] 🚀 NVIDIA Jetson / DeepStream hardware acceleration detected!");
+        if is_jetson && (has_nvvidconv || has_nvargus) {
+            println!("[HAL:Camera] 🚀 NVIDIA Jetson / DeepStream hardware acceleration detected!");
 
-                // Check if CSI camera requested or available
-                let jetson_child = if (resolved_path == "csi" || resolved_path == "nvarguscamerasrc" || device_path == "csi") && has_nvargus {
-                    println!("[HAL:Camera] ⚡ Launching DeepStream NVMM CSI camera pipeline (nvarguscamerasrc)...");
-                    Command::new("gst-launch-1.0")
-                        .args([
-                            "nvarguscamerasrc", "!",
-                            "video/x-raw(memory:NVMM),width=1280,height=720,framerate=30/1", "!",
-                            "nvvidconv", "!",
-                            "video/x-raw,format=BGRx", "!",
-                            "videoconvert", "!",
-                            "jpegenc", "quality=85", "!",
-                            "multifilesink",
-                            "location=/tmp/edge_live_frame.jpg",
-                            "max-files=1",
-                        ])
-                        .stdout(Stdio::null())
-                        .stderr(Stdio::null())
-                        .spawn()
-                        .ok()
-                } else {
-                    // Jetson V4L2 USB camera with NVMM hardware converter / encoder
-                    println!("[HAL:Camera] ⚡ Launching Jetson NVMM hardware-accelerated pipeline on {}...", resolved_path);
-                    let nv_child = Command::new("gst-launch-1.0")
-                        .args([
-                            "v4l2src",
-                            &format!("device={}", resolved_path),
-                            "!",
-                            "video/x-raw,width=640,height=480",
-                            "!",
-                            "nvvidconv",
-                            "!",
-                            "video/x-raw(memory:NVMM)",
-                            "!",
-                            "nvjpegenc",
-                            "!",
-                            "multifilesink",
-                            "location=/tmp/edge_live_frame.jpg",
-                            "max-files=1",
-                        ])
-                        .stdout(Stdio::null())
-                        .stderr(Stdio::null())
-                        .spawn()
-                        .ok();
-
-                    if nv_child.is_some() {
-                        nv_child
-                    } else {
-                        // Fallback without nvjpegenc (using software jpegenc with nvvidconv)
-                        Command::new("gst-launch-1.0")
-                            .args([
-                                "v4l2src",
-                                &format!("device={}", resolved_path),
-                                "!",
-                                "video/x-raw,width=640,height=480",
-                                "!",
-                                "nvvidconv",
-                                "!",
-                                "video/x-raw,format=BGRx",
-                                "!",
-                                "videoconvert",
-                                "!",
-                                "jpegenc",
-                                "quality=85",
-                                "!",
-                                "multifilesink",
-                                "location=/tmp/edge_live_frame.jpg",
-                                "max-files=1",
-                            ])
-                            .stdout(Stdio::null())
-                            .stderr(Stdio::null())
-                            .spawn()
-                            .ok()
-                    }
-                };
-
-                if let Some(child) = jetson_child {
-                    (Some(child), "NVIDIA DeepStream (NVMM Zero-Copy)".to_string())
-                } else {
-                    println!("[HAL:Camera] ℹ️ DeepStream pipeline startup fallback; running universal GStreamer...");
-                    let gst_child = Command::new("gst-launch-1.0")
-                        .args([
-                            "v4l2src",
-                            &format!("device={}", resolved_path),
-                            "!",
-                            "image/jpeg,width=640,height=480,framerate=30/1",
-                            "!",
-                            "multifilesink",
-                            "location=/tmp/edge_live_frame.jpg",
-                            "max-files=1",
-                        ])
-                        .stdout(Stdio::null())
-                        .stderr(Stdio::null())
-                        .spawn()
-                        .ok();
-                    (gst_child, "Universal GStreamer (V4L2)".to_string())
-                }
+            // Check if CSI camera requested or available
+            let jetson_child = if (resolved_path == "csi" || resolved_path == "nvarguscamerasrc" || device_path == "csi") && has_nvargus {
+                println!("[HAL:Camera] ⚡ Launching DeepStream NVMM CSI camera pipeline (nvarguscamerasrc)...");
+                Command::new("gst-launch-1.0")
+                    .args([
+                        "nvarguscamerasrc", "!",
+                        "video/x-raw(memory:NVMM),width=1280,height=720,framerate=30/1", "!",
+                        "nvvidconv", "!",
+                        "video/x-raw,format=BGRx", "!",
+                        "videoconvert", "!",
+                        "jpegenc", "quality=85", "!",
+                        "multifilesink",
+                        "location=/tmp/edge_live_frame.jpg",
+                        "max-files=1",
+                    ])
+                    .stdout(Stdio::null())
+                    .stderr(Stdio::null())
+                    .spawn()
+                    .ok()
             } else {
-                println!("[HAL:Camera] 🎥 Starting live universal hardware capture stream on {}...", resolved_path);
-                let gst_child = Command::new("gst-launch-1.0")
+                // Jetson V4L2 USB camera with NVMM hardware converter / encoder
+                println!("[HAL:Camera] ⚡ Launching Jetson NVMM hardware-accelerated pipeline on {}...", resolved_path);
+                let nv_child = Command::new("gst-launch-1.0")
                     .args([
                         "v4l2src",
                         &format!("device={}", resolved_path),
                         "!",
-                        "videoconvert",
+                        "video/x-raw,width=640,height=480",
                         "!",
-                        "jpegenc",
-                        "quality=85",
+                        "nvvidconv",
+                        "!",
+                        "video/x-raw(memory:NVMM)",
+                        "!",
+                        "nvjpegenc",
                         "!",
                         "multifilesink",
                         "location=/tmp/edge_live_frame.jpg",
@@ -155,27 +80,133 @@ impl CameraDriver {
                     .spawn()
                     .ok();
 
-                if gst_child.is_some() {
-                    (gst_child, "Universal GStreamer (V4L2)".to_string())
+                if nv_child.is_some() {
+                    nv_child
                 } else {
-                    // Fallback to ffmpeg if gst-launch-1.0 is not installed
-                    println!("[HAL:Camera] ℹ️ gst-launch-1.0 not available; falling back to ffmpeg V4L2 streamer...");
-                    let ff_child = Command::new("ffmpeg")
+                    Command::new("gst-launch-1.0")
                         .args([
-                            "-f", "v4l2",
-                            "-i", &resolved_path,
-                            "-vf", "fps=5,scale=640:480",
-                            "-update", "1",
-                            "-y",
-                            "/tmp/edge_live_frame.jpg",
+                            "v4l2src",
+                            &format!("device={}", resolved_path),
+                            "!",
+                            "video/x-raw,width=640,height=480",
+                            "!",
+                            "nvvidconv",
+                            "!",
+                            "video/x-raw,format=BGRx",
+                            "!",
+                            "videoconvert",
+                            "!",
+                            "jpegenc",
+                            "quality=85",
+                            "!",
+                            "multifilesink",
+                            "location=/tmp/edge_live_frame.jpg",
+                            "max-files=1",
                         ])
                         .stdout(Stdio::null())
                         .stderr(Stdio::null())
                         .spawn()
-                        .ok();
-                    (ff_child, "FFmpeg V4L2 Streamer".to_string())
+                        .ok()
                 }
+            };
+
+            if let Some(child) = jetson_child {
+                (Some(child), "NVIDIA DeepStream (NVMM Zero-Copy)".to_string())
+            } else {
+                println!("[HAL:Camera] ℹ️ DeepStream pipeline startup fallback; running universal GStreamer...");
+                let gst_child = Command::new("gst-launch-1.0")
+                    .args([
+                        "v4l2src",
+                        &format!("device={}", resolved_path),
+                        "!",
+                        "image/jpeg,width=640,height=480,framerate=30/1",
+                        "!",
+                        "multifilesink",
+                        "location=/tmp/edge_live_frame.jpg",
+                        "max-files=1",
+                    ])
+                    .stdout(Stdio::null())
+                    .stderr(Stdio::null())
+                    .spawn()
+                    .ok();
+                (gst_child, "Universal GStreamer (V4L2)".to_string())
             }
+        } else {
+            println!("[HAL:Camera] 🎥 Starting live universal hardware capture stream on {}...", resolved_path);
+            let gst_child = Command::new("gst-launch-1.0")
+                .args([
+                    "v4l2src",
+                    &format!("device={}", resolved_path),
+                    "!",
+                    "videoconvert",
+                    "!",
+                    "jpegenc",
+                    "quality=85",
+                    "!",
+                    "multifilesink",
+                    "location=/tmp/edge_live_frame.jpg",
+                    "max-files=1",
+                ])
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .spawn()
+                .ok();
+
+            if gst_child.is_some() {
+                (gst_child, "Universal GStreamer (V4L2)".to_string())
+            } else {
+                // Fallback to ffmpeg if gst-launch-1.0 is not installed
+                println!("[HAL:Camera] ℹ️ gst-launch-1.0 not available; falling back to ffmpeg V4L2 streamer...");
+                let ff_child = Command::new("ffmpeg")
+                    .args([
+                        "-f", "v4l2",
+                        "-i", resolved_path,
+                        "-vf", "fps=5,scale=640:480",
+                        "-update", "1",
+                        "-y",
+                        "/tmp/edge_live_frame.jpg",
+                    ])
+                    .stdout(Stdio::null())
+                    .stderr(Stdio::null())
+                    .spawn()
+                    .ok();
+                (ff_child, "FFmpeg V4L2 Streamer".to_string())
+            }
+        }
+    }
+
+    /// Watchdog to keep the hardware camera streamer continuously running
+    pub fn ensure_streamer_active(&mut self) {
+        if !self.is_hardware_available {
+            return;
+        }
+
+        let needs_revival = if let Some(ref mut child) = self.stream_proc {
+            match child.try_wait() {
+                Ok(Some(status)) => {
+                    println!("[HAL:Camera] ⚠️ Camera pipeline exited ({:?}). Reviving immediately...", status);
+                    true
+                }
+                Ok(None) => false,
+                Err(_) => true,
+            }
+        } else {
+            true
+        };
+
+        if needs_revival {
+            let (child, backend) = Self::spawn_streamer(&self.device_path, &self.device_path);
+            self.stream_proc = child;
+            self.streaming_backend = backend;
+        }
+    }
+
+    pub fn new(device_path: &str, width: u32, height: u32, motion_threshold: f32) -> Self {
+        let (resolved_path, hardware_ok) = Self::detect_camera_device(device_path);
+
+        // If physical camera or CSI is accessible, launch background frame streamer to /tmp/edge_live_frame.jpg
+        let (stream_proc, backend_name) = if hardware_ok {
+            Self::spawn_streamer(&resolved_path, device_path)
         } else {
             println!("[HAL:Camera] ℹ️ No physical camera node (/dev/video*) detected (headless cloud VM / Colab).");
             println!("[HAL:Camera] Ingesting authentic industrial dataset frame (default_frame.jpg).");
@@ -279,6 +310,7 @@ impl CameraDriver {
     /// Executes real mathematical pixel differencing against the previous frame.
     pub fn capture_frame(&mut self) -> Result<CameraFramePayload, String> {
         self.frame_counter += 1;
+        self.ensure_streamer_active();
         let expected_size = (self.width * self.height * 3) as usize;
 
         // 1. Ingest raw/JPEG frame bytes from hardware or test buffer
