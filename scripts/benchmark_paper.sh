@@ -35,26 +35,35 @@ echo -e "Target Output Directory: ${CYAN}${RESULTS_DIR}/${NC}\n"
 # Track spawned PIDs for teardown
 SPAWNED_PIDS=()
 PRE_EXISTING_DAEMON=$(pgrep -x client_daemon || true)
+PRE_EXISTING_INFERENCE=$(pgrep -x inference_worker || true)
+PRE_EXISTING_WASM=$(pgrep -x wasm_host || true)
+PRE_EXISTING_STORAGE=$(pgrep -x storage_service || true)
 PRE_EXISTING_NATS=$(pgrep -f "nats-server -p 4222" || true)
 
 cleanup_on_exit() {
-    echo -e "\n${YELLOW}${BOLD}[TEARDOWN] Cleaning up all benchmark processes...${NC}"
+    echo -e "\n${YELLOW}${BOLD}[TEARDOWN] Finalizing benchmark harness...${NC}"
     for pid in "${SPAWNED_PIDS[@]}"; do
         if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
             kill -9 "$pid" 2>/dev/null || true
         fi
     done
-    pkill -x inference_worker 2>/dev/null || true
-    pkill -x wasm_host 2>/dev/null || true
-    pkill -x storage_service 2>/dev/null || true
-    # Only kill client_daemon and nats if they were spawned by this benchmark
+    # Only kill services if they were NOT already running before the benchmark started
     if [[ -z "$PRE_EXISTING_DAEMON" ]]; then
         pkill -x client_daemon 2>/dev/null || true
+    fi
+    if [[ -z "$PRE_EXISTING_INFERENCE" ]]; then
+        pkill -x inference_worker 2>/dev/null || true
+    fi
+    if [[ -z "$PRE_EXISTING_WASM" ]]; then
+        pkill -x wasm_host 2>/dev/null || true
+    fi
+    if [[ -z "$PRE_EXISTING_STORAGE" ]]; then
+        pkill -x storage_service 2>/dev/null || true
     fi
     if [[ -z "$PRE_EXISTING_NATS" ]]; then
         pkill -f "nats-server -p 4222" 2>/dev/null || true
     fi
-    log_ok "Benchmark teardown complete. Running edge services preserved."
+    log_ok "Benchmark complete. Live full-throttle edge fleet preserved."
 }
 trap cleanup_on_exit EXIT INT TERM
 
@@ -129,20 +138,20 @@ if ! nc -z 127.0.0.1 4222 2>/dev/null && ! timeout 0.5 bash -c '</dev/tcp/127.0.
     sleep 0.4
 fi
 
-# Boot Storage Service
-if [[ -f "$STORAGE_BIN" ]]; then
+# Boot Storage Service (if not already running at full throttle)
+if ! pgrep -x storage_service >/dev/null && [[ -f "$STORAGE_BIN" ]]; then
     "$STORAGE_BIN" >/dev/null 2>&1 &
     SPAWNED_PIDS+=($!)
 fi
 
-# Boot WASM Host
-if [[ -f "$WASM_BIN" ]]; then
+# Boot WASM Host (if not already running at full throttle)
+if ! pgrep -x wasm_host >/dev/null && [[ -f "$WASM_BIN" ]]; then
     "$WASM_BIN" >/dev/null 2>&1 &
     SPAWNED_PIDS+=($!)
 fi
 
-# Boot Inference Worker
-if [[ -f "$INFERENCE_BIN" ]]; then
+# Boot Inference Worker (if not already running at full throttle)
+if ! pgrep -x inference_worker >/dev/null && [[ -f "$INFERENCE_BIN" ]]; then
     "$INFERENCE_BIN" >/dev/null 2>&1 &
     SPAWNED_PIDS+=($!)
 fi
