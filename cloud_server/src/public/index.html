@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tether-Edge — Minimalist Fleet Control Plane</title>
+  
+  <!-- High-priority local preloads for instantaneous rendering -->
+  <link rel="preload" href="/vendor/react.min.js" as="script">
+  <link rel="preload" href="/vendor/react-dom.min.js" as="script">
+  <link rel="preload" href="/vendor/tailwind.js" as="script">
+  <link rel="preload" href="/app.js?v=3.1" as="script">
+
+  <!-- Asynchronous non-blocking Google Fonts with immediate system font fallback -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  </noscript>
+
+  <!-- Local fast-boot Tailwind CSS engine -->
+  <script src="/vendor/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfeff',
+              100: '#cffafe',
+              400: '#22d3ee',
+              500: '#06b6d4',
+              600: '#0891b2',
+              700: '#0e7490',
+            },
+            surface: {
+              950: '#070a10',
+              900: '#0b0f19',
+              850: '#111827',
+              800: '#1a2234',
+              700: '#2a3449',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- React 18 & ReactDOM: Local offline bundle -->
+  <script src="/vendor/react.min.js"></script>
+  <script src="/vendor/react-dom.min.js"></script>
+
+  <style>
+    body {
+      background-color: #070a10;
+      color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f293d;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #374151;
+    }
+    .grid-bg {
+      background-image: radial-gradient(rgba(14, 116, 144, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .canvas-dots {
+      background-color: #070a10;
+      background-image: radial-gradient(rgba(148, 163, 184, 0.18) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+    }
+    @keyframes wireFlow {
+      from { stroke-dashoffset: 20; }
+      to { stroke-dashoffset: 0; }
+    }
+    .wire-animated {
+      stroke-dasharray: 6 5;
+      animation: wireFlow 1s linear infinite;
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.08); }
+    }
+    .animate-pulse-subtle {
+      animation: pulse-subtle 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen grid-bg selection:bg-cyan-500 selection:text-black">
+  <div id="root">
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#6b7280;font-family:monospace;font-size:13px;">
+      <div style="text-align:center;">
+        <div style="display:inline-block;width:24px;height:24px;border:2px solid #06b6d4;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:12px;"></div>
+        <div>Loading Edge Fleet Manager...</div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  </style>
+
+  <!-- Fail-safe diagnostic overlay in case of uncaught exceptions (registered BEFORE app.js) -->
+  <script>
+    window.addEventListener('error', function(e) {
+      var root = document.getElementById('root');
+      if (root && root.innerHTML.includes('Loading Edge Fleet Manager...')) {
+        root.innerHTML = '<div style="margin:40px;padding:24px;background:#18181b;border:1px solid #ef4444;border-radius:12px;color:#fca5a5;font-family:monospace;max-width:800px;margin-inline:auto;">' +
+          '<h3 style="color:#ef4444;font-size:16px;font-weight:bold;margin-bottom:12px;">⚠️ Application Runtime Error</h3>' +
+          '<p style="color:#e5e7eb;font-size:13px;margin-bottom:8px;">' + (e.message || 'Unknown error') + '</p>' +
+          '<pre style="background:#09090b;padding:12px;border-radius:6px;font-size:11px;overflow:auto;color:#9ca3af;">' + (e.error && e.error.stack ? e.error.stack : (e.filename + ':' + e.lineno)) + '</pre>' +
+          '</div>';
+      }
+    });
+  </script>
+
+  <!-- Main React Application Script (Cache-busted to v3.0) -->
+  <script src="/app.js?v=3.1"></script>
+</body>
+</html>
