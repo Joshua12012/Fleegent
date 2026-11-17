@@ -73,7 +73,7 @@ build_all() {
 # ------------------------------------------------------------------------------
 run_all() {
     echo -e "${BOLD}================================================================${NC}"
-    echo -e "${BOLD}       🚀 EDGE FLEET MANAGEMENT — CLIENT V1 MICROSERVICES       ${NC}"
+    echo -e "${BOLD}       TETHER-EDGE — CLIENT V1 MICROSERVICES       ${NC}"
     echo -e "${BOLD}================================================================${NC}"
 
     WASM_FILE="$ROOT_DIR/wasm_worker/target/wasm32-wasip1/release/wasm_worker.wasm"
