@@ -18,7 +18,8 @@ router.post('/generate', (req, res) => {
 
     const host = req.get('host') || '127.0.0.1:8080';
     const protocol = req.protocol || 'http';
-    const cloudUrl = store.tunnel_url || `${protocol}://${host}`;
+    const isDirectOrTailscale = host.startsWith('100.') || host.startsWith('192.168.') || host.startsWith('10.') || host.startsWith('127.0.0.1');
+    const cloudUrl = isDirectOrTailscale ? `${protocol}://${host}` : (store.tunnel_url || `${protocol}://${host}`);
     const bootstrapCurl = `curl -sSL ${cloudUrl}/bootstrap.sh?token=${tokenRecord.token} | bash`;
 
     res.status(201).json({
@@ -52,7 +53,8 @@ router.get('/latest', (req, res) => {
 
     const host = req.get('host') || '127.0.0.1:8080';
     const protocol = req.protocol || 'http';
-    const cloudUrl = store.tunnel_url || `${protocol}://${host}`;
+    const isDirectOrTailscale = host.startsWith('100.') || host.startsWith('192.168.') || host.startsWith('10.') || host.startsWith('127.0.0.1');
+    const cloudUrl = isDirectOrTailscale ? `${protocol}://${host}` : (store.tunnel_url || `${protocol}://${host}`);
     const bootstrapCurl = `curl -sSL ${cloudUrl}/bootstrap.sh?token=${latest.token} | bash`;
 
     res.json({
