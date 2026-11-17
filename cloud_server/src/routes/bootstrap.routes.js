@@ -132,17 +132,20 @@ if [[ -f "./target/release/client_daemon" ]]; then
     fi
 fi
 
-if [[ -f "./target/release/client_daemon" && -f "./run-edge.sh" ]]; then
+if [[ -f "./target/release/client_daemon" && -f "./run-edge.sh" && -f "./bin/nats-server" ]]; then
     echo -e "  - \${GREEN}[OK]\${NC} Found local release binaries in target/release, skipping bundle download."
 else
     echo -e "  - Downloading latest Edge Client runtime bundle from: \${CLOUD_URL}/edge-client-bundle.tar.gz"
     mkdir -p bin target/release data data/models data/samples
-    curl -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz 2>/dev/null || true
+    if ! curl -f -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz; then
+        echo -e "\${RED}\${BOLD}[ERROR]\${NC} Failed to download or unpack runtime bundle from \${CLOUD_URL}/edge-client-bundle.tar.gz"
+        exit 1
+    fi
 fi
 
 # Ensure all binaries are mirrored to target/release and set executable
 mkdir -p target/release
-cp -n bin/* target/release/ 2>/dev/null || true
+cp -f bin/* target/release/ 2>/dev/null || true
 chmod +x edge-ctl run-edge.sh target/release/* bin/* 2>/dev/null || true
 
 chmod +x edge-ctl run-edge.sh nats-server target/release/* bin/* 2>/dev/null || true
