@@ -598,11 +598,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 // 1. Camera Ingestion Service (if enabled)
                 if manifest.camera.enabled {
                     if let Ok(frame) = camera_driver.capture_frame() {
-                        if frame.motion_detected {
-                            println!(
-                                "  📷 [CAM] Frame #{} ({}x{}) | Motion: detected -> Forwarded to WASM",
-                                frame.frame_id, frame.width, frame.height
-                            );
+                        let is_keyframe = (frame.frame_id % 5) == 0;
+                        if frame.motion_detected || is_keyframe {
+                            if frame.motion_detected {
+                                println!(
+                                    "  📷 [CAM] Frame #{} ({}x{}) | Motion: detected -> Forwarded to WASM",
+                                    frame.frame_id, frame.width, frame.height
+                                );
+                            }
                             let _ = client
                                 .publish(TOPIC_SENSOR_CAMERA, serde_json::to_vec(&frame)?.into())
                                 .await;
