@@ -221,7 +221,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("----------------------------------------------------------------");
 
     let thermal_driver = ThermalDriver::new("/sys/class/thermal/thermal_zone0/temp");
-    let mut camera_driver = CameraDriver::new("/dev/video0", 640, 480, 0.12);
+    let mut camera_driver = CameraDriver::new("/dev/video0", 640, 480, 0.16);
     let mut vibration_driver = VibrationDriver::new("bearing_de_01", 1600);
     let mut audio_driver = AudioDriver::new("mic_chassis_01", 44100);
 

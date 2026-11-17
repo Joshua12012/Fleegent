@@ -198,7 +198,7 @@ fn evaluate_vision_tensor(
 
     // Normalized gradient contrast
     let normalized_contrast = (max_gradient / 255.0).clamp(0.0, 1.0);
-    let has_defect = frame.motion_detected || normalized_contrast > 0.15;
+    let has_defect = frame.motion_detected && normalized_contrast > 0.35;
 
     let (detections, diagnosis) = if has_defect {
         let conf = (0.75 + normalized_contrast * 0.23).min(0.98);

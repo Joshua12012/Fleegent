@@ -357,7 +357,7 @@ impl CameraDriver {
             height: self.height,
             channels: 3,
             format: if is_jpeg { "JPEG".to_string() } else { "RGB24".to_string() },
-            motion_detected: motion_detected || delta_l > self.motion_threshold || is_keyframe,
+            motion_detected: motion_detected || delta_l > self.motion_threshold,
             data_preview,
             timestamp: now_secs,
         })
