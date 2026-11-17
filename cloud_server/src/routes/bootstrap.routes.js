@@ -115,6 +115,7 @@ echo -e "\${GREEN}\${BOLD}[OK]\${NC} Successfully enrolled as: \${BOLD}\$DEVICE_
 
 echo -e "\n\${CYAN}[3/4]\${NC} Staging local edge directories and configuration..."
 mkdir -p data data/models data/samples
+rm -rf data/*.db data/*.db-wal data/*.db-shm /tmp/edge_stop_camera 2>/dev/null || true
 
 cat <<EOF > data/edge.json
 {

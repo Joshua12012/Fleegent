@@ -125,6 +125,32 @@ run_all() {
 
     mkdir -p data data/models
 
+    # Step 0: Auto-bridge Camera Stream (Phone IP Webcam or local webcam)
+    if command -v python3 >/dev/null 2>&1; then
+        pkill -f "http://192.168.43.1:8080/shot.jpg" 2>/dev/null || true
+        if curl -s -m 0.8 http://192.168.43.1:8080/shot.jpg >/dev/null 2>&1; then
+            log_info "0/6 Auto-detected Phone IP Webcam at http://192.168.43.1:8080. Starting background frame bridge..."
+            python3 -c "
+import urllib.request, time, os
+url = 'http://192.168.43.1:8080/shot.jpg'
+while True:
+    try:
+        with urllib.request.urlopen(url, timeout=2) as resp:
+            data = resp.read()
+            if len(data) > 1024:
+                with open('/tmp/edge_live_frame.tmp', 'wb') as f:
+                    f.write(data)
+                os.replace('/tmp/edge_live_frame.tmp', '/tmp/edge_live_frame.jpg')
+        time.sleep(0.06)
+    except Exception:
+        time.sleep(0.5)
+" > /tmp/camera_bridge.log 2>&1 &
+            CAM_PID=$!
+            disown $CAM_PID 2>/dev/null || true
+            sleep 0.3
+        fi
+    fi
+
     # Locate NATS Broker (system PATH or local root)
     NATS_BIN="nats-server"
     if ! command -v nats-server >/dev/null 2>&1; then
@@ -229,6 +255,7 @@ stop_all() {
     touch /tmp/edge_stop_camera 2>/dev/null || true
 
     killall -9 inference_worker wasm_host storage_service gst-launch-1.0 ffmpeg 2>/dev/null || true
+    pkill -9 -f "http://192.168.43.1:8080/shot.jpg" 2>/dev/null || true
     pkill -9 -f gst-launch-1.0 2>/dev/null || true
     pkill -9 -f ffmpeg 2>/dev/null || true
     pkill -x inference_worker 2>/dev/null || true
