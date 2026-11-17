@@ -170,7 +170,7 @@ process.on('unhandledRejection', (reason) => {
 // Start Server
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`================================================================`);
-  console.log(`🚀 EDGE FLEET MANAGEMENT PLATFORM — CLOUD CONTROL PLANE`);
+  console.log(`TETHER-EDGE PLATFORM — CLOUD CONTROL PLANE`);
   console.log(`================================================================`);
   console.log(`  Server listening on:  http://0.0.0.0:${PORT}`);
   console.log(`  Dashboard UI:         http://localhost:${PORT}`);
