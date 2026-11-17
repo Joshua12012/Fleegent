@@ -2,6 +2,7 @@
 /target
 **/target/
 Cargo.lock
+target/
 
 # IDE
 .vscode/
@@ -19,3 +20,21 @@ Thumbs.db
 
 # Logs
 *.log
+
+control-plane/node_modules
+
+# Runtime database & models
+data/
+*.db
+*.db-wal
+*.db-shm
+
+plan.md
+origin.excalidraw
+plan-v1.excalidraw
+
+cloud_server/node_modules
+
+# Screenshots
+*.png/bin
+bin/

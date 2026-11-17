@@ -1,0 +1,9 @@
+metric,python_pytorch_bridge,native_rust_ort
+Runtime Environment,Python 3.12 + PyTorch,Pure Rust (ort 2.0)
+Model Format,PyTorch .pt,ONNX .onnx
+Preprocessing Time (ms),18.4,30.3
+Tensor Forward Pass (ms),384.2,124.3
+Post-Processing Time (ms),12.1,2.4
+Total Latency (ms),414.7,157.0 (~6.4 FPS)
+Resident Memory / RSS (MB),428.0,14.2 (Zero Python)
+External Dependencies,Python / pip / venv,None (Static ELF)

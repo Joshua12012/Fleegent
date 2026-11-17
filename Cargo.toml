@@ -1,0 +1,12 @@
+[workspace]
+members = [
+    "common",
+    "storage_service",
+    "inference_worker",
+    "wasm_host",
+    "client_daemon",
+]
+exclude = [
+    "wasm_worker",
+]
+resolver = "2"
