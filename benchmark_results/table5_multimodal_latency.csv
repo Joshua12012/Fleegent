@@ -1,6 +1,0 @@
-modality,target_metric,backend_engine,latency
-Vision (Objects),COCO Object Detection,yolov8n.onnx,124.3 ms
-Vision (Defects),Surface Fissures / Scratches,Spatial Convolution,1.2 ms
-Vibration,3-Axis Bearing Degradation (ISO-10816),1D-CNN (Harmonics),1.5 ms
-Acoustic,Pump Cavitation Anomaly,Mel-Spectrum Ratio,1.8 ms
-On-Device SLM,Root-Cause Operator Guidance,Qwen-0.6B GGUF,45.3 tok/s
