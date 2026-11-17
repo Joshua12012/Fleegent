@@ -34,13 +34,40 @@ router.post('/devices/:id/frame', express.raw({ type: ['image/jpeg', 'applicatio
 });
 
 /**
+ * GET /api/v1/devices/:id/frame
+ * Fetches the latest JPEG camera frame uploaded specifically by this device.
+ */
+router.get('/devices/:id/frame', (req, res) => {
+  const devId = req.params.id;
+  if (store.latestFrames && store.latestFrames.has(devId)) {
+    const entry = store.latestFrames.get(devId);
+    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    return res.send(entry.buffer);
+  }
+  res.status(404).send(`No frame uploaded yet for device '${devId}'`);
+});
+
+/**
  * GET /api/v1/telemetry/live/frame
  * Serves the live camera frame captured from physical /dev/video0 or uploaded from remote edge nodes.
+ * Supports ?device_id=... to filter for a specific device.
  */
 router.get('/telemetry/live/frame', (req, res) => {
   const now = Date.now();
+  const reqDevId = req.query.device_id;
 
-  // 1. Check if any device has uploaded a live frame within the last 30 seconds
+  // 1. If specific device_id requested, serve that device's latest frame
+  if (reqDevId && store.latestFrames && store.latestFrames.has(reqDevId)) {
+    const entry = store.latestFrames.get(reqDevId);
+    if (now - entry.received_at < 30000) {
+      res.setHeader('Content-Type', 'image/jpeg');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      return res.send(entry.buffer);
+    }
+  }
+
+  // 2. Otherwise serve the most recently uploaded frame across all active devices
   if (store.latestFrames && store.latestFrames.size > 0) {
     let mostRecent = null;
     for (const [devId, entry] of store.latestFrames.entries()) {

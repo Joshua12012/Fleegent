@@ -249,6 +249,35 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("  - Cloud Control URL: {}", cloud_url);
     println!("----------------------------------------------------------------\n");
 
+    // 4.5. Background Phone Camera / IP Webcam Ingestion Loop (Native Rust Async)
+    let phone_camera_url = std::env::var("CAMERA_URL")
+        .unwrap_or_else(|_| "http://192.168.43.1:8080/shot.jpg".to_string());
+    let fetch_http = reqwest::Client::builder()
+        .timeout(Duration::from_millis(1500))
+        .build()
+        .unwrap_or_else(|_| reqwest::Client::new());
+
+    tokio::spawn(async move {
+        let mut announced = false;
+        loop {
+            if let Ok(resp) = fetch_http.get(&phone_camera_url).send().await {
+                if resp.status().is_success() {
+                    if let Ok(bytes) = resp.bytes().await {
+                        if bytes.len() > 1024 && bytes[0] == 0xFF && bytes[1] == 0xD8 {
+                            let _ = std::fs::write("/tmp/edge_live_frame.tmp", &bytes);
+                            let _ = std::fs::rename("/tmp/edge_live_frame.tmp", "/tmp/edge_live_frame.jpg");
+                            if !announced {
+                                announced = true;
+                                println!("  📱 [Phone Camera] Connected to IP Webcam at: {}", phone_camera_url);
+                            }
+                        }
+                    }
+                }
+            }
+            tokio::time::sleep(Duration::from_millis(60)).await;
+        }
+    });
+
     // 5. Shared state for active pipeline manifest
     let active_manifest = Arc::new(RwLock::new(ModularServices::default()));
     let active_version = Arc::new(RwLock::new(0u64));

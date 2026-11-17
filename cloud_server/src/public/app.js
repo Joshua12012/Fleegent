@@ -1321,6 +1321,7 @@ function App() {
   const [frameError, setFrameError] = useState(false);
   const [activeModel, setActiveModel] = useState('yolov8n-coco');
   const [isDeployingModel, setIsDeployingModel] = useState(false);
+  const [selectedLiveDevice, setSelectedLiveDevice] = useState('all');
 
   // ----------------------------------------------------------------------------
   // INTERACTIVE NODE GRAPH PIPELINE STATE
@@ -2831,12 +2832,29 @@ function App() {
     className: "w-3.5 h-3.5 text-indigo-400"
   }), /*#__PURE__*/React.createElement("span", null, "Pipeline Studio (TIF Sandbox)")), isDeployingModel && /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-indigo-400 animate-pulse"
-  }, "Hot-swapping..."))), /*#__PURE__*/React.createElement("div", {
+  }, "Hot-swapping..."), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center space-x-2 pl-2 border-l border-white/10"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "text-xs text-zinc-400 font-medium hidden sm:inline"
+  }, "Camera Feed:"), /*#__PURE__*/React.createElement("select", {
+    value: selectedLiveDevice,
+    onChange: e => setSelectedLiveDevice(e.target.value),
+    className: "px-2.5 py-1.5 rounded-xl bg-zinc-900 border border-white/10 text-xs font-medium text-zinc-200 outline-none hover:border-indigo-500/50 transition cursor-pointer"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "all"
+  }, "📺 All Devices (Most Recent)"), devices.map(d => /*#__PURE__*/React.createElement("option", {
+    key: d.device_id,
+    value: d.device_id
+  }, "🎥 ", d.hostname || d.device_id, " (", d.device_id, ")")))))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 lg:grid-cols-3 gap-6 items-start"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lg:col-span-2 relative rounded-3xl overflow-hidden bg-black border border-white/[0.08] shadow-2xl aspect-[4/3] flex items-center justify-center group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: `/api/v1/telemetry/live/frame?t=${liveFrameTick}`,
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute top-4 left-4 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur border border-white/10 text-xs font-mono text-zinc-300 flex items-center space-x-2 pointer-events-none"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "w-2 h-2 rounded-full bg-emerald-400 animate-pulse"
+  }), /*#__PURE__*/React.createElement("span", null, selectedLiveDevice === 'all' ? 'Auto-Switching (Active Fleet)' : selectedLiveDevice)), /*#__PURE__*/React.createElement("img", {
+    src: `/api/v1/telemetry/live/frame?device_id=${selectedLiveDevice !== 'all' ? selectedLiveDevice : ''}&t=${liveFrameTick}`,
     alt: "Live Camera Stream",
     className: `w-full h-full object-cover ${frameError ? 'hidden' : 'block'}`,
     onError: () => setFrameError(true),

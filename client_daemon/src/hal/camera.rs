@@ -24,6 +24,7 @@ pub struct CameraDriver {
     is_hardware_available: bool,
     stream_proc: Option<Child>,
     streaming_backend: String,
+    consecutive_failures: u32,
 }
 
 impl CameraDriver {
@@ -184,17 +185,29 @@ impl CameraDriver {
         let needs_revival = if let Some(ref mut child) = self.stream_proc {
             match child.try_wait() {
                 Ok(Some(status)) => {
-                    println!("[HAL:Camera] ⚠️ Camera pipeline exited ({:?}). Reviving immediately...", status);
+                    self.consecutive_failures += 1;
+                    if self.consecutive_failures >= 2 {
+                        println!("[HAL:Camera] ℹ️ Physical camera hardware exited ({:?}). Disabling GStreamer spawner; listening to /tmp/edge_live_frame.jpg.", status);
+                        self.is_hardware_available = false;
+                        self.stream_proc = None;
+                        return;
+                    }
                     true
                 }
-                Ok(None) => false,
-                Err(_) => true,
+                Ok(None) => {
+                    self.consecutive_failures = 0;
+                    false
+                }
+                Err(_) => {
+                    self.consecutive_failures += 1;
+                    true
+                }
             }
         } else {
             true
         };
 
-        if needs_revival {
+        if needs_revival && self.consecutive_failures < 2 {
             let (child, backend) = Self::spawn_streamer(&self.device_path, &self.device_path);
             self.stream_proc = child;
             self.streaming_backend = backend;
@@ -223,6 +236,7 @@ impl CameraDriver {
             is_hardware_available: hardware_ok,
             stream_proc,
             streaming_backend: backend_name,
+            consecutive_failures: 0,
         }
     }
 
