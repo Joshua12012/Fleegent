@@ -125,12 +125,40 @@ cat <<EOF > data/edge.json
 EOF
 echo -e "\${GREEN}\${BOLD}[OK]\${NC} Staged identity config: data/edge.json"
 
+if [[ -f "./target/release/client_daemon" ]]; then
+    if [[ "\$ARCH" == "aarch64" || "\$ARCH" == "arm64" ]] && file "./target/release/client_daemon" 2>/dev/null | grep -qi "x86-64"; then
+        echo -e "  - \${YELLOW}[WARN]\${NC} Cleaning incompatible x86_64 binaries on ARM64 host..."
+        rm -f ./target/release/* ./bin/client_daemon ./bin/inference_worker ./bin/storage_service ./bin/wasm_host 2>/dev/null || true
+    fi
+fi
+
 if [[ -f "./target/release/client_daemon" && -f "./run-edge.sh" ]]; then
     echo -e "  - \${GREEN}[OK]\${NC} Found local release binaries in target/release, skipping bundle download."
+elif [[ "\$ARCH" == "aarch64" || "\$ARCH" == "arm64" ]]; then
+    echo -e "  - \${CYAN}[ARM64/Jetson]\${NC} Detected ARM64 architecture (\${ARCH})."
+    if [[ -f "./Cargo.toml" ]] && command -v cargo >/dev/null 2>&1; then
+        echo -e "  - Compiling client microservices natively for Jetson Orin Nano..."
+        cargo build --workspace --release --quiet
+    else
+        echo -e "  - \${YELLOW}[WARN]\${NC} Prebuilt edge bundle is compiled for x86_64."
+        echo -e "  - To run natively on Jetson, build in your cloned workspace:"
+        echo -e "    \${BOLD}git clone -b feature/full-edge-platform https://github.com/Joshua12012/Fleegent.git ~/tether-edge\${NC}"
+        echo -e "    \${BOLD}cd ~/tether-edge && cargo build --release\${NC}"
+    fi
 else
     echo -e "  - Downloading latest Edge Client binaries from: \${CLOUD_URL}/edge-client-bundle.tar.gz"
     mkdir -p bin target/release data data/models data/samples
     curl -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz --skip-old-files 2>/dev/null || curl -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz 2>/dev/null || true
+fi
+
+# Ensure native NATS broker on ARM64
+if [[ "\$ARCH" == "aarch64" || "\$ARCH" == "arm64" ]]; then
+    mkdir -p bin
+    if [[ ! -f "bin/nats-server" ]] || file "bin/nats-server" 2>/dev/null | grep -qi "x86-64"; then
+        echo -e "  - Downloading native ARM64 NATS broker for Jetson..."
+        curl -sSL "https://github.com/nats-io/nats-server/releases/download/v2.10.22/nats-server-v2.10.22-linux-arm64.tar.gz" | tar -xz -C bin/ --strip-components=1 nats-server-v2.10.22-linux-arm64/nats-server 2>/dev/null || true
+        chmod +x bin/nats-server 2>/dev/null || true
+    fi
 fi
 
 chmod +x edge-ctl run-edge.sh nats-server target/release/* bin/* 2>/dev/null || true

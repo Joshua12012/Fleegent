@@ -98,6 +98,20 @@ run_all() {
     [[ ! -f "$WASM_FILE" && -f "$ROOT_DIR/bin/wasm_worker.wasm" ]] && WASM_FILE="$ROOT_DIR/bin/wasm_worker.wasm"
     [[ ! -f "$WASM_FILE" && -f "$ROOT_DIR/wasm_worker.wasm" ]] && WASM_FILE="$ROOT_DIR/wasm_worker.wasm"
 
+    # Architecture validation: clean incompatible x86_64 binaries if running on ARM64 Jetson
+    HOST_ARCH=$(uname -m 2>/dev/null || echo "x86_64")
+    if [[ "$HOST_ARCH" == "aarch64" || "$HOST_ARCH" == "arm64" ]]; then
+        if [[ -f "$DAEMON_BIN" ]] && file "$DAEMON_BIN" 2>/dev/null | grep -qi "x86-64"; then
+            log_warn "Detected incompatible x86_64 binaries on ARM64 ($HOST_ARCH) Jetson host."
+            log_info "Cleaning x86 binaries to enable native ARM64 compilation..."
+            rm -f "$ROOT_DIR/target/release/client_daemon" "$ROOT_DIR/target/release/inference_worker" "$ROOT_DIR/target/release/storage_service" "$ROOT_DIR/target/release/wasm_host" "$ROOT_DIR/bin/client_daemon" "$ROOT_DIR/bin/inference_worker" "$ROOT_DIR/bin/storage_service" "$ROOT_DIR/bin/wasm_host" 2>/dev/null || true
+            DAEMON_BIN="$ROOT_DIR/target/release/client_daemon"
+            STORAGE_BIN="$ROOT_DIR/target/release/storage_service"
+            INFERENCE_BIN="$ROOT_DIR/target/release/inference_worker"
+            WASM_HOST_BIN="$ROOT_DIR/target/release/wasm_host"
+        fi
+    fi
+
     # Auto-build if any binary is missing and Cargo workspace is present
     if [[ ! -f "$WASM_FILE" ]] || [[ ! -f "$STORAGE_BIN" ]] || [[ ! -f "$INFERENCE_BIN" ]] || [[ ! -f "$WASM_HOST_BIN" ]] || [[ ! -f "$DAEMON_BIN" ]]; then
         if command -v cargo >/dev/null 2>&1 && [[ -d "$ROOT_DIR/wasm_worker" ]] && [[ -f "$ROOT_DIR/Cargo.toml" ]]; then
@@ -114,8 +128,30 @@ run_all() {
     # Locate NATS Broker (system PATH or local root)
     NATS_BIN="nats-server"
     if ! command -v nats-server >/dev/null 2>&1; then
-        if [[ -f "$ROOT_DIR/nats-server" ]]; then
+        if [[ -f "$ROOT_DIR/bin/nats-server" ]]; then
+            NATS_BIN="$ROOT_DIR/bin/nats-server"
+        elif [[ -f "$ROOT_DIR/nats-server" ]]; then
             NATS_BIN="$ROOT_DIR/nats-server"
+        fi
+    fi
+
+    # Auto-fetch official NATS broker for aarch64 if missing or incompatible
+    if [[ "$HOST_ARCH" == "aarch64" || "$HOST_ARCH" == "arm64" ]]; then
+        NATS_IS_X86=false
+        if command -v "$NATS_BIN" >/dev/null 2>&1 || [[ -f "$NATS_BIN" ]]; then
+            if file "$(which "$NATS_BIN" 2>/dev/null || echo "$NATS_BIN")" 2>/dev/null | grep -qi "x86-64"; then
+                NATS_IS_X86=true
+            fi
+        else
+            NATS_IS_X86=true
+        fi
+
+        if [[ "$NATS_IS_X86" == "true" ]]; then
+            log_info "Downloading official NATS Broker for ARM64 (Jetson)..."
+            mkdir -p "$ROOT_DIR/bin"
+            curl -sSL "https://github.com/nats-io/nats-server/releases/download/v2.10.22/nats-server-v2.10.22-linux-arm64.tar.gz" | tar -xz -C "$ROOT_DIR/bin" --strip-components=1 nats-server-v2.10.22-linux-arm64/nats-server 2>/dev/null || true
+            chmod +x "$ROOT_DIR/bin/nats-server" 2>/dev/null || true
+            NATS_BIN="$ROOT_DIR/bin/nats-server"
         fi
     fi
 
