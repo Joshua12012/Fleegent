@@ -121,6 +121,8 @@ app.use('/api/v1/tunnel', tunnelRoutes);
 
 // System state reset
 app.post('/api/v1/reset', (req, res) => {
+  const deviceService = require('./services/device.service');
+  deviceService.purgedDeviceIds.clear();
   res.json(store.resetAll());
 });
 

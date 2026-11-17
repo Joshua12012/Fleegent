@@ -56,8 +56,7 @@ class TokenService {
     if (hardware_id && hardware_id !== 'unknown-mac' && hardware_id !== 'auto-registered') {
       existingDevice = Array.from(store.devices.values()).find(d => 
         d.hardware_id === hardware_id && 
-        d.hostname === hostname && 
-        d.status !== 'PURGED'
+        d.hostname === hostname
       );
     }
 
@@ -86,6 +85,7 @@ class TokenService {
     if (existingDevice) {
       existingDevice.hostname = hostname || existingDevice.hostname;
       existingDevice.status = 'ONLINE';
+      existingDevice.pending_command = null;
       existingDevice.last_seen = now;
       existingDevice.auth_token = authToken;
       existingDevice.os_info = os_info || existingDevice.os_info;

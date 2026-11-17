@@ -13,6 +13,18 @@ class DeviceService {
     return this.purgedDeviceIds.has(deviceId);
   }
 
+  unpurge(deviceId) {
+    this.purgedDeviceIds.delete(deviceId);
+    const device = store.devices.get(deviceId);
+    if (device) {
+      device.pending_command = null;
+      if (device.status === 'PURGED' || device.status === 'STOPPED') {
+        device.status = 'ONLINE';
+      }
+      store.saveToDisk();
+    }
+  }
+
   /**
    * Returns all edge devices with real-time heartbeat calculation.
    * If last_seen > 30s ago, status is marked OFFLINE.
@@ -143,6 +155,7 @@ class DeviceService {
     // Check if a remote command (STOP or PURGE) is pending for this device
     if (device && device.pending_command) {
       const cmd = device.pending_command;
+      device.pending_command = null; // Clear so it only executes once
       if (cmd === 'PURGE') {
         this.purgedDeviceIds.add(device.device_id);
         store.devices.delete(device.device_id);

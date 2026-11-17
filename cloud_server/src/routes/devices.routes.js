@@ -59,6 +59,9 @@ router.get('/:id', (req, res) => {
 router.post('/claim', (req, res) => {
   try {
     const claimResponse = tokenService.claimToken(req.body);
+    if (claimResponse && claimResponse.device_id) {
+      deviceService.unpurge(claimResponse.device_id);
+    }
     res.status(200).json(claimResponse);
   } catch (err) {
     res.status(400).json({ success: false, error: err.message });
@@ -85,11 +88,13 @@ router.get('/:id/services', (req, res) => {
     if (!device) {
       return res.status(404).json({ success: false, error: `Device '${req.params.id}' not found` });
     }
+    const cmd = device.pending_command || (device.status === 'STOPPED' ? 'STOP' : null);
+    device.pending_command = null;
     res.json({
       success: true,
       device_id: device.device_id,
       status: device.status,
-      command: device.pending_command || (device.status === 'STOPPED' ? 'STOP' : null),
+      command: cmd,
       version: device.config?.version || 1,
       services: device.config?.services || {}
     });

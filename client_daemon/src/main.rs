@@ -76,7 +76,10 @@ fn handle_remote_command(cmd: &str) {
             .args(["-f", "nats-server -p 4222"])
             .status();
         let _ = std::process::Command::new("pkill")
-            .args(["-f", "gst-launch-1.0|ffmpeg -f v4l2"])
+            .args(["-f", "gst-launch-1.0"])
+            .status();
+        let _ = std::process::Command::new("pkill")
+            .args(["-f", "ffmpeg"])
             .status();
         let _ = std::fs::remove_file("/tmp/edge_live_frame.jpg");
 
@@ -103,7 +106,10 @@ fn handle_remote_command(cmd: &str) {
             .args(["-f", "nats-server -p 4222"])
             .status();
         let _ = std::process::Command::new("pkill")
-            .args(["-f", "gst-launch-1.0|ffmpeg -f v4l2"])
+            .args(["-f", "gst-launch-1.0"])
+            .status();
+        let _ = std::process::Command::new("pkill")
+            .args(["-f", "ffmpeg"])
             .status();
 
         let _ = std::fs::remove_dir_all("data");
