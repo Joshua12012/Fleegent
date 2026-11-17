@@ -1301,6 +1301,10 @@ function App() {
     const q = promptText || assistantPrompt;
     if (!q || !q.trim()) return;
 
+    if (!promptText) {
+      setAssistantPrompt('');
+    }
+
     setIsAssistantThinking(true);
     setAssistantReply(null);
     try {
@@ -2474,6 +2478,7 @@ function App() {
                   <div className="flex flex-wrap gap-1.5">
                     {[
                       "Summarize camera scene",
+                      "What do you see?",
                       "Check safety compliance",
                       "Diagnose machine health"
                     ].map((prompt, idx) => (

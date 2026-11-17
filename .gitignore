@@ -42,3 +42,4 @@ cloud_server/node_modules
 benchmark_results/
 
 bin/
+lib/

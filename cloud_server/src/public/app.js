@@ -2031,6 +2031,7 @@ function App() {
   const handleAskAssistant = async promptText => {
     const q = promptText || assistantPrompt;
     if (!q || !q.trim()) return;
+    if (!promptText) setAssistantPrompt('');
     setIsAssistantThinking(true);
     setAssistantReply(null);
     try {
@@ -2981,7 +2982,7 @@ function App() {
     className: "text-xs text-zinc-400 leading-relaxed"
   }, "Ask on-device AI to analyze visual targets or inspect machine health."), /*#__PURE__*/React.createElement("div", {
     className: "flex flex-wrap gap-1.5"
-  }, ["Summarize camera scene", "Check safety compliance", "Diagnose machine health"].map((prompt, idx) => /*#__PURE__*/React.createElement("button", {
+  }, ["Summarize camera scene", "What do you see?", "Check safety compliance", "Diagnose machine health"].map((prompt, idx) => /*#__PURE__*/React.createElement("button", {
     key: idx,
     onClick: () => handleAskAssistant(prompt),
     className: "text-[11px] px-2.5 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border border-white/[0.06] transition"
