@@ -64,15 +64,27 @@ defaultModels.forEach(filename => {
 // Static binary downloads for edge nodes
 app.use('/models', express.static(modelsDir));
 
-// Pre-built edge client bundle for zero-touch curl installation
-app.get('/edge-client-bundle.tar.gz', (req, res) => {
-  const bundlePath = path.join(dataDir, 'edge-client-bundle.tar.gz');
+// Pre-built edge client bundles for zero-touch curl installation (multi-arch support)
+const serveBundle = (filename, req, res) => {
+  const bundlePath = path.join(dataDir, filename);
   if (fs.existsSync(bundlePath)) {
-    res.download(bundlePath, 'edge-client-bundle.tar.gz');
+    res.setHeader('Cache-Control', 'public, max-age=60');
+    res.download(bundlePath, filename);
   } else {
-    res.status(404).send('Edge bundle not found');
+    // Fallback to default bundle
+    const fallbackPath = path.join(dataDir, 'edge-client-bundle.tar.gz');
+    if (fs.existsSync(fallbackPath)) {
+      res.setHeader('Cache-Control', 'public, max-age=60');
+      res.download(fallbackPath, 'edge-client-bundle.tar.gz');
+    } else {
+      res.status(404).send('Edge bundle not found');
+    }
   }
-});
+};
+
+app.get('/edge-client-bundle.tar.gz', (req, res) => serveBundle('edge-client-bundle.tar.gz', req, res));
+app.get('/edge-client-bundle-arm64.tar.gz', (req, res) => serveBundle('edge-client-bundle-arm64.tar.gz', req, res));
+app.get('/edge-client-bundle-x86_64.tar.gz', (req, res) => serveBundle('edge-client-bundle-x86_64.tar.gz', req, res));
 
 // Static files for the frontend dashboard
 const publicDir = path.join(__dirname, 'public');

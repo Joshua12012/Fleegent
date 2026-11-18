@@ -135,15 +135,32 @@ if [[ -f "./target/release/client_daemon" ]]; then
     fi
 fi
 
-echo -e "  - Downloading latest Edge Client runtime bundle from: \${CLOUD_URL}/edge-client-bundle.tar.gz"
-mkdir -p bin target/release data data/models data/samples
-BUNDLE_TMP="/tmp/edge-client-bundle.tar.gz"
-if ! curl --http1.1 -fL --retry 3 --retry-delay 1 -sS "\${CLOUD_URL}/edge-client-bundle.tar.gz" -o "\$BUNDLE_TMP"; then
-    echo -e "\${RED}\${BOLD}[ERROR]\${NC} Failed to download runtime bundle from \${CLOUD_URL}/edge-client-bundle.tar.gz"
+if [[ "\$ARCH" == "aarch64" || "\$ARCH" == "arm64" ]]; then
+    BUNDLE_FILE="edge-client-bundle-arm64.tar.gz"
+elif [[ "\$ARCH" == "x86_64" ]]; then
+    BUNDLE_FILE="edge-client-bundle-x86_64.tar.gz"
+else
+    BUNDLE_FILE="edge-client-bundle.tar.gz"
+fi
+
+echo -e "  - Downloading latest Edge Client runtime bundle (\$ARCH) from: \${CLOUD_URL}/\${BUNDLE_FILE}"
+mkdir -p bin target/release data data/models data/samples lib
+BUNDLE_TMP="/tmp/\${BUNDLE_FILE}"
+rm -f "\$BUNDLE_TMP" 2>/dev/null || true
+
+# Robust download: HTTP/1.1 avoids Cloudflare HTTP/2 stream resets (INTERNAL_ERROR err 2), -C - allows resume, retries 5 times
+if ! curl --http1.1 -C - -fSL --retry 5 --retry-delay 2 --retry-connrefused -sS "\${CLOUD_URL}/\${BUNDLE_FILE}" -o "\$BUNDLE_TMP"; then
+    echo -e "  - \${YELLOW}[WARN]\${NC} Primary bundle download interrupted, retrying generic \${CLOUD_URL}/edge-client-bundle.tar.gz..."
+    curl --http1.1 -C - -fSL --retry 5 --retry-delay 2 --retry-connrefused -sS "\${CLOUD_URL}/edge-client-bundle.tar.gz" -o "\$BUNDLE_TMP"
+fi
+
+if [[ ! -s "\$BUNDLE_TMP" ]]; then
+    echo -e "\${RED}\${BOLD}[ERROR]\${NC} Downloaded runtime bundle is missing or empty."
     exit 1
 fi
+
 if ! tar -xzf "\$BUNDLE_TMP"; then
-    echo -e "\${RED}\${BOLD}[ERROR]\${NC} Failed to unpack runtime bundle"
+    echo -e "\${RED}\${BOLD}[ERROR]\${NC} Failed to unpack runtime bundle."
     exit 1
 fi
 rm -f "\$BUNDLE_TMP" 2>/dev/null || true

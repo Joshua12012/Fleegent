@@ -623,23 +623,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 // 1. Camera Ingestion Service (if enabled)
                 if manifest.camera.enabled {
                     if let Ok(frame) = camera_driver.capture_frame() {
-                        if manifest.monitoring.enabled {
-                            // WASM Gatekeeper is ENABLED: Route to WASM pre-filter
-                            if frame.motion_detected {
-                                println!(
-                                    "  📷 [CAM] Frame #{} ({}x{}) | Motion: detected -> Forwarded to WASM Gatekeeper",
-                                    frame.frame_id, frame.width, frame.height
-                                );
-                                let _ = client
-                                    .publish(TOPIC_SENSOR_CAMERA, serde_json::to_vec(&frame)?.into())
-                                    .await;
-                            }
-                        } else if manifest.inference.enabled && manifest.inference.modality == Modality::Vision {
-                            // WASM Gatekeeper is DISABLED: Direct Camera -> Vision NN pipeline!
-                            println!(
-                                "  📷 [CAM] Frame #{} ({}x{}) | Forwarded to Vision Engine ({})",
-                                frame.frame_id, frame.width, frame.height, manifest.inference.active_model_id
-                            );
+                        // Forward camera frame to Vision AI Inference Worker whenever vision model is enabled
+                        if manifest.inference.enabled && manifest.inference.modality == Modality::Vision {
                             let v_req = VisionInferenceRequest {
                                 request_id: format!("cam_frame_{}", frame.frame_id),
                                 camera_frame: frame.clone(),
@@ -648,6 +633,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             };
                             let _ = client
                                 .publish(TOPIC_INFERENCE_VISION, serde_json::to_vec(&v_req)?.into())
+                                .await;
+                        }
+
+                        // Also route to WASM Gatekeeper when monitoring is active and motion is detected
+                        if manifest.monitoring.enabled && frame.motion_detected {
+                            let _ = client
+                                .publish(TOPIC_SENSOR_CAMERA, serde_json::to_vec(&frame)?.into())
                                 .await;
                         }
 
@@ -739,11 +731,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 if let Ok(resp) = serde_json::from_slice::<InferenceResponse>(&msg.payload) {
                     let summary = if let Some(v) = &resp.vision_result {
                         if v.detections.is_empty() {
-                            "nominal (0 targets)".to_string()
+                            "No objects detected".to_string()
                         } else {
-                            v.detections
+                            let mut counts: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
+                            for d in &v.detections {
+                                *counts.entry(d.label.clone()).or_insert(0) += 1;
+                            }
+                            counts
                                 .iter()
-                                .map(|d| format!("{} ({:.0}%)", d.label, d.confidence * 100.0))
+                                .map(|(label, count)| {
+                                    if *count > 1 {
+                                        format!("{} (x{})", label, count)
+                                    } else {
+                                        label.clone()
+                                    }
+                                })
                                 .collect::<Vec<_>>()
                                 .join(", ")
                         }
@@ -755,10 +757,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         resp.output_text.clone()
                     };
 
-                    println!(
-                        "  🧠 [{}] Targets: [{}] | Latency: {}ms",
-                        resp.backend, summary, resp.latency_ms
-                    );
+                    if resp.vision_result.is_some() {
+                        println!(
+                            "  🎯 \x1b[1;32m[YOLO PREDICTION]\x1b[0m Categories: \x1b[1m[{}]\x1b[0m | Latency: {}ms",
+                            summary, resp.latency_ms
+                        );
+                    } else {
+                        println!(
+                            "  🧠 [{}] Prediction: [{}] | Latency: {}ms",
+                            resp.backend, summary, resp.latency_ms
+                        );
+                    }
 
 
                     // Forward live inference result to Cloud Control Plane for visual dashboard

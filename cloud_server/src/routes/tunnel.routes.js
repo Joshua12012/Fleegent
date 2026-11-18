@@ -17,7 +17,7 @@ function launchTunnel(port = 8080) {
 
   return new Promise((resolve) => {
     try {
-      const proc = spawn('cloudflared', ['tunnel', '--url', `http://127.0.0.1:${port}`]);
+      const proc = spawn('cloudflared', ['tunnel', '--protocol', 'http2', '--url', `http://127.0.0.1:${port}`]);
       store.tunnel_proc = proc;
       let urlResolved = false;
 

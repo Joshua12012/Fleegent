@@ -75,6 +75,18 @@ run_all() {
     echo -e "${BOLD}       TETHER-EDGE — CLIENT V1 MICROSERVICES       ${NC}"
     echo -e "${BOLD}================================================================${NC}"
 
+    # Architecture dispatch: auto-link/copy matching binaries if arch subdirectories exist
+    HOST_ARCH=$(uname -m 2>/dev/null || echo "x86_64")
+    if [[ -d "$ROOT_DIR/bin/$HOST_ARCH" ]]; then
+        mkdir -p "$ROOT_DIR/bin" "$ROOT_DIR/target/release"
+        cp -f "$ROOT_DIR/bin/$HOST_ARCH"/* "$ROOT_DIR/bin/" 2>/dev/null || true
+        cp -f "$ROOT_DIR/bin/$HOST_ARCH"/* "$ROOT_DIR/target/release/" 2>/dev/null || true
+    fi
+    if [[ -d "$ROOT_DIR/lib/$HOST_ARCH" ]]; then
+        mkdir -p "$ROOT_DIR/lib"
+        cp -f "$ROOT_DIR/lib/$HOST_ARCH"/* "$ROOT_DIR/lib/" 2>/dev/null || true
+    fi
+
     WASM_FILE="$ROOT_DIR/wasm_worker/target/wasm32-wasip1/release/wasm_worker.wasm"
     STORAGE_BIN="$ROOT_DIR/target/release/storage_service"
     INFERENCE_BIN="$ROOT_DIR/target/release/inference_worker"
