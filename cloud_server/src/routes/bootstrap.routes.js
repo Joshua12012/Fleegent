@@ -136,16 +136,21 @@ if [[ -f "./target/release/client_daemon" ]]; then
 fi
 
 echo -e "  - Downloading latest Edge Client runtime bundle from: \${CLOUD_URL}/edge-client-bundle.tar.gz"
-mkdir -p bin lib target/release data data/models data/samples
-if ! curl -f -sSL "\${CLOUD_URL}/edge-client-bundle.tar.gz" | tar -xz; then
-    echo -e "\${RED}\${BOLD}[ERROR]\${NC} Failed to download or unpack runtime bundle from \${CLOUD_URL}/edge-client-bundle.tar.gz"
+mkdir -p bin target/release data data/models data/samples
+BUNDLE_TMP="/tmp/edge-client-bundle.tar.gz"
+if ! curl --http1.1 -fL --retry 3 --retry-delay 1 -sS "\${CLOUD_URL}/edge-client-bundle.tar.gz" -o "\$BUNDLE_TMP"; then
+    echo -e "\${RED}\${BOLD}[ERROR]\${NC} Failed to download runtime bundle from \${CLOUD_URL}/edge-client-bundle.tar.gz"
     exit 1
 fi
+if ! tar -xzf "\$BUNDLE_TMP"; then
+    echo -e "\${RED}\${BOLD}[ERROR]\${NC} Failed to unpack runtime bundle"
+    exit 1
+fi
+rm -f "\$BUNDLE_TMP" 2>/dev/null || true
 
 # Ensure all binaries are mirrored to target/release and set executable
-mkdir -p target/release lib
+mkdir -p target/release
 cp -f bin/* target/release/ 2>/dev/null || true
-chmod -R a+r lib/ 2>/dev/null || true
 chmod +x edge-ctl run-edge.sh target/release/* bin/* 2>/dev/null || true
 
 chmod +x edge-ctl run-edge.sh nats-server target/release/* bin/* 2>/dev/null || true

@@ -221,7 +221,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("----------------------------------------------------------------");
 
     let thermal_driver = ThermalDriver::new("/sys/class/thermal/thermal_zone0/temp");
-    let mut camera_driver = CameraDriver::new("/dev/video0", 640, 480, 0.16);
+    let mut camera_driver = CameraDriver::new("/dev/video0", 640, 480, 0.12);
     let mut vibration_driver = VibrationDriver::new("bearing_de_01", 1600);
     let mut audio_driver = AudioDriver::new("mic_chassis_01", 44100);
 
@@ -248,35 +248,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("  - Host RAM:          {} MB / {} MB used", used_ram_mb, total_ram_mb);
     println!("  - Cloud Control URL: {}", cloud_url);
     println!("----------------------------------------------------------------\n");
-
-    // 4.5. Background Phone Camera / IP Webcam Ingestion Loop (Native Rust Async)
-    let phone_camera_url = std::env::var("CAMERA_URL")
-        .unwrap_or_else(|_| "http://192.168.43.1:8080/shot.jpg".to_string());
-    let fetch_http = reqwest::Client::builder()
-        .timeout(Duration::from_millis(1500))
-        .build()
-        .unwrap_or_else(|_| reqwest::Client::new());
-
-    tokio::spawn(async move {
-        let mut announced = false;
-        loop {
-            if let Ok(resp) = fetch_http.get(&phone_camera_url).send().await {
-                if resp.status().is_success() {
-                    if let Ok(bytes) = resp.bytes().await {
-                        if bytes.len() > 1024 && bytes[0] == 0xFF && bytes[1] == 0xD8 {
-                            let _ = std::fs::write("/tmp/edge_live_frame.tmp", &bytes);
-                            let _ = std::fs::rename("/tmp/edge_live_frame.tmp", "/tmp/edge_live_frame.jpg");
-                            if !announced {
-                                announced = true;
-                                println!("  📱 [Phone Camera] Connected to IP Webcam at: {}", phone_camera_url);
-                            }
-                        }
-                    }
-                }
-            }
-            tokio::time::sleep(Duration::from_millis(60)).await;
-        }
-    });
 
     // 5. Shared state for active pipeline manifest
     let active_manifest = Arc::new(RwLock::new(ModularServices::default()));
@@ -598,14 +569,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 // 1. Camera Ingestion Service (if enabled)
                 if manifest.camera.enabled {
                     if let Ok(frame) = camera_driver.capture_frame() {
-                        let is_keyframe = (frame.frame_id % 5) == 0;
-                        if frame.motion_detected || is_keyframe {
-                            if frame.motion_detected {
-                                println!(
-                                    "  📷 [CAM] Frame #{} ({}x{}) | Motion: detected -> Forwarded to WASM",
-                                    frame.frame_id, frame.width, frame.height
-                                );
-                            }
+                        if frame.motion_detected {
+                            println!(
+                                "  📷 [CAM] Frame #{} ({}x{}) | Motion: detected -> Forwarded to WASM",
+                                frame.frame_id, frame.width, frame.height
+                            );
                             let _ = client
                                 .publish(TOPIC_SENSOR_CAMERA, serde_json::to_vec(&frame)?.into())
                                 .await;

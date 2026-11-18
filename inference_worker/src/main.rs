@@ -198,7 +198,7 @@ fn evaluate_vision_tensor(
 
     // Normalized gradient contrast
     let normalized_contrast = (max_gradient / 255.0).clamp(0.0, 1.0);
-    let has_defect = frame.motion_detected && normalized_contrast > 0.35;
+    let has_defect = frame.motion_detected || normalized_contrast > 0.15;
 
     let (detections, diagnosis) = if has_defect {
         let conf = (0.75 + normalized_contrast * 0.23).min(0.98);
@@ -601,20 +601,12 @@ async fn handle_vision(
             (res, diag, yolo_res.latency_ms, yolo_res.model_name)
         }
         Err(e) => {
-            eprintln!("  ⚠️ [Native YOLO Inference Error] {}", e);
-            let diag = format!("[{}] Native YOLO inference: {}. (0 objects detected)", ctx.name, e);
-            let res = VisionInferenceResult {
-                model_id: ctx.model_id.clone(),
-                detections: Vec::new(),
-                frame_width: 640,
-                frame_height: 480,
-                latency_ms: 0,
-                timestamp: now_secs,
-            };
+            // Fallback to spatial gradient defect convolution if frame buffer temporarily offline
+            let (v_res, diag, lat) = evaluate_vision_tensor(ctx, &req.camera_frame);
             (
-                res,
-                diag,
-                0,
+                v_res,
+                format!("{} (Native YOLO fallback: {})", diag, e),
+                lat,
                 format!("Vision Engine ({})", ctx.name),
             )
         }

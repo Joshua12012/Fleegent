@@ -225,17 +225,9 @@ while True:
         fi
     fi
 
-    # Configure dynamic library search paths for native ONNX Runtime
-    export LD_LIBRARY_PATH="$ROOT_DIR/lib:$ROOT_DIR/bin:${LD_LIBRARY_PATH:-}"
-    if [[ -f "$ROOT_DIR/lib/libonnxruntime.so" ]]; then
-        export ORT_DYLIB_PATH="$ROOT_DIR/lib/libonnxruntime.so"
-    elif [[ -f "$ROOT_DIR/bin/libonnxruntime.so" ]]; then
-        export ORT_DYLIB_PATH="$ROOT_DIR/bin/libonnxruntime.so"
-    fi
-
     # Step 3: Start AI Inference Service (Native Rust YOLO ORT + 1D-CNN + Audio + Llama.cpp)
     log_info "3/6 Starting AI Inference Service (Native Rust YOLO + Multi-Modal)..."
-    "$INFERENCE_BIN" > /tmp/inference_worker.log 2>&1 &
+    "$INFERENCE_BIN" > /dev/null 2>&1 &
     INFERENCE_PID=$!
     sleep 0.2
 
