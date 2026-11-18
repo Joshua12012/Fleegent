@@ -971,8 +971,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             format!("data/models/{}.onnx", cmd.component_id),
                             format!("data/models/{}.bin", cmd.component_id),
                             format!("models/{}.onnx", cmd.component_id),
+                            format!("data/models/{}-coco.onnx", cmd.component_id),
                             "data/models/yolov8n-coco.onnx".to_string(),
+                            "data/models/yolo11n-coco.onnx".to_string(),
                             "data/models/yolov8n.onnx".to_string(),
+                            "data/models/yolo11n.onnx".to_string(),
                             "yolov8n.onnx".to_string(),
                         ];
                         if let Some(valid_path) = candidates.iter().find(|p| Path::new(p).exists()) {
@@ -981,6 +984,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 load_failed = true;
                                 load_err = e.to_string();
                             }
+                        } else {
+                            eprintln!("[Inference Service] ⚠️ No ONNX model weights found at candidate paths for {}", cmd.component_id);
+                            load_failed = true;
+                            load_err = format!("Model weights not found for {}", cmd.component_id);
                         }
                     }
 

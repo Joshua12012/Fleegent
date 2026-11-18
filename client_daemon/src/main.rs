@@ -144,6 +144,55 @@ fn handle_remote_command(cmd: &str) {
     }
 }
 
+/// Dynamically syncs model weights from Cloud Server to local edge cache (data/models/)
+/// Zero-touch on-demand delivery avoiding heavy initial bundle tarballs.
+async fn ensure_model_synced(http_client: &reqwest::Client, cloud_url: &str, model_id: &str) {
+    if model_id.is_empty() || model_id == "None (Standby)" {
+        return;
+    }
+    let target_filename = if model_id.ends_with(".onnx") {
+        model_id.to_string()
+    } else {
+        format!("{}.onnx", model_id)
+    };
+    let local_path = format!("data/models/{}", target_filename);
+    let path = std::path::Path::new(&local_path);
+    if path.exists() {
+        if let Ok(meta) = std::fs::metadata(path) {
+            if meta.len() > 1_000_000 {
+                return;
+            }
+        }
+    }
+
+    let download_url = format!("{}/models/{}", cloud_url, target_filename);
+    println!("  📥 [ModelPulse Sync] Dynamic model fetch: {} from {}", target_filename, download_url);
+    let _ = tokio::fs::create_dir_all("data/models").await;
+    match http_client.get(&download_url).send().await {
+        Ok(resp) => {
+            if resp.status().is_success() {
+                if let Ok(bytes) = resp.bytes().await {
+                    if bytes.len() > 1_000_000 {
+                        let tmp_path = format!("{}.tmp", local_path);
+                        if tokio::fs::write(&tmp_path, &bytes).await.is_ok() {
+                            let _ = tokio::fs::rename(&tmp_path, &local_path).await;
+                            println!("  ✅ [ModelPulse Sync] Successfully staged {} ({} bytes)", local_path, bytes.len());
+                            return;
+                        }
+                    } else {
+                        eprintln!("  ⚠️ [ModelPulse Sync] Downloaded model is too small ({} bytes)", bytes.len());
+                    }
+                }
+            } else {
+                eprintln!("  ⚠️ [ModelPulse Sync] Server returned status {} for {}", resp.status(), download_url);
+            }
+        }
+        Err(e) => {
+            eprintln!("  ⚠️ [ModelPulse Sync] Network error fetching model: {}", e);
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("================================================================");
@@ -357,6 +406,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     || m.storage.enabled;
 
                 if is_any_enabled {
+                    if m.inference.enabled {
+                        ensure_model_synced(&http_client, &cloud_url, &m.inference.active_model_id).await;
+                    }
                     println!("================================================================");
                     println!("  📦 ACTIVE PIPELINE MANIFEST LOADED (Version {})", *v);
                     println!("================================================================");
@@ -513,6 +565,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             println!("================================================================\n");
 
                             if m.inference.enabled {
+                                ensure_model_synced(&http_client, &cloud_url, &m.inference.active_model_id).await;
                                 let reload_cmd = ReloadCommand {
                                     target: common::ReloadTarget::Model,
                                     component_id: m.inference.active_model_id.clone(),
@@ -549,6 +602,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         let dep_id_str = dep_cmd.deployment_id.clone().unwrap_or_else(|| dep_cmd.timestamp.to_string());
                         if dep_id_str != last_applied_deployment_id {
                             last_applied_deployment_id = dep_id_str;
+                            ensure_model_synced(&http_client, &cloud_url, &dep_cmd.component_id).await;
                             println!(
                                 "\n  📥 [OTA Hot-Swap] Cloud requested model update: {} ({:?}) -> Dispatching to workers...",
                                 dep_cmd.model_name, dep_cmd.modality

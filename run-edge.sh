@@ -21,7 +21,6 @@ cd "$ROOT_DIR"
 # Track background process PIDs for graceful teardown
 NATS_PID=""
 STORAGE_PID=""
-LLAMA_PID=""
 INFERENCE_PID=""
 WASM_HOST_PID=""
 
@@ -44,7 +43,7 @@ log_err()   { echo -e "${RED}${BOLD}[ERROR]${NC} $1"; }
 cleanup() {
     echo -e "\n${BOLD}[EDGE] Shutting down all edge client microservices...${NC}"
     
-    for pid in "$WASM_HOST_PID" "$INFERENCE_PID" "$LLAMA_PID" "$STORAGE_PID" "$NATS_PID"; do
+    for pid in "$WASM_HOST_PID" "$INFERENCE_PID" "$STORAGE_PID" "$NATS_PID"; do
         if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
             kill "$pid" 2>/dev/null || true
             wait "$pid" 2>/dev/null || true
@@ -197,35 +196,44 @@ while True:
     STORAGE_PID=$!
     sleep 0.2
 
-    # Step 2.5: Start Local Llama.cpp GGUF Inference Engine (if installed)
-    LLAMA_BIN=""
-    for cand in "$ROOT_DIR/llama-server" "$ROOT_DIR/bin/llama-server" "/usr/local/bin/llama-server" "llama-server" "/home/joshua/llama.cpp/build/bin/llama-server"; do
-        if command -v "$cand" >/dev/null 2>&1 || [[ -f "$cand" ]]; then
-            LLAMA_BIN="$cand"
-            break
-        fi
-    done
+    # Step 2.5: ModelPulse Dynamic Model Sync (Server to Edge Client)
+    CLOUD_URL=""
+    if [[ -f "$ROOT_DIR/data/edge.json" ]]; then
+        CLOUD_URL=$(grep -o '"cloud_server_url": *"[^"]*"' "$ROOT_DIR/data/edge.json" | cut -d'"' -f4 || true)
+    fi
 
-    QWEN_MODEL=""
-    for cand in "$ROOT_DIR/data/models/qwen3-0.6b-q4_k_m.gguf" "$ROOT_DIR/qwen3-0.6b-q4_k_m.gguf" "$ROOT_DIR/data/models/qwen_v1.gguf" "/home/joshua/Downloads/qwen3-0.6b-q4_k_m.gguf"; do
-        if [[ -f "$cand" ]]; then
-            QWEN_MODEL="$cand"
-            break
-        fi
-    done
-
-    if [[ -n "$LLAMA_BIN" && -n "$QWEN_MODEL" ]]; then
-        if ! nc -z 127.0.0.1 9931 2>/dev/null && ! timeout 0.5 bash -c '</dev/tcp/127.0.0.1/9931' 2>/dev/null; then
-            log_info "2.5/7 Starting Local Llama.cpp Server (Qwen-0.6B GGUF on 127.0.0.1:9931)..."
-            "$LLAMA_BIN" --host 127.0.0.1 --port 9931 -m "$QWEN_MODEL" -c 1024 -t 4 --reasoning off > /dev/null 2>&1 &
-            LLAMA_PID=$!
-            sleep 1.2
-        else
-            log_info "2.5/7 Local Llama.cpp Server is already active on port 9931."
+    TARGET_MODEL="yolov8n-coco"
+    if [[ -n "$CLOUD_URL" && -f "$ROOT_DIR/data/edge.json" ]]; then
+        DEV_ID=$(grep -o '"device_id": *"[^"]*"' "$ROOT_DIR/data/edge.json" | cut -d'"' -f4 || true)
+        if [[ -n "$DEV_ID" ]]; then
+            SRV_MODEL=$(curl -s --connect-timeout 2 "${CLOUD_URL}/api/v1/devices/${DEV_ID}/services" 2>/dev/null | grep -o '"active_model_id": *"[^"]*"' | head -n1 | cut -d'"' -f4 || true)
+            if [[ -n "$SRV_MODEL" && "$SRV_MODEL" != "null" && "$SRV_MODEL" != "None (Standby)" ]]; then
+                TARGET_MODEL="$SRV_MODEL"
+            fi
         fi
     fi
 
-    # Step 3: Start AI Inference Service (Native Rust YOLO ORT + 1D-CNN + Audio + Llama.cpp)
+    TARGET_FILE="${TARGET_MODEL}.onnx"
+    [[ "$TARGET_MODEL" == *.onnx ]] && TARGET_FILE="$TARGET_MODEL"
+
+    MODEL_LOCAL_PATH="$ROOT_DIR/data/models/$TARGET_FILE"
+    mkdir -p "$ROOT_DIR/data/models"
+    if [[ ! -s "$MODEL_LOCAL_PATH" || $(stat -c%s "$MODEL_LOCAL_PATH" 2>/dev/null || echo 0) -lt 1000000 ]]; then
+        if [[ -n "$CLOUD_URL" ]]; then
+            log_info "2.5/6 [ModelPulse Sync] Dynamic model fetch: $TARGET_FILE from $CLOUD_URL..."
+            if curl --http1.1 -fL --retry 3 --retry-delay 1 -sS "${CLOUD_URL}/models/${TARGET_FILE}" -o "${MODEL_LOCAL_PATH}.tmp"; then
+                mv -f "${MODEL_LOCAL_PATH}.tmp" "$MODEL_LOCAL_PATH"
+                log_ok "[ModelPulse Sync] Successfully staged $TARGET_FILE ($(du -h "$MODEL_LOCAL_PATH" | awk '{print $1}'))."
+            else
+                rm -f "${MODEL_LOCAL_PATH}.tmp" 2>/dev/null || true
+                log_warn "[ModelPulse Sync] Could not download $TARGET_FILE from server. Will use fallback weights if available."
+            fi
+        fi
+    else
+        log_ok "[ModelPulse Sync] Active model $TARGET_FILE is cached and ready ($(du -h "$MODEL_LOCAL_PATH" | awk '{print $1}'))."
+    fi
+
+    # Step 3: Start AI Inference Service (Native Rust YOLO ORT + 1D-CNN + Audio)
     log_info "3/6 Starting AI Inference Service (Native Rust YOLO + Multi-Modal)..."
     "$INFERENCE_BIN" > /dev/null 2>&1 &
     INFERENCE_PID=$!
