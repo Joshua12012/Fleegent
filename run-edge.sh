@@ -233,15 +233,40 @@ while True:
         log_ok "[ModelPulse Sync] Active model $TARGET_FILE is cached and ready ($(du -h "$MODEL_LOCAL_PATH" | awk '{print $1}'))."
     fi
 
+    # Step 2.6: Dynamic ONNX Runtime Engine Library Sync (ARM64 / Jetson)
+    mkdir -p "$ROOT_DIR/lib"
+    if [[ "$HOST_ARCH" == "aarch64" || "$HOST_ARCH" == "arm64" ]]; then
+        if [[ ! -s "$ROOT_DIR/lib/libonnxruntime.so" ]]; then
+            if [[ -f "$ROOT_DIR/lib/aarch64/libonnxruntime.so" ]]; then
+                cp -f "$ROOT_DIR/lib/aarch64/libonnxruntime.so" "$ROOT_DIR/lib/libonnxruntime.so"
+            elif [[ -f "$ROOT_DIR/data/models/libonnxruntime.so" ]]; then
+                cp -f "$ROOT_DIR/data/models/libonnxruntime.so" "$ROOT_DIR/lib/libonnxruntime.so"
+            elif [[ -n "$CLOUD_URL" ]]; then
+                log_info "2.6/6 [ModelPulse Sync] Downloading ARM64 libonnxruntime.so from $CLOUD_URL..."
+                curl --http1.1 -fL --retry 3 --retry-delay 1 -sS "${CLOUD_URL}/models/libonnxruntime.so" -o "$ROOT_DIR/lib/libonnxruntime.so.tmp" && mv -f "$ROOT_DIR/lib/libonnxruntime.so.tmp" "$ROOT_DIR/lib/libonnxruntime.so" || rm -f "$ROOT_DIR/lib/libonnxruntime.so.tmp" 2>/dev/null || true
+            fi
+        fi
+    fi
+
+    # Configure dynamic library search paths for native ONNX Runtime
+    export LD_LIBRARY_PATH="$ROOT_DIR/lib:$ROOT_DIR/lib/aarch64:$ROOT_DIR/lib/x86_64:$ROOT_DIR/bin:${LD_LIBRARY_PATH:-}"
+    if [[ -f "$ROOT_DIR/lib/libonnxruntime.so" ]]; then
+        export ORT_DYLIB_PATH="$ROOT_DIR/lib/libonnxruntime.so"
+    elif [[ -f "$ROOT_DIR/lib/aarch64/libonnxruntime.so" && ( "$HOST_ARCH" == "aarch64" || "$HOST_ARCH" == "arm64" ) ]]; then
+        export ORT_DYLIB_PATH="$ROOT_DIR/lib/aarch64/libonnxruntime.so"
+    elif [[ -f "$ROOT_DIR/lib/x86_64/libonnxruntime.so" && "$HOST_ARCH" == "x86_64" ]]; then
+        export ORT_DYLIB_PATH="$ROOT_DIR/lib/x86_64/libonnxruntime.so"
+    fi
+
     # Step 3: Start AI Inference Service (Native Rust YOLO ORT + 1D-CNN + Audio)
     log_info "3/6 Starting AI Inference Service (Native Rust YOLO + Multi-Modal)..."
-    "$INFERENCE_BIN" > /dev/null 2>&1 &
+    "$INFERENCE_BIN" > "$ROOT_DIR/data/inference.log" 2>&1 &
     INFERENCE_PID=$!
     sleep 0.2
 
     # Step 4: Start WASM Microservice Runtime Host
     log_info "4/6 Starting WASM Microservice Runtime Host (Wasmtime sandbox)..."
-    "$WASM_HOST_BIN" > /dev/null 2>&1 &
+    "$WASM_HOST_BIN" > "$ROOT_DIR/data/wasm_host.log" 2>&1 &
     WASM_HOST_PID=$!
     sleep 0.4
 

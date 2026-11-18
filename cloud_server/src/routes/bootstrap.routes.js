@@ -149,8 +149,9 @@ fi
 rm -f "\$BUNDLE_TMP" 2>/dev/null || true
 
 # Ensure all binaries are mirrored to target/release and set executable
-mkdir -p target/release
+mkdir -p target/release lib
 cp -f bin/* target/release/ 2>/dev/null || true
+chmod -R a+rx lib/ 2>/dev/null || true
 chmod +x edge-ctl run-edge.sh target/release/* bin/* 2>/dev/null || true
 
 chmod +x edge-ctl run-edge.sh nats-server target/release/* bin/* 2>/dev/null || true

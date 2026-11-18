@@ -169,6 +169,7 @@ impl ModelContext {
 }
 
 /// Evaluates real Computer Vision tensor math (2D spatial gradient convolution & crack detection).
+#[allow(dead_code)]
 fn evaluate_vision_tensor(
     ctx: &ModelContext,
     frame: &common::CameraFramePayload,
@@ -601,12 +602,20 @@ async fn handle_vision(
             (res, diag, yolo_res.latency_ms, yolo_res.model_name)
         }
         Err(e) => {
-            // Fallback to spatial gradient defect convolution if frame buffer temporarily offline
-            let (v_res, diag, lat) = evaluate_vision_tensor(ctx, &req.camera_frame);
+            eprintln!("  ⚠️ [Native YOLO Inference Error] {}", e);
+            let diag = format!("[{}] Native YOLO inference: {}. (0 objects detected)", ctx.name, e);
+            let res = VisionInferenceResult {
+                model_id: ctx.model_id.clone(),
+                detections: Vec::new(),
+                frame_width: 640,
+                frame_height: 480,
+                latency_ms: 0,
+                timestamp: now_secs,
+            };
             (
-                v_res,
-                format!("{} (Native YOLO fallback: {})", diag, e),
-                lat,
+                res,
+                diag,
+                0,
                 format!("Vision Engine ({})", ctx.name),
             )
         }

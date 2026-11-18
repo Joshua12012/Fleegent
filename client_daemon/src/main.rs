@@ -27,10 +27,10 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use async_nats::Client;
 use common::{
     AnomalyAlert, EnvironmentPayload, HealthReport, InferenceResponse, Modality,
-    ModularServices, ReloadCommand, SystemTelemetry, TOPIC_ADMIN_HEALTH, TOPIC_ADMIN_RELOAD,
-    TOPIC_INFERENCE_RESPONSE, TOPIC_SENSOR_AUDIO, TOPIC_SENSOR_CAMERA,
-    TOPIC_SENSOR_ENVIRONMENT, TOPIC_SENSOR_VIBRATION, TOPIC_TELEMETRY_ALERT,
-    TOPIC_TELEMETRY_SYSTEM,
+    ModularServices, ReloadCommand, SystemTelemetry, VisionInferenceRequest,
+    TOPIC_ADMIN_HEALTH, TOPIC_ADMIN_RELOAD, TOPIC_INFERENCE_RESPONSE, TOPIC_INFERENCE_VISION,
+    TOPIC_SENSOR_AUDIO, TOPIC_SENSOR_CAMERA, TOPIC_SENSOR_ENVIRONMENT, TOPIC_SENSOR_VIBRATION,
+    TOPIC_TELEMETRY_ALERT, TOPIC_TELEMETRY_SYSTEM,
 };
 use futures::StreamExt;
 use serde::{Deserialize, Serialize};
@@ -623,13 +623,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 // 1. Camera Ingestion Service (if enabled)
                 if manifest.camera.enabled {
                     if let Ok(frame) = camera_driver.capture_frame() {
-                        if frame.motion_detected {
+                        if manifest.monitoring.enabled {
+                            // WASM Gatekeeper is ENABLED: Route to WASM pre-filter
+                            if frame.motion_detected {
+                                println!(
+                                    "  📷 [CAM] Frame #{} ({}x{}) | Motion: detected -> Forwarded to WASM Gatekeeper",
+                                    frame.frame_id, frame.width, frame.height
+                                );
+                                let _ = client
+                                    .publish(TOPIC_SENSOR_CAMERA, serde_json::to_vec(&frame)?.into())
+                                    .await;
+                            }
+                        } else if manifest.inference.enabled && manifest.inference.modality == Modality::Vision {
+                            // WASM Gatekeeper is DISABLED: Direct Camera -> Vision NN pipeline!
                             println!(
-                                "  📷 [CAM] Frame #{} ({}x{}) | Motion: detected -> Forwarded to WASM",
-                                frame.frame_id, frame.width, frame.height
+                                "  📷 [CAM] Frame #{} ({}x{}) | Forwarded to Vision Engine ({})",
+                                frame.frame_id, frame.width, frame.height, manifest.inference.active_model_id
                             );
+                            let v_req = VisionInferenceRequest {
+                                request_id: format!("cam_frame_{}", frame.frame_id),
+                                camera_frame: frame.clone(),
+                                model_target: "vision".to_string(),
+                                timestamp: frame.timestamp,
+                            };
                             let _ = client
-                                .publish(TOPIC_SENSOR_CAMERA, serde_json::to_vec(&frame)?.into())
+                                .publish(TOPIC_INFERENCE_VISION, serde_json::to_vec(&v_req)?.into())
                                 .await;
                         }
 

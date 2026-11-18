@@ -55,8 +55,10 @@ impl NativeYoloEngine {
         let candidates = [
             "data/models/yolov8n-coco.onnx",
             "data/models/yolov8n.onnx",
-            "yolov8n.onnx",
+            "models/yolov8n-coco.onnx",
             "models/yolov8n.onnx",
+            "yolov8n-coco.onnx",
+            "yolov8n.onnx",
             "/content/data/models/yolov8n.onnx",
             "/content/yolov8n.onnx",
             "../data/models/yolov8n.onnx",
@@ -87,7 +89,50 @@ impl NativeYoloEngine {
         let t0 = Instant::now();
         println!("[YOLO Native Engine] 🔄 Loading ONNX weights from: {}", path);
 
-        let env = ort::init().build().map_err(|e| e.to_string())?;
+        let env_path = std::env::var("ORT_DYLIB_PATH").unwrap_or_default();
+        let arch_candidates: &[&str] = if cfg!(target_arch = "aarch64") {
+            &[
+                "lib/aarch64/libonnxruntime.so",
+                "lib/libonnxruntime.so",
+                "bin/libonnxruntime.so",
+                "data/models/libonnxruntime.so",
+                "/usr/lib/libonnxruntime.so",
+                "/usr/local/lib/libonnxruntime.so",
+                "/tmp/libonnxruntime.so",
+            ]
+        } else {
+            &[
+                "lib/x86_64/libonnxruntime.so",
+                "lib/libonnxruntime_x86_64.so",
+                "/usr/lib/libonnxruntime.so",
+                "/usr/local/lib/libonnxruntime.so",
+                "/tmp/libonnxruntime.so",
+            ]
+        };
+
+        let mut dylib_opt: Option<String> = if !env_path.is_empty() && Path::new(&env_path).exists() {
+            Some(env_path)
+        } else {
+            None
+        };
+
+        if dylib_opt.is_none() {
+            for cand in arch_candidates {
+                if Path::new(cand).exists() {
+                    dylib_opt = Some(cand.to_string());
+                    break;
+                }
+            }
+        }
+
+        let env_builder = if let Some(ref dylib) = dylib_opt {
+            println!("[YOLO Native Engine] 🔗 Linking ONNX Runtime dynamic library from: {}", dylib);
+            ort::init_from(dylib).map_err(|e| format!("Failed to load ONNX runtime from {}: {}", dylib, e))?
+        } else {
+            ort::init()
+        };
+
+        let env = env_builder.build().map_err(|e| e.to_string())?;
         let session = Session::builder(&env)
             .map_err(|e| e.to_string())?
             .with_intra_threads(2)

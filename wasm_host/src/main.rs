@@ -162,8 +162,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("  ⚙️  EDGE PLATFORM — WASM MICROSERVICE RUNTIME (Wasmtime)     ");
     println!("----------------------------------------------------------------");
 
-    // Default WASM binary path
-    let wasm_file = "wasm_worker/target/wasm32-wasip1/release/wasm_worker.wasm";
+    // Discovers available WASM binary path
+    let candidates = [
+        "bin/wasm_worker.wasm",
+        "wasm_worker.wasm",
+        "wasm_worker/target/wasm32-wasip1/release/wasm_worker.wasm",
+        "target/wasm32-wasip1/release/wasm_worker.wasm",
+    ];
+    let wasm_file = candidates
+        .iter()
+        .find(|p| Path::new(p).exists())
+        .copied()
+        .unwrap_or("bin/wasm_worker.wasm");
+
     if !Path::new(wasm_file).exists() {
         eprintln!(
             "[WASM Host] ERROR: WASM module not found at: {}. Please run 'make build' first.",

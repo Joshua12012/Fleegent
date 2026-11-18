@@ -181,6 +181,17 @@ impl CameraDriver {
             return;
         }
 
+        // If an active stream bridge (e.g. Phone IP Webcam) is updating /tmp/edge_live_frame.jpg, do not restart
+        if let Ok(meta) = fs::metadata("/tmp/edge_live_frame.jpg") {
+            if let Ok(modified) = meta.modified() {
+                if let Ok(elapsed) = modified.elapsed() {
+                    if elapsed.as_secs() < 3 {
+                        return;
+                    }
+                }
+            }
+        }
+
         let needs_revival = if let Some(ref mut child) = self.stream_proc {
             match child.try_wait() {
                 Ok(Some(status)) => {
