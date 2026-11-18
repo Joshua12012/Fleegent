@@ -212,6 +212,28 @@ class DeviceService {
     if (active_model) device.active_model = active_model;
     if (hostname) device.hostname = hostname;
 
+    // Maintain a rolling audit history of telemetry per device (up to 200 samples)
+    if (!Array.isArray(device.telemetry_history)) {
+      device.telemetry_history = [];
+    }
+    if (telemetry) {
+      device.telemetry_history.push({
+        ...telemetry,
+        recorded_at: now
+      });
+      if (device.telemetry_history.length > 200) {
+        device.telemetry_history.shift();
+      }
+
+      // Check for telemetry anomalies and record in operational audit log
+      if (telemetry.temperature_c && telemetry.temperature_c > 80.0) {
+        store.logEvent('TELEMETRY_THERMAL_ALERT', `Device [${device_id}] thermal threshold exceeded: ${telemetry.temperature_c.toFixed(1)}°C`, {
+          device_id,
+          temperature_c: telemetry.temperature_c
+        });
+      }
+    }
+
     store.devices.set(device_id, device);
     store.saveToDisk();
 

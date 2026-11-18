@@ -53,6 +53,53 @@ router.get('/:id', (req, res) => {
 });
 
 /**
+ * GET /api/v1/devices/:id/telemetry
+ * Returns the latest real-time telemetry snapshot and modalities for this device.
+ */
+router.get('/:id/telemetry', (req, res) => {
+  try {
+    const device = deviceService.getDeviceById(req.params.id);
+    if (!device) {
+      return res.status(404).json({ success: false, error: `Device '${req.params.id}' not found` });
+    }
+    res.json({
+      success: true,
+      device_id: device.device_id,
+      hostname: device.hostname,
+      status: device.status,
+      active_model: device.active_model,
+      telemetry: device.telemetry || null,
+      live_modalities: device.live_modalities || {},
+      drift_metrics: device.drift_metrics || null
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/devices/:id/telemetry/history
+ * Returns the rolling historical telemetry audit log for this specific device.
+ */
+router.get('/:id/telemetry/history', (req, res) => {
+  try {
+    const device = store.devices.get(req.params.id) || deviceService.getDeviceById(req.params.id);
+    if (!device) {
+      return res.status(404).json({ success: false, error: `Device '${req.params.id}' not found` });
+    }
+    res.json({
+      success: true,
+      device_id: device.device_id,
+      hostname: device.hostname,
+      count: (device.telemetry_history || []).length,
+      history: device.telemetry_history || []
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
  * POST /api/v1/devices/claim
  * Called by bootstrap.sh on the edge device to claim token and enroll.
  */

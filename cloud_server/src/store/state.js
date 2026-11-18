@@ -127,6 +127,12 @@ class StateStore {
         if (data.tokens) {
           for (const t of data.tokens) this.tokens.set(t.token, t);
         }
+        if (data.events && Array.isArray(data.events)) {
+          this.events = data.events;
+        }
+        if (data.outliers && Array.isArray(data.outliers)) {
+          this.outliers = data.outliers;
+        }
       }
     } catch (e) {
       console.warn('[StateStore] Could not load state from disk:', e.message);
@@ -141,6 +147,8 @@ class StateStore {
       const data = {
         devices: Array.from(this.devices.values()),
         tokens: Array.from(this.tokens.values()),
+        events: this.events.slice(0, 100),
+        outliers: this.outliers.slice(0, 50),
         updated_at: Math.floor(Date.now() / 1000)
       };
       fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
@@ -159,6 +167,7 @@ class StateStore {
     };
     this.events.unshift(event);
     if (this.events.length > 100) this.events.pop();
+    this.saveToDisk();
     return event;
   }
 
@@ -170,6 +179,7 @@ class StateStore {
     };
     this.outliers.unshift(entry);
     if (this.outliers.length > 50) this.outliers.pop();
+    this.saveToDisk();
     return entry;
   }
 
