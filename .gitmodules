@@ -1,0 +1,3 @@
+[submodule "modelpulse"]
+	path = modelpulse
+	url = https://github.com/MdSufiyan005/Model-Pulse.git
