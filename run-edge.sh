@@ -129,6 +129,10 @@ run_all() {
         fi
     fi
 
+    # Ensure Rust / Cargo in PATH if installed in ~/.cargo/bin
+    [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env" 2>/dev/null || true
+    export PATH="$HOME/.cargo/bin:$PATH"
+
     # Auto-build if any binary is missing and Cargo workspace is present
     if [[ ! -f "$WASM_FILE" ]] || [[ ! -f "$STORAGE_BIN" ]] || [[ ! -f "$INFERENCE_BIN" ]] || [[ ! -f "$WASM_HOST_BIN" ]] || [[ ! -f "$DAEMON_BIN" ]]; then
         if command -v cargo >/dev/null 2>&1 && [[ -d "$ROOT_DIR/wasm_worker" ]] && [[ -f "$ROOT_DIR/Cargo.toml" ]]; then
