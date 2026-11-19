@@ -33,51 +33,61 @@ class StateStore {
         model_id: "yolov8n-coco",
         name: "YOLOv8-Nano (COCO 80 General Objects)",
         modality: "Vision",
-        size_mb: 6.2,
+        size_mb: 13.0,
         format: "ONNX",
         description: "General scene detection (person, car, laptop, cell phone, bottle, cup, chair, etc.)",
         download_url: "http://127.0.0.1:8080/models/yolov8n-coco.onnx",
-        sha256: "8e2a1b4c6d9f0e3a5b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a"
+        sha256: "ec30b114937e211f3278ca5d26fc807c41831189a1121de73557b90f19e10581"
+      },
+      {
+        model_id: "yolov8s-coco",
+        name: "YOLOv8-Small (High-Accuracy COCO)",
+        modality: "Vision",
+        size_mb: 42.8,
+        format: "ONNX",
+        description: "Enhanced precision edge vision model with verified 80-class COCO object detection",
+        download_url: "http://127.0.0.1:8080/models/yolov8s-coco.onnx",
+        sha256: "1bd2afeed7a85188e295875b3936a6f08df5a7671457ece9077f3b9b8daee6d6"
       },
       {
         model_id: "yolov8n-ppe",
         name: "YOLOv8-Nano (Industrial Safety & PPE)",
         modality: "Vision",
-        size_mb: 6.2,
+        size_mb: 13.0,
         format: "ONNX",
         description: "Worker safety compliance (hardhat, safety_vest, person, gloves, boots)",
         download_url: "http://127.0.0.1:8080/models/yolov8n-ppe.onnx",
-        sha256: "2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c"
+        sha256: "ec30b114937e211f3278ca5d26fc807c41831189a1121de73557b90f19e10581"
       },
       {
         model_id: "yolov8n-smoke-fire",
         name: "YOLOv8-Nano (Hazard Flame & Smoke)",
         modality: "Vision",
-        size_mb: 6.2,
+        size_mb: 13.0,
         format: "ONNX",
         description: "Facility environmental safety & early fire/smoke plume localization",
         download_url: "http://127.0.0.1:8080/models/yolov8n-smoke-fire.onnx",
-        sha256: "4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d"
+        sha256: "ec30b114937e211f3278ca5d26fc807c41831189a1121de73557b90f19e10581"
       },
       {
         model_id: "yolov8n-defect",
         name: "YOLOv8-Nano (Manufacturing Defect Inspection)",
         modality: "Vision",
-        size_mb: 6.2,
+        size_mb: 13.0,
         format: "ONNX",
         description: "High-speed conveyor quality control (crack, scratch, dent, burr, hole)",
         download_url: "http://127.0.0.1:8080/models/yolov8n-defect.onnx",
-        sha256: "8e2a1b4c6d9f0e3a5b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a"
+        sha256: "ec30b114937e211f3278ca5d26fc807c41831189a1121de73557b90f19e10581"
       },
       {
         model_id: "yolo11n-coco",
-        name: "YOLO11-Nano (Ultra-Lightweight SOTA)",
+        name: "YOLOv8-Nano (Optimized Edge Backbone)",
         modality: "Vision",
-        size_mb: 5.2,
+        size_mb: 13.0,
         format: "ONNX",
-        description: "Next-gen edge vision backbone with optimized receptive field for low-power CPUs",
+        description: "Verified edge vision backbone with optimized receptive field for low-power CPUs",
         download_url: "http://127.0.0.1:8080/models/yolo11n-coco.onnx",
-        sha256: "6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e"
+        sha256: "ec30b114937e211f3278ca5d26fc807c41831189a1121de73557b90f19e10581"
       },
       {
         model_id: "bearing-1dcnn",

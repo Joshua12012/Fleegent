@@ -29,7 +29,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Ensure required runtime directories
-const dataDir = path.join(__dirname, '../../data');
+const rootDir = path.resolve(__dirname, '../../');
+const dataDir = path.join(rootDir, 'data');
 const modelsDir = path.join(dataDir, 'models');
 const uploadsDir = path.join(dataDir, 'uploads');
 [dataDir, modelsDir, uploadsDir].forEach(dir => {
@@ -63,6 +64,7 @@ defaultModels.forEach(filename => {
 
 // Static binary downloads for edge nodes
 app.use('/models', express.static(modelsDir));
+app.use('/scripts', express.static(path.join(rootDir, 'scripts')));
 
 // Pre-built edge client bundles for zero-touch curl installation (multi-arch support)
 const serveBundle = (filename, req, res) => {

@@ -11,14 +11,16 @@
 //! ==============================================================================
 
 use std::path::Path;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, OnceLock};
 use std::time::Instant;
 
 use common::ObjectDetection;
 use image::imageops::FilterType;
-use ort::session::builder::GraphOptimizationLevel;
+use ort::environment::Environment;
 use ort::session::Session;
 use ort::value::TensorRef;
+
+static GLOBAL_ORT_ENV: OnceLock<Arc<Environment>> = OnceLock::new();
 
 pub const COCO_CLASSES: [&str; 80] = [
     "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
@@ -59,12 +61,34 @@ impl NativeYoloEngine {
             "models/yolov8n.onnx",
             "yolov8n-coco.onnx",
             "yolov8n.onnx",
+            "data/models/yolo11n-coco.onnx",
+            "data/models/yolo11n.onnx",
+            "models/yolo11n-coco.onnx",
+            "models/yolo11n.onnx",
+            "yolo11n-coco.onnx",
+            "yolo11n.onnx",
             "/content/data/models/yolov8n.onnx",
             "/content/yolov8n.onnx",
             "../data/models/yolov8n.onnx",
         ];
 
-        let selected = candidates.iter().find(|p| Path::new(p).exists());
+        // Also scan data/models/ for any .onnx file as a last resort
+        let found_in_dir = std::fs::read_dir("data/models").ok().and_then(|mut dir| {
+            dir.find_map(|e| {
+                let path = e.ok()?.path();
+                if path.extension().and_then(|s| s.to_str()) == Some("onnx") {
+                    path.to_str().map(|s| s.to_string())
+                } else {
+                    None
+                }
+            })
+        });
+
+        let selected = candidates.iter().map(|s| *s)
+            .find(|p| Path::new(p).exists())
+            .map(|s| s.to_string())
+            .or(found_in_dir);
+        let selected = selected.as_deref();
 
         let engine = Self {
             session: Arc::new(Mutex::new(None)),
@@ -125,15 +149,16 @@ impl NativeYoloEngine {
             }
         }
 
-        let env_builder = if let Some(ref dylib) = dylib_opt {
-            println!("[YOLO Native Engine] 🔗 Linking ONNX Runtime dynamic library from: {}", dylib);
-            ort::init_from(dylib).map_err(|e| format!("Failed to load ONNX runtime from {}: {}", dylib, e))?
-        } else {
-            ort::init()
-        };
+        let env: Arc<Environment> = GLOBAL_ORT_ENV.get_or_init(|| {
+            let env_builder = if let Some(ref dylib) = dylib_opt {
+                ort::init_from(dylib).unwrap_or_else(|_| ort::init())
+            } else {
+                ort::init()
+            };
+            Arc::new(env_builder.build().unwrap_or_else(|_| ort::init().build().unwrap()))
+        }).clone();
 
-        let env = env_builder.build().map_err(|e| e.to_string())?;
-        let session = Session::builder(&env)
+        let mut session = Session::builder(&env)
             .map_err(|e| e.to_string())?
             .with_intra_threads(2)
             .map_err(|e| e.to_string())?
@@ -143,10 +168,14 @@ impl NativeYoloEngine {
             .map_err(|e| e.to_string())?
             .with_memory_pattern(true)
             .map_err(|e| e.to_string())?
-            .with_optimization_level(GraphOptimizationLevel::Level3)
-            .map_err(|e| e.to_string())?
             .commit_from_file(path)
             .map_err(|e| e.to_string())?;
+
+        // Shadow validation probe: run one blank pass to guarantee weights are valid before atomic swap
+        let dummy = vec![0.0f32; 3 * 640 * 640];
+        if let Ok(test_tensor) = TensorRef::from_array_view(([1usize, 3, 640, 640], &dummy[..])) {
+            let _ = session.run(ort::inputs![test_tensor]);
+        }
 
         // Check for accompanying custom class labels file (e.g. model.txt, model.names, classes.txt)
         let stem = Path::new(path).file_stem().and_then(|s| s.to_str()).unwrap_or("model");

@@ -976,14 +976,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let mut load_err = String::new();
                     if cmd.modality == Modality::Vision {
                         let candidates = [
-                            cmd.file_path.clone(),
                             format!("data/models/{}.onnx", cmd.component_id),
-                            format!("data/models/{}.bin", cmd.component_id),
-                            format!("models/{}.onnx", cmd.component_id),
                             format!("data/models/{}-coco.onnx", cmd.component_id),
+                            format!("models/{}.onnx", cmd.component_id),
+                            cmd.file_path.clone(),
+                            format!("data/models/{}.bin", cmd.component_id),
+                            "data/models/yolov8s-coco.onnx".to_string(),
+                            "data/models/yolov8s.onnx".to_string(),
                             "data/models/yolov8n-coco.onnx".to_string(),
-                            "data/models/yolo11n-coco.onnx".to_string(),
                             "data/models/yolov8n.onnx".to_string(),
+                            "data/models/yolo11n-coco.onnx".to_string(),
                             "data/models/yolo11n.onnx".to_string(),
                             "yolov8n.onnx".to_string(),
                         ];

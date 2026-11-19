@@ -79,20 +79,19 @@ router.get('/:id/telemetry', (req, res) => {
 
 /**
  * GET /api/v1/devices/:id/telemetry/history
- * Returns the rolling historical telemetry audit log for this specific device.
+ * Returns the persistent disk-backed historical telemetry audit log for this specific device.
  */
 router.get('/:id/telemetry/history', (req, res) => {
   try {
+    const limit = parseInt(req.query.limit, 10) || 50;
+    const history = deviceService.getDeviceTelemetryHistory(req.params.id, limit);
     const device = store.devices.get(req.params.id) || deviceService.getDeviceById(req.params.id);
-    if (!device) {
-      return res.status(404).json({ success: false, error: `Device '${req.params.id}' not found` });
-    }
     res.json({
       success: true,
-      device_id: device.device_id,
-      hostname: device.hostname,
-      count: (device.telemetry_history || []).length,
-      history: device.telemetry_history || []
+      device_id: req.params.id,
+      hostname: device ? device.hostname : req.params.id,
+      count: history.length,
+      history
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

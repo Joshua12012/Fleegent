@@ -365,6 +365,12 @@ router.post('/telemetry/live', (req, res) => {
         if (data.drift_metrics) {
           device.drift_metrics = data.drift_metrics;
         }
+        if (data.latency_ms) {
+          device.last_latency_ms = data.latency_ms;
+          if (device.telemetry) {
+            device.telemetry.inference_latency_ms = data.latency_ms;
+          }
+        }
       }
       device.last_seen = now;
       device.status = 'ONLINE';

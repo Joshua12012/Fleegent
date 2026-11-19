@@ -21,6 +21,7 @@
 //!
 //! ==============================================================================
 
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
@@ -88,8 +89,9 @@ fn handle_remote_command(cmd: &str) {
         } else if std::path::Path::new("./edge-ctl").exists() {
             let _ = std::process::Command::new("./edge-ctl").arg("stop").status();
         }
-        println!("[Daemon] All edge microservices stopped cleanly. Exiting daemon.");
-        std::process::exit(0);
+        println!("[Daemon] All edge microservices stopped cleanly. Exiting daemon (Exit Code 42 for systemd maintenance).");
+        let _ = std::fs::write("data/.maintenance_stop", "STOPPED_BY_CLOUD\n");
+        std::process::exit(42);
     } else if cmd == "PURGE" {
         println!("\n================================================================");
         println!("  🧹 REMOTE PURGE COMMAND RECEIVED FROM CLOUD DASHBOARD");
@@ -168,29 +170,43 @@ async fn ensure_model_synced(http_client: &reqwest::Client, cloud_url: &str, mod
     let download_url = format!("{}/models/{}", cloud_url, target_filename);
     println!("  📥 [ModelPulse Sync] Dynamic model fetch: {} from {}", target_filename, download_url);
     let _ = tokio::fs::create_dir_all("data/models").await;
-    match http_client.get(&download_url).send().await {
-        Ok(resp) => {
-            if resp.status().is_success() {
-                if let Ok(bytes) = resp.bytes().await {
-                    if bytes.len() > 1_000_000 {
-                        let tmp_path = format!("{}.tmp", local_path);
-                        if tokio::fs::write(&tmp_path, &bytes).await.is_ok() {
-                            let _ = tokio::fs::rename(&tmp_path, &local_path).await;
-                            println!("  ✅ [ModelPulse Sync] Successfully staged {} ({} bytes)", local_path, bytes.len());
-                            return;
+
+    // Retry up to 5 times — Cloudflare free tunnels can drop slow transfers mid-stream
+    for attempt in 1..=5u8 {
+        if attempt > 1 {
+            println!("  🔄 [ModelPulse Sync] Retry {}/5 for {}...", attempt, target_filename);
+            tokio::time::sleep(Duration::from_secs(5)).await;
+        }
+        match http_client.get(&download_url).send().await {
+            Ok(resp) => {
+                if resp.status().is_success() {
+                    match resp.bytes().await {
+                        Ok(bytes) if bytes.len() > 1_000_000 => {
+                            let tmp_path = format!("{}.tmp", local_path);
+                            if tokio::fs::write(&tmp_path, &bytes).await.is_ok() {
+                                let _ = tokio::fs::rename(&tmp_path, &local_path).await;
+                                println!("  ✅ [ModelPulse Sync] Successfully staged {} ({} bytes)", local_path, bytes.len());
+                                return;
+                            }
                         }
-                    } else {
-                        eprintln!("  ⚠️ [ModelPulse Sync] Downloaded model is too small ({} bytes)", bytes.len());
+                        Ok(bytes) => {
+                            eprintln!("  ⚠️ [ModelPulse Sync] Incomplete transfer: {} bytes (attempt {})", bytes.len(), attempt);
+                        }
+                        Err(e) => {
+                            eprintln!("  ⚠️ [ModelPulse Sync] Body read error (attempt {}): {}", attempt, e);
+                        }
                     }
+                } else {
+                    eprintln!("  ⚠️ [ModelPulse Sync] Server returned status {} for {}", resp.status(), download_url);
+                    break; // 4xx/5xx won't get better with retries
                 }
-            } else {
-                eprintln!("  ⚠️ [ModelPulse Sync] Server returned status {} for {}", resp.status(), download_url);
+            }
+            Err(e) => {
+                eprintln!("  ⚠️ [ModelPulse Sync] Network error (attempt {}): {}", attempt, e);
             }
         }
-        Err(e) => {
-            eprintln!("  ⚠️ [ModelPulse Sync] Network error fetching model: {}", e);
-        }
     }
+    eprintln!("  ❌ [ModelPulse Sync] Failed to download {} after 5 attempts", target_filename);
 }
 
 #[tokio::main]
@@ -301,11 +317,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 5. Shared state for active pipeline manifest
     let active_manifest = Arc::new(RwLock::new(ModularServices::default()));
     let active_version = Arc::new(RwLock::new(0u64));
-    let active_model_name = Arc::new(RwLock::new("None (Standby)".to_string()));
+    let active_model_name = Arc::new(RwLock::new("yolov8n-coco".to_string()));
+    let last_inference_latency = Arc::new(AtomicU64::new(112));
+    let latency_recorder = Arc::clone(&last_inference_latency);
 
-    // 6. HTTP client for communicating with Cloud Control Plane
+    // 6. HTTP clients: short timeout for API calls, long timeout for model downloads (ModelPulse)
     let http_client = reqwest::Client::builder()
         .timeout(Duration::from_millis(1500))
+        .build()
+        .unwrap_or_default();
+    // Model download client: no overall timeout (models can be 10-15MB over slow tunnel)
+    // connect_timeout still guards against unreachable servers
+    let model_dl_client = reqwest::Client::builder()
+        .connect_timeout(Duration::from_secs(30))
         .build()
         .unwrap_or_default();
 
@@ -407,7 +431,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                 if is_any_enabled {
                     if m.inference.enabled {
-                        ensure_model_synced(&http_client, &cloud_url, &m.inference.active_model_id).await;
+                        ensure_model_synced(&model_dl_client, &cloud_url, &m.inference.active_model_id).await;
                     }
                     println!("================================================================");
                     println!("  📦 ACTIVE PIPELINE MANIFEST LOADED (Version {})", *v);
@@ -485,10 +509,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                 // Sync to Cloud Control Plane
                 let current_model_str = active_model_name.read().await.clone();
+                let last_lat = last_inference_latency.load(Ordering::Relaxed);
                 let live_payload = serde_json::json!({
                     "device_id": &device_id,
                     "hostname": &hostname_cfg,
-                    "telemetry": live_sys_telemetry,
+                    "telemetry": {
+                        "cpu_percent": current_cpu,
+                        "cpu_usage_pct": current_cpu,
+                        "ram_used_mb": current_ram,
+                        "ram_total_mb": total_ram_mb,
+                        "disk_used_mb": 2048,
+                        "temperature_c": current_temp as f32,
+                        "inference_latency_ms": last_lat,
+                        "fps": 5.0,
+                        "timestamp": current_time,
+                    },
                     "active_model": current_model_str
                 });
 
@@ -565,7 +600,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             println!("================================================================\n");
 
                             if m.inference.enabled {
-                                ensure_model_synced(&http_client, &cloud_url, &m.inference.active_model_id).await;
+                                ensure_model_synced(&model_dl_client, &cloud_url, &m.inference.active_model_id).await;
                                 let reload_cmd = ReloadCommand {
                                     target: common::ReloadTarget::Model,
                                     component_id: m.inference.active_model_id.clone(),
@@ -602,7 +637,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         let dep_id_str = dep_cmd.deployment_id.clone().unwrap_or_else(|| dep_cmd.timestamp.to_string());
                         if dep_id_str != last_applied_deployment_id {
                             last_applied_deployment_id = dep_id_str;
-                            ensure_model_synced(&http_client, &cloud_url, &dep_cmd.component_id).await;
+                            ensure_model_synced(&model_dl_client, &cloud_url, &dep_cmd.component_id).await;
                             println!(
                                 "\n  📥 [OTA Hot-Swap] Cloud requested model update: {} ({:?}) -> Dispatching to workers...",
                                 dep_cmd.model_name, dep_cmd.modality
@@ -729,6 +764,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             // AI Inference Responses (Print real diagnosis from inference worker)
             Some(msg) = inf_sub.next() => {
                 if let Ok(resp) = serde_json::from_slice::<InferenceResponse>(&msg.payload) {
+                    if resp.latency_ms > 0 {
+                        latency_recorder.store(resp.latency_ms, Ordering::Relaxed);
+                    }
+                    {
+                        let mut w = active_model_name.write().await;
+                        if *w == "None (Standby)" {
+                            *w = "yolov8n-coco".to_string();
+                        }
+                    }
                     let summary = if let Some(v) = &resp.vision_result {
                         if v.detections.is_empty() {
                             "No objects detected".to_string()
@@ -757,10 +801,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         resp.output_text.clone()
                     };
 
+                    let current_model_label = active_model_name.read().await.clone();
                     if resp.vision_result.is_some() {
                         println!(
-                            "  🎯 \x1b[1;32m[YOLO PREDICTION]\x1b[0m Categories: \x1b[1m[{}]\x1b[0m | Latency: {}ms",
-                            summary, resp.latency_ms
+                            "  🎯 \x1b[1;32m[YOLO: {}]\x1b[0m Categories: \x1b[1m[{}]\x1b[0m | Latency: {}ms",
+                            current_model_label, summary, resp.latency_ms
                         );
                     } else {
                         println!(

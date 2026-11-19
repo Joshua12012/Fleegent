@@ -41,6 +41,12 @@ log_err()   { echo -e "${RED}${BOLD}[ERROR]${NC} $1"; }
 # Graceful Cleanup Handler
 # ------------------------------------------------------------------------------
 cleanup() {
+    if [[ "${COMMAND:-}" != "run" && "${COMMAND:-}" != "start" && "${COMMAND:-}" != "test" && "${COMMAND:-}" != "verify" ]]; then
+        return 0
+    fi
+    if [[ -z "$WASM_HOST_PID" && -z "$INFERENCE_PID" && -z "$STORAGE_PID" && -z "$NATS_PID" ]]; then
+        return 0
+    fi
     echo -e "\n${BOLD}[EDGE] Shutting down all edge client microservices...${NC}"
     
     for pid in "$WASM_HOST_PID" "$INFERENCE_PID" "$STORAGE_PID" "$NATS_PID"; do
@@ -138,12 +144,44 @@ run_all() {
 
     # Step 0: Auto-bridge Camera Stream (Phone IP Webcam or local webcam)
     if command -v python3 >/dev/null 2>&1; then
-        pkill -f "http://192.168.43.1:8080/shot.jpg" 2>/dev/null || true
-        if curl -s -m 0.8 http://192.168.43.1:8080/shot.jpg >/dev/null 2>&1; then
-            log_info "0/6 Auto-detected Phone IP Webcam at http://192.168.43.1:8080. Starting background frame bridge..."
+        pkill -f "shot.jpg" 2>/dev/null || true
+        
+        # Determine candidate Phone IP Webcam URLs
+        CANDIDATE_URLS=()
+        if [[ -n "${PHONE_CAM_URL:-}" ]]; then
+            CANDIDATE_URLS+=("$PHONE_CAM_URL")
+        fi
+        if [[ -n "${PHONE_IP:-}" ]]; then
+            CANDIDATE_URLS+=("http://${PHONE_IP}:8080/shot.jpg")
+            CANDIDATE_URLS+=("http://${PHONE_IP}:4747/video")
+        fi
+        # Auto-detect default gateway (phone hotspot IP)
+        GW_IP=$(ip route 2>/dev/null | grep default | awk '{print $3}' | head -1)
+        if [[ -n "$GW_IP" ]]; then
+            CANDIDATE_URLS+=("http://${GW_IP}:8080/shot.jpg")
+        fi
+        # Primary target IP webcam URLs
+        CANDIDATE_URLS+=("http://169.254.184.87:8080/shot.jpg")
+        CANDIDATE_URLS+=("http://192.168.1.3:8080/shot.jpg")
+        CANDIDATE_URLS+=("http://192.168.43.1:8080/shot.jpg")
+        CANDIDATE_URLS+=("http://172.20.10.1:8080/shot.jpg")
+        # DroidCam fallback port 4747
+        CANDIDATE_URLS+=("http://169.254.184.87:4747/video")
+        CANDIDATE_URLS+=("http://192.168.1.3:4747/video")
+
+        DETECTED_CAM_URL=""
+        for test_url in "${CANDIDATE_URLS[@]}"; do
+            if curl -s -m 0.6 "$test_url" >/dev/null 2>&1; then
+                DETECTED_CAM_URL="$test_url"
+                break
+            fi
+        done
+
+        if [[ -n "$DETECTED_CAM_URL" ]]; then
+            log_info "0/6 Auto-detected Phone IP Webcam at $DETECTED_CAM_URL. Starting background frame bridge..."
             python3 -c "
 import urllib.request, time, os
-url = 'http://192.168.43.1:8080/shot.jpg'
+url = '$DETECTED_CAM_URL'
 while True:
     try:
         with urllib.request.urlopen(url, timeout=2) as resp:
@@ -233,12 +271,33 @@ while True:
     if [[ ! -s "$MODEL_LOCAL_PATH" || $(stat -c%s "$MODEL_LOCAL_PATH" 2>/dev/null || echo 0) -lt 1000000 ]]; then
         if [[ -n "$CLOUD_URL" ]]; then
             log_info "2.5/6 [ModelPulse Sync] Dynamic model fetch: $TARGET_FILE from $CLOUD_URL..."
-            if curl --http1.1 -fL --retry 3 --retry-delay 1 -sS "${CLOUD_URL}/models/${TARGET_FILE}" -o "${MODEL_LOCAL_PATH}.tmp"; then
-                mv -f "${MODEL_LOCAL_PATH}.tmp" "$MODEL_LOCAL_PATH"
-                log_ok "[ModelPulse Sync] Successfully staged $TARGET_FILE ($(du -h "$MODEL_LOCAL_PATH" | awk '{print $1}'))."
-            else
-                rm -f "${MODEL_LOCAL_PATH}.tmp" 2>/dev/null || true
-                log_warn "[ModelPulse Sync] Could not download $TARGET_FILE from server. Will use fallback weights if available."
+            DOWNLOAD_OK=false
+            for _attempt in 1 2 3 4 5; do
+                log_info "  [ModelPulse] Download attempt $_attempt/5..."
+                if curl --http1.1 -fL \
+                    --max-time 600 --connect-timeout 30 \
+                    --retry 2 --retry-delay 3 --retry-connrefused \
+                    -C - \
+                    -sS "${CLOUD_URL}/models/${TARGET_FILE}" \
+                    -o "${MODEL_LOCAL_PATH}.tmp"; then
+                    ACTUAL_SIZE=$(stat -c%s "${MODEL_LOCAL_PATH}.tmp" 2>/dev/null || echo 0)
+                    if [[ "$ACTUAL_SIZE" -gt 1000000 ]]; then
+                        mv -f "${MODEL_LOCAL_PATH}.tmp" "$MODEL_LOCAL_PATH"
+                        log_ok "[ModelPulse Sync] Successfully staged $TARGET_FILE ($(du -h "$MODEL_LOCAL_PATH" | awk '{print $1}'))."
+                        DOWNLOAD_OK=true
+                        break
+                    else
+                        log_warn "  [ModelPulse] Got ${ACTUAL_SIZE} bytes -- incomplete, retrying..."
+                        rm -f "${MODEL_LOCAL_PATH}.tmp" 2>/dev/null || true
+                    fi
+                else
+                    log_warn "  [ModelPulse] curl failed on attempt $_attempt, retrying in 5s..."
+                    rm -f "${MODEL_LOCAL_PATH}.tmp" 2>/dev/null || true
+                    sleep 5
+                fi
+            done
+            if [[ "$DOWNLOAD_OK" != "true" ]]; then
+                log_warn "[ModelPulse Sync] Could not download $TARGET_FILE after 5 attempts. Will use fallback weights if available."
             fi
         fi
     else
@@ -314,6 +373,85 @@ stop_all() {
 }
 
 # ------------------------------------------------------------------------------
+# Status Function (Inspects Daemon & Microservice Health)
+# ------------------------------------------------------------------------------
+status_all() {
+    echo -e "${BOLD}================================================================${NC}"
+    echo -e "${BOLD}       TETHER-EDGE — DAEMON & MICROSERVICE STATUS               ${NC}"
+    echo -e "${BOLD}================================================================${NC}"
+
+    check_proc() {
+        local name="$1"
+        local pattern="$2"
+        local pids
+        pids=$(pgrep -f "$pattern" 2>/dev/null || true)
+        if [[ -n "$pids" ]]; then
+            local pid_first
+            pid_first=$(echo "$pids" | awk '{print $1}')
+            local cpu_mem
+            cpu_mem=$(ps -o %cpu,%mem -p "$pid_first" --no-headers 2>/dev/null | awk '{print "CPU: "$1"%, RAM: "$2"%"}' || echo "")
+            echo -e "  ● \033[1;32m${name}\033[0m: RUNNING (PID: $(echo $pids | tr '\n' ' ')) [${cpu_mem}]"
+        else
+            echo -e "  ○ \033[1;31m${name}\033[0m: STOPPED"
+        fi
+    }
+
+    check_proc "Client Daemon    " "client_daemon"
+    check_proc "Inference Worker " "inference_worker"
+    check_proc "NATS Broker      " "nats-server -p 4222"
+    check_proc "Storage Service  " "storage_service"
+    check_proc "WASM Worker Host " "wasm_host"
+
+    echo -e "----------------------------------------------------------------"
+    if systemctl is-active edge-platform.service >/dev/null 2>&1; then
+        echo -e "  Systemd Service: \033[1;32mACTIVE (edge-platform.service)\033[0m"
+    else
+        echo -e "  Systemd Service: \033[1;33mINACTIVE / NOT RUNNING\033[0m"
+    fi
+
+    if [[ -f "$ROOT_DIR/data/edge.json" ]]; then
+        local dev_id
+        dev_id=$(grep -o '"device_id"[[:space:]]*:[[:space:]]*"[^"]*' "$ROOT_DIR/data/edge.json" 2>/dev/null | head -n1 | sed -E 's/.*"([^"]+)$/\1/' || echo "unknown")
+        local cloud_url
+        cloud_url=$(grep -o '"cloud_server_url"[[:space:]]*:[[:space:]]*"[^"]*' "$ROOT_DIR/data/edge.json" 2>/dev/null | head -n1 | sed -E 's/.*"([^"]+)$/\1/' || echo "http://127.0.0.1:8080")
+        echo -e "  Device Identity: \033[1m${dev_id}\033[0m"
+        echo -e "  Cloud URL:       \033[1m${cloud_url}\033[0m"
+    fi
+
+    # Check last telemetry / inference line
+    for log_candidate in "$ROOT_DIR/data/edge.log" "$ROOT_DIR/data/daemon.log" "$ROOT_DIR/client_test.log"; do
+        if [[ -f "$log_candidate" ]]; then
+            local last_pred
+            last_pred=$(grep -E "\[YOLO|PREDICTION" "$log_candidate" | tail -n 1 || true)
+            if [[ -n "$last_pred" ]]; then
+                echo -e "  Latest Prediction:\n    ${last_pred}"
+                break
+            fi
+        fi
+    done
+    echo -e "${BOLD}================================================================${NC}\n"
+}
+
+# ------------------------------------------------------------------------------
+# Logs Function (Follows Daemon & Inference Logs)
+# ------------------------------------------------------------------------------
+logs_all() {
+    for log_candidate in "$ROOT_DIR/data/edge.log" "$ROOT_DIR/data/daemon.log" "$ROOT_DIR/client_test.log"; do
+        if [[ -f "$log_candidate" ]]; then
+            log_info "Tailing live logs from $log_candidate..."
+            tail -f "$log_candidate"
+            return 0
+        fi
+    done
+    if systemctl is-active edge-platform.service >/dev/null 2>&1; then
+        log_info "Tailing systemd service logs..."
+        journalctl -u edge-platform.service -f
+    else
+        log_warn "No background log file found. Run in background with: ./run-edge.sh run > data/edge.log 2>&1 &"
+    fi
+}
+
+# ------------------------------------------------------------------------------
 # Clean Function
 # ------------------------------------------------------------------------------
 clean_all() {
@@ -330,7 +468,54 @@ shift || true
 
 case "$COMMAND" in
     run|start)
+        rm -f "$ROOT_DIR/data/.maintenance_stop" 2>/dev/null || true
         run_all "$@"
+        ;;
+    status)
+        status_all
+        ;;
+    logs|log)
+        logs_all
+        ;;
+    restart)
+        stop_all
+        sleep 1
+        rm -f "$ROOT_DIR/data/.maintenance_stop" 2>/dev/null || true
+        run_all "$@"
+        ;;
+    install-systemd|--install-systemd)
+        SERVICE_FILE="/etc/systemd/system/edge-platform.service"
+        CURRENT_USER=$(id -un)
+        log_info "Generating systemd unit at $SERVICE_FILE for user $CURRENT_USER..."
+        SERVICE_CONTENT="[Unit]
+Description=Edge Platform Microservices Fleet & Orchestrator
+After=network.target
+
+[Service]
+Type=simple
+User=$CURRENT_USER
+WorkingDirectory=$ROOT_DIR
+ExecStart=$ROOT_DIR/run-edge.sh run
+Restart=always
+RestartSec=3s
+RestartPreventExitStatus=42
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target"
+
+        if [[ $EUID -ne 0 ]]; then
+            echo "$SERVICE_CONTENT" | sudo tee "$SERVICE_FILE" >/dev/null
+            sudo systemctl daemon-reload
+            sudo systemctl enable edge-platform.service
+        else
+            echo "$SERVICE_CONTENT" > "$SERVICE_FILE"
+            systemctl daemon-reload
+            systemctl enable edge-platform.service
+        fi
+        log_ok "Systemd service 'edge-platform.service' installed and enabled on boot!"
+        log_info "To start service: sudo systemctl start edge-platform"
+        log_info "To check status:  sudo systemctl status edge-platform"
         ;;
     stop)
         stop_all
@@ -390,7 +575,7 @@ case "$COMMAND" in
         clean_all
         ;;
     *)
-        echo "Usage: ./run-edge.sh [run|stop|purge|test|build|clean]"
+        echo "Usage: ./run-edge.sh [run|stop|restart|status|logs|purge|test|build|clean]"
         exit 1
         ;;
 esac

@@ -146,12 +146,32 @@ fi
 echo -e "  - Downloading latest Edge Client runtime bundle (\$ARCH) from: \${CLOUD_URL}/\${BUNDLE_FILE}"
 mkdir -p bin target/release data data/models data/samples lib
 BUNDLE_TMP="/tmp/\${BUNDLE_FILE}"
-rm -f "\$BUNDLE_TMP" 2>/dev/null || true
 
-# Robust download: HTTP/1.1 avoids Cloudflare HTTP/2 stream resets (INTERNAL_ERROR err 2), -C - allows resume, retries 5 times
-if ! curl --http1.1 -C - -fSL --retry 5 --retry-delay 2 --retry-connrefused -sS "\${CLOUD_URL}/\${BUNDLE_FILE}" -o "\$BUNDLE_TMP"; then
-    echo -e "  - \${YELLOW}[WARN]\${NC} Primary bundle download interrupted, retrying generic \${CLOUD_URL}/edge-client-bundle.tar.gz..."
-    curl --http1.1 -C - -fSL --retry 5 --retry-delay 2 --retry-connrefused -sS "\${CLOUD_URL}/edge-client-bundle.tar.gz" -o "\$BUNDLE_TMP"
+download_bundle_resumable() {
+    local url="\$1"
+    local dest="\$2"
+    local max_tries=6
+    local try=1
+    while [[ \$try -le \$max_tries ]]; do
+        if curl --http1.1 -C - -fSL --connect-timeout 15 -m 180 --retry-connrefused "\$url" -o "\$dest"; then
+            if [[ -s "\$dest" ]]; then
+                return 0
+            fi
+        fi
+        echo -e "  - \${YELLOW}[RESUME]\${NC} Download interrupted, resuming from existing offset (attempt \$try/\$max_tries)..."
+        try=\$((try + 1))
+        sleep 2
+    done
+    return 1
+}
+
+if ! download_bundle_resumable "\${CLOUD_URL}/\${BUNDLE_FILE}" "\$BUNDLE_TMP"; then
+    echo -e "  - \${YELLOW}[WARN]\${NC} Primary bundle download failed, retrying generic \${CLOUD_URL}/edge-client-bundle.tar.gz..."
+    rm -f "\$BUNDLE_TMP" 2>/dev/null || true
+    if ! download_bundle_resumable "\${CLOUD_URL}/edge-client-bundle.tar.gz" "\$BUNDLE_TMP"; then
+        echo -e "\${RED}\${BOLD}[ERROR]\${NC} Failed to complete runtime bundle download after retries."
+        exit 1
+    fi
 fi
 
 if [[ ! -s "\$BUNDLE_TMP" ]]; then
@@ -180,7 +200,20 @@ if [[ -f "./storage_service" && ! -d "./storage_service" ]]; then chmod +x ./sto
 echo -e "\${GREEN}\${BOLD}[OK]\${NC} Edge runtime package ready."
 
 MODE="\${1:-foreground}"
-if [[ "\$MODE" == "--daemon" || "\$MODE" == "-d" || "\$MODE" == "daemon" ]]; then
+if [[ "\$MODE" == "--systemd" || "\$MODE" == "--autostart" ]]; then
+    echo -e "\n\${CYAN}[4/4]\${NC} Installing systemd autostart service for permanent boot persistence..."
+    if [[ -f "./run-edge.sh" ]]; then
+        ./run-edge.sh install-systemd
+        if command -v systemctl >/dev/null 2>&1; then
+            if [[ \$EUID -ne 0 ]]; then
+                sudo systemctl start edge-platform.service || true
+            else
+                systemctl start edge-platform.service || true
+            fi
+            echo -e "\${GREEN}\${BOLD}[OK]\${NC} Edge platform autostart service running!"
+        fi
+    fi
+elif [[ "\$MODE" == "--daemon" || "\$MODE" == "-d" || "\$MODE" == "daemon" ]]; then
     echo -e "\n\${CYAN}[4/4]\${NC} Starting Edge Microservice Fleet in background daemon mode..."
     mkdir -p data
     if [[ -f "./run-edge.sh" ]]; then

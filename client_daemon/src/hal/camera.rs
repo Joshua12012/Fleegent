@@ -24,6 +24,7 @@ pub struct CameraDriver {
     is_hardware_available: bool,
     stream_proc: Option<Child>,
     streaming_backend: String,
+    streamer_fail_count: u32,
 }
 
 impl CameraDriver {
@@ -195,10 +196,20 @@ impl CameraDriver {
         let needs_revival = if let Some(ref mut child) = self.stream_proc {
             match child.try_wait() {
                 Ok(Some(status)) => {
-                    println!("[HAL:Camera] ⚠️ Camera pipeline exited ({:?}). Reviving immediately...", status);
+                    self.streamer_fail_count += 1;
+                    if self.streamer_fail_count >= 3 {
+                        println!("[HAL:Camera] ⚠️ Camera pipeline exited ({:?}) multiple times. Physical camera unavailable; switching to resilient fallback feed.", status);
+                        self.is_hardware_available = false;
+                        self.stream_proc = None;
+                        return;
+                    }
+                    println!("[HAL:Camera] ⚠️ Camera pipeline exited ({:?}) (attempt {}/3). Reviving...", status, self.streamer_fail_count);
                     true
                 }
-                Ok(None) => false,
+                Ok(None) => {
+                    self.streamer_fail_count = 0;
+                    false
+                }
                 Err(_) => true,
             }
         } else {
@@ -234,6 +245,7 @@ impl CameraDriver {
             is_hardware_available: hardware_ok,
             stream_proc,
             streaming_backend: backend_name,
+            streamer_fail_count: 0,
         }
     }
 
@@ -302,8 +314,8 @@ impl CameraDriver {
             }
         }
 
-        // If on Jetson and no USB camera found, check if CSI camera plugin is available
-        if Self::detect_jetson() && Self::has_nv_plugin("nvarguscamerasrc") {
+        // If on Jetson, only select CSI if explicitly requested or if csi/nvarguscamerasrc was preferred
+        if (preferred == "csi" || preferred == "nvarguscamerasrc") && Self::detect_jetson() && Self::has_nv_plugin("nvarguscamerasrc") {
             return ("csi".to_string(), true);
         }
 
@@ -362,10 +374,18 @@ impl CameraDriver {
 
     /// Reads raw frame bytes from the hardware device or physical sample buffer.
     fn read_frame_bytes(&mut self, expected_size: usize) -> Vec<u8> {
-        // 1. Check if live hardware frame was written by GStreamer/ffmpeg from /dev/video0 to /tmp/edge_live_frame.jpg
-        if let Ok(bytes) = fs::read("/tmp/edge_live_frame.jpg") {
-            if bytes.len() > 1024 {
-                return bytes;
+        // 1. Check if live hardware frame was written recently (within last 3 seconds)
+        if let Ok(meta) = fs::metadata("/tmp/edge_live_frame.jpg") {
+            if let Ok(modified) = meta.modified() {
+                if let Ok(elapsed) = modified.elapsed() {
+                    if elapsed.as_secs() <= 3 {
+                        if let Ok(bytes) = fs::read("/tmp/edge_live_frame.jpg") {
+                            if bytes.len() > 1024 {
+                                return bytes;
+                            }
+                        }
+                    }
+                }
             }
         }
 

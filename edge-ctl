@@ -244,10 +244,19 @@ case "$COMMAND" in
         ./run-edge.sh test
         ;;
     benchmark|bench)
-        ./scripts/benchmark_paper.sh "$@"
+        python3 ./scripts/benchmark_empirical.py "$@"
         ;;
-    db|query|logs)
+    db|query)
         cmd_db "$@"
+        ;;
+    status)
+        ./run-edge.sh status
+        ;;
+    logs|log)
+        ./run-edge.sh logs
+        ;;
+    restart)
+        ./run-edge.sh restart
         ;;
     purge|uninstall|clean-all|delete)
         cmd_purge "$@"
@@ -259,10 +268,13 @@ case "$COMMAND" in
         echo "Client Lifecycle Commands:"
         echo "  1. ./edge-ctl setup     - Download/setup all files, dirs, and bundled binaries"
         echo "  2. ./edge-ctl run       - Run the edge client and connect to the Cloud Server"
-        echo "  3. ./edge-ctl stop      - Gracefully stop edge microservices (preserves data)"
-        echo "  4. ./edge-ctl benchmark - Automated paper metrics benchmark (exports CSV tables & shuts down)"
-        echo "  5. ./edge-ctl db        - Query live records from the embedded SQLite database"
-        echo "  6. ./edge-ctl purge     - Stop all processes and completely purge all files & data"
+        echo "  3. ./edge-ctl status    - Inspect running state, PIDs, model & systemd health"
+        echo "  4. ./edge-ctl logs      - Stream background daemon & inference log output"
+        echo "  5. ./edge-ctl restart   - Gracefully reboot microservices and reconnect"
+        echo "  6. ./edge-ctl stop      - Gracefully stop edge microservices (preserves data)"
+        echo "  7. ./edge-ctl benchmark - Automated paper metrics benchmark (exports CSV tables & shuts down)"
+        echo "  8. ./edge-ctl db        - Query live records from the embedded SQLite database"
+        echo "  9. ./edge-ctl purge     - Stop all processes and completely purge all files & data"
         exit 1
         ;;
 esac
